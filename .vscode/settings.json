@@ -1,0 +1,32 @@
+{
+    "flake8.args": [
+        "--max-line-length=100"
+    ],
+    "black-formatter.args": ["--line-length", "100"],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.rulers": [100]
+    },
+    "python.analysis.extraPaths": [
+        "./*"
+    ],
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "python.languageServer": "Jedi",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true
+    },
+    "python.testing.pytestEnabled": true
+}
