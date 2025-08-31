@@ -7,10 +7,3 @@ if __name__ == "__main__":
     cur.execute("SELECT version();")
     print(cur.fetchone())
     conn.close()
-
-    # version classe avec Singleton
-    # db = DBConnection()
-    # conn = db.connection
-    # cur = conn.cursor()
-    # cur.execute("SELECT version();")
-    # print(cur.fetchone())
