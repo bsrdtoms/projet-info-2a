@@ -8,7 +8,7 @@ sql_file = "data/pop_db.sql"
 with open(json_file, "r", encoding="utf-8") as f:
     data = json.load(f)
     
-cards = data["data"]   # ✅ Récupérer seulement la liste des cartes
+cards = data["data"]   # Récupérer seulement la liste des cartes
 
 
 # Colonnes
@@ -58,4 +58,4 @@ with open(sql_file, "w", encoding="utf-8") as f:
         valeurs_str = ", ".join(valeurs)
         f.write(f"INSERT INTO cards ({colonnes_str}) VALUES ({valeurs_str});\n")
 
-print(f"✅ Fichier {sql_file} généré avec {len(cards)} cartes.")
+print(f"Fichier {sql_file} généré avec {len(cards)} cartes.")

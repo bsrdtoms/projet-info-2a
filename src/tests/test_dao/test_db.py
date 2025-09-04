@@ -1,7 +1,6 @@
-from dao.db_connection import get_connection  # ou DBConnection si tu utilises la classe
+from dao.db_connection import get_connection
 
 if __name__ == "__main__":
-    # version simple si tu as défini get_connection()
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT version();")
