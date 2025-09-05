@@ -15,4 +15,6 @@
 
 [] FO3d : interface web simple
 
+[] Réveiller le modèle d'IA avant d'en avoir besoin pour que ce soit plus rapide pour l'utilisateur
+
 [] Truc pour visualiser les données des cartes (méthode clustering)
