@@ -1,134 +1,94 @@
 ```mermaid
-classDiagram
-    %% Entités principales
-    class Utilisateur {
-        +id_utilisateur: int
-        +pseudo: string
-        +email: string
-        +mot_de_passe: string
-        +role: string
-        +date_creation: datetime
+erDiagram
+    USER {
+        int user_id PK
+        varchar email UK
+        varchar password_hash
+        varchar first_name
+        varchar last_name
+        enum user_type "end_user, game_designer, admin"
+        datetime created_at
+        datetime updated_at
+        boolean is_active
     }
 
-    class CarteMagic {
-        +id_carte: int
-        +nom: string
-        +description: string
-        +type: string
-        +couleur: string
-        +rareté: string
-        +date_creation: datetime
-        +date_mise_a_jour: datetime
-        +vector_embedding: list[float]
+    CARD {
+        int card_id PK
+        varchar card_name UK
+        text card_text
+        varchar mana_cost
+        varchar card_type
+        varchar rarity
+        varchar set_code
+        int power
+        int toughness
+        text flavor_text
+        varchar image_url
+        datetime created_at
+        datetime updated_at
+        int created_by FK
     }
 
-    class Favoris {
-        +id_utilisateur: int
-        +id_carte: int
-        +date_ajout: datetime
+    CARD_EMBEDDING {
+        int embedding_id PK
+        int card_id FK
+        vector embedding_vector "Vector de dimension 1536 ou autre"
+        varchar embedding_model "modèle utilisé (OpenAI, etc.)"
+        datetime created_at
+        datetime updated_at
     }
 
-    class HistoriqueRecherche {
-        +id_recherche: int
-        +id_utilisateur: int
-        +requete: string
-        +date_recherche: datetime
+    FAVORITE {
+        int favorite_id PK
+        int user_id FK
+        int card_id FK
+        datetime created_at
     }
 
-    %% DAO
-    class UtilisateurDao {
-        +creer(Utilisateur): bool
-        +trouver_par_id(int): Utilisateur
-        +trouver_par_pseudo(str): Utilisateur
-        +supprimer(Utilisateur): bool
-        +lister_tous(): list[Utilisateur]
+    MATCH_REQUEST {
+        int request_id PK
+        int user_id FK
+        text input_text
+        datetime created_at
+        varchar session_id
     }
 
-    class CarteMagicDao {
-        +creer(CarteMagic): bool
-        +trouver_par_id(int): CarteMagic
-        +lister_tous(): list[CarteMagic]
-        +supprimer(CarteMagic): bool
-        +rechercher_par_nom(str): list[CarteMagic]
-        +rechercher_semantique(vector: list[float], top_n: int): list[CarteMagic]
-        +random(): CarteMagic
-        +mettre_a_jour(CarteMagic): bool
+    MATCH_RESULT {
+        int result_id PK
+        int request_id FK
+        int card_id FK
+        float similarity_score
+        int rank_position
+        datetime created_at
     }
 
-    class FavorisDao {
-        +ajouter_favoris(int, int): bool
-        +lister_favoris(int): list[CarteMagic]
-        +supprimer_favoris(int, int): bool
+    TEXT_EMBEDDING {
+        int text_embedding_id PK
+        int request_id FK
+        vector text_vector "Vector de l'input text"
+        varchar embedding_model
+        datetime created_at
     }
 
-    class HistoriqueRechercheDao {
-        +ajouter_recherche(int, str): bool
-        +lister_historique(int): list[HistoriqueRecherche]
+    SESSION {
+        varchar session_id PK
+        int user_id FK
+        datetime created_at
+        datetime last_activity
+        boolean is_active
     }
 
-    %% Services
-    class UtilisateurService {
-        +inscrire(str, str, str, str): Utilisateur
-        +se_connecter(str, str): Utilisateur
-        +supprimer_utilisateur(int): bool
-    }
-
-    class CarteMagicService {
-        +rechercher_par_nom(str): list[CarteMagic]
-        +rechercher_semantique(str): list[CarteMagic]
-        +random(): CarteMagic
-        +ajouter_carte(dict): CarteMagic
-        +supprimer_carte(int): bool
-        +mettre_a_jour_carte(CarteMagic): bool
-    }
-
-    class FavorisService {
-        +ajouter_favoris(int, int): bool
-        +lister_favoris(int): list[CarteMagic]
-        +supprimer_favoris(int, int): bool
-    }
-
-    %% Vues / API
-    class VueAbstraite {
-        <<abstract>>
-        +afficher()
-        +choisir_menu()
-    }
-
-    class AccueilVue {
-        +afficher_accueil()
-    }
-
-    class RechercheVue {
-        +afficher_resultats(list[CarteMagic])
-        +effectuer_recherche(str)
-    }
-
-    class GestionCarteVue {
-        +afficher_carte(CarteMagic)
-        +ajouter_carte()
-        +supprimer_carte(int)
-        +mettre_a_jour_carte(CarteMagic)
-    }
-
-    %% Relations entre classes
-    VueAbstraite <|-- AccueilVue
-    VueAbstraite <|-- RechercheVue
-    VueAbstraite <|-- GestionCarteVue
-
-    RechercheVue ..> CarteMagicService : appelle
-    GestionCarteVue ..> CarteMagicService : appelle
-    GestionCarteVue ..> UtilisateurService : appelle
-
-    CarteMagicService ..> CarteMagicDao : appelle
-    CarteMagicService ..> HistoriqueRechercheDao : appelle
-    FavorisService ..> FavorisDao : appelle
-    UtilisateurService ..> UtilisateurDao : appelle
-
-    Utilisateur <.. UtilisateurService : utilise
-    Utilisateur <.. UtilisateurDao : utilise
-    CarteMagic <.. CarteMagicService : utilise
-    CarteMagic <.. CarteMagicDao : utilise
-    Favoris <.. FavorisService : utilise
-    Favoris <.. FavorisDao : utilise
-    HistoriqueRecherche <.. HistoriqueRechercheDao : utilise
+    %% Relations
+    USER ||--o{ CARD : "created_by"
+    USER ||--o{ FAVORITE : "user_id"
+    USER ||--o{ MATCH_REQUEST : "user_id"
+    USER ||--o{ SESSION : "user_id"
+    
+    CARD ||--|| CARD_EMBEDDING : "card_id"
+    CARD ||--o{ FAVORITE : "card_id"
+    CARD ||--o{ MATCH_RESULT : "card_id"
+    
+    MATCH_REQUEST ||--o{ MATCH_RESULT : "request_id"
+    MATCH_REQUEST ||--|| TEXT_EMBEDDING : "request_id"
+    
+    SESSION ||--o{ MATCH_REQUEST : "session_id"
