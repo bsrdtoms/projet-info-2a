@@ -10,6 +10,7 @@ classDiagram
         +vector_embedding: list[float]
     }
 
+
     %% DAO
     class CarteMagicDao {
         +creer(CarteMagic): bool
