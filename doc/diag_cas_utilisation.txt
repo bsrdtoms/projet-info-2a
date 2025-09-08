@@ -1,0 +1,44 @@
+@startuml
+' à coller ici pour visualiser : https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000
+' doc : https://plantuml.com/fr/use-case-diagram
+
+
+left to right direction
+
+actor "Administrator"   as admin
+actor "Game designer"  as gamedesign
+actor "End user"      as user
+
+rectangle "Possible actions" {
+  usecase "Sign in"        as inscription
+  usecase "Log in"    as authentification
+  usecase "Log out"           as quit
+  usecase "Match a new text"        as newtext
+  usecase "New Favorite"        as favorite
+  usecase "Match a new card"        as newcard
+  usecase "Add a new card"        as createcard
+  usecase "Remove a card"        as removecard
+  usecase "Modify a card"        as modifycard
+  usecase "Remove an end user or a game disigner" as removeuser
+
+}
+
+admin --> authentification
+admin --> quit
+admin --> removeuser
+
+gamedesign --> authentification
+gamedesign --> quit
+gamedesign --> createcard
+gamedesign --> removecard
+gamedesign --> modifycard
+
+user --> inscription
+user --> authentification
+user --> quit
+user --> newtext
+user --> favorite
+user --> newcard
+
+
+@enduml

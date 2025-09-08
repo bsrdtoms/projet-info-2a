@@ -1,3 +1,4 @@
+@@ -1,47 +1,48 @@
 ```mermaid
 classDiagram
     %% ====================
@@ -152,6 +153,13 @@ classDiagram
     VueAbstraite <|-- RechercheVue
     VueAbstraite <|-- WebVue
 
+<<<<<<< HEAD
     MenuUtilisateurVue ..> UtilisateurService
     RechercheVue ..> CarteMagicService
     WebVue ..> CarteMagicService
+=======
+    RechercheVue ..> CarteMagicService : appelle
+    CarteMagicService ..> CarteMagicDao : appelle
+    CarteMagic <.. CarteMagicService : utilise
+    CarteMagic <.. CarteMagicDao : utilise
+>>>>>>> 40d6a505c50e7cb1b19a7c51ef6af190d50fac83
