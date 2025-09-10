@@ -21,25 +21,32 @@ classDiagram
     %% UTILISATEURS
     %% ====================
     class UtilisateurService {
-        +creer_compte()
-        +supprimer_compte()
-        +connexion()
+        %% tous %%
+        +connexion(pseudo : str, mdp : str)
         +deconnexion()
-        +ajouter_favori(Client, CarteMagic)
-        +supprimer_favori(Client, CarteMagic)
-        +historique_recherche()
+
+        %% admin1 %%
+        +creer_compte(pseudo, mdp)
+        +supprimer_compte()
         +trouver_par_id(int): Utilisateur
         +lister_tous(): list[Utilisateur]
+        
+        %% client %%
+        +ajouter_favori(CarteMagic)
+        +supprimer_favori(CarteMagic)
+        +historique_recherche()
     }
 
     class UtilisateurDao {
-        +creer_compte()
-        +supprimer_compte()
-        +connexion()
-        +deconnexion()
+        +creer(Utilisateur)
+        +supprimer(Utilisateur)
+
+        %% modifier un utilisateur %%
         +ajouter_favori(Client, CarteMagic)
         +supprimer_favori(Client, CarteMagic)
-        +historique_recherche()
+
+        %% lire les données d'un utilisateur %%
+        +historique_recherche(Client) : list[HistoriqueRecherche]
         +trouver_par_id(int): Utilisateur
         +lister_tous(): list[Utilisateur]
     }
@@ -49,18 +56,19 @@ classDiagram
         +id_utilisateur: int
         +pseudo: string
         +mdp: string
-        +type
     }
 
     class Admin1 
     class Admin2 
     class Client 
 
-    UtilisateurVue ..> UtilisateurService : use
+    UtilisateurVue ..> UtilisateurService : utilise
 
-    UtilisateurService ..> UtilisateurDao : use
+    UtilisateurService ..> UtilisateurDao : utilise
 
-    Utilisateur <.. UtilisateurService : create
+    UtilisateurDao ..> Utilisateur : manipule
+
+    UtilisateurService ..> Utilisateur : manipule
 
     Utilisateur <|-- Admin1
     Utilisateur <|-- Admin2
@@ -71,21 +79,26 @@ classDiagram
     %% CARTES
     %% ====================
     class CarteMagicService {
-        +ajouter_carte(carte: CarteMagic)
+        +ajouter_carte(nom: str, text: str, type, couleur)
         +modifier_carte()
         +supprimer_carte(carte: CarteMagic)
         +rechercher_par_nom(str): list[CarteMagic]
-        +rechercher_semantique(str, filtres: ?, exclusions: ?): list[CarteMagic]
+        +rechercher_semantique(str, model : EmbeddingModel): list[CarteMagic]
         +random(): CarteMagic
     }
 
     class CarteMagicDao {
-        +creer(CarteMagic): bool
+        +creer(CarteMagic)
+        +supprimer(CarteMagic)
+
+        %% modifier %%
+        +modifier()
+        +ajouter_embedding(CarteMagic, list[float], type_de_modele : EmbeddingModel )
+
+        %% lire %%
         +trouver_par_id(int): CarteMagic
-        +supprimer(CarteMagic): bool
-        +modifier(CarteMagic): bool
         +rechercher_par_nom(str): list[CarteMagic]
-        +rechercher_semantique(): list[CarteMagic]
+        +rechercher_semantique(list[float]): list[CarteMagic]
         +random(): CarteMagic
     }
 
@@ -100,11 +113,50 @@ classDiagram
         +detailed_description(): str
     }
 
-    RechercheVue ..> CarteMagicService : use
+    RechercheVue ..> CarteMagicService : utilise
 
-    CarteMagicService ..> CarteMagicDao : use
+    CarteMagicService ..> CarteMagicDao : utilise
 
-    CarteMagic <.. CarteMagicService
+    CarteMagicDao ..> CarteMagic : manipule
+
+    CarteMagicService ..> CarteMagic : utilise
+
+    %% Embedding %%
+    class EmbeddingModel {
+        +generer_embedding(str): list[float]
+    }
+
+    class Model1 {
+        +generer_embedding(str): list[float]
+    }
+
+    class Model2 {
+        +generer_embedding(str): list[float]
+    }
+
+    class Model3 {
+        +generer_embedding(str): list[float]
+    }
+
+    EmbeddingModel <|-- Model1
+    EmbeddingModel <|-- Model2
+    EmbeddingModel <|-- Model3
+
+    CarteMagicService ..> EmbeddingModel : utilise
+
+    %% performance %%
+    class PerformanceEvaluator {
+        +jeu_test: dict
+        +precision_at_k(int): float
+        +recall_at_k(int): float
+        +f1_score(int): float
+        +evaluer_modele(EmbeddingModel): dict
+    }
+
+    PerformanceEvaluator ..> EmbeddingModel : évalue
+    PerformanceEvaluator ..> CarteMagicService : utilise
+
+
 
 
     %% ====================
@@ -117,7 +169,7 @@ classDiagram
 
     class HistoriqueDao {
         +ajouter(Client, HistoriqueRecherche)
-        +lister_par_client(Client): list[HistoriqueRecherche]
+        +lire_historique(Client): list[HistoriqueRecherche]
     }
 
     class HistoriqueRecherche {
@@ -127,18 +179,22 @@ classDiagram
         +resultats: list[CarteMagic]
     }
 
-    RechercheVue ..> HistoriqueService : use
+    RechercheVue ..> HistoriqueService : utilise
 
-    HistoriqueService ..> HistoriqueDao : use
+    HistoriqueService ..> HistoriqueDao : utilise
 
-    HistoriqueRecherche <.. HistoriqueService
+    HistoriqueService ..> HistoriqueRecherche : manipule
+
+    HistoriqueDao ..> HistoriqueRecherche : manipule
+
 
 
     %% ====================
     %% AUTRES RELATIONS
     %% ====================
-    UtilisateurVue ..> CarteMagicService : use
+    UtilisateurVue ..> CarteMagicService : utilise
     Client "1" --> "*" HistoriqueRecherche : possède
+    Client "*" -- "*" CarteMagic : possède
     
 
 
