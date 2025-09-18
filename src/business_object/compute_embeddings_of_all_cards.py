@@ -10,17 +10,17 @@ def get_batch_embeddings(texts, batch_size=1000):
     """Obtenir des embeddings en batch"""
     token = os.getenv("API_TOKEN")
     url = "https://llm.lab.sspcloud.fr/ollama/api/embed"
-    
+
     headers = {
         'Authorization': f'Bearer {token}',
         'Content-Type': 'application/json'
     }
-    
+
     data = {
-        "model": "bge-m3:latest", 
+        "model": "bge-m3:latest",
         "input": texts  # Array de textes
     }
-    
+
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200:
         result = response.json()
@@ -35,7 +35,7 @@ def get_batch_embeddings(texts, batch_size=1000):
 
 def process_cards_with_batch():
     """Traitement optimisé des cartes avec batch processing"""
-    
+
     print("📥 Chargement des données...")
     with open("projet-info-2a/data/AtomicCards.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -48,11 +48,11 @@ def process_cards_with_batch():
 
     df = pd.DataFrame(cards)
     print(f"📊 Total de cartes: {len(df)}")
-    
+
     # Préparer les textes et les indices
     texts_to_embed = []
     valid_indices = []
-    
+
     for i, row in df.iterrows():
         if 'text' in row and row['text'] is not None and str(row['text']).strip():
             texts_to_embed.append(str(row['text']))
