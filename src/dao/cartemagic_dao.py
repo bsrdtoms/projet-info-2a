@@ -1,7 +1,9 @@
-class CarteMagicDao():
+
+
+class MagicCardDao():
     """Classe contenant les méthodes pour accéder aux Cartes de la base de données"""
 
-    def créer(self, carte) -> bool :
+    def create(self, carte) -> bool:
         """Création d'une carte dans la base de données
 
         Parameters
@@ -16,7 +18,7 @@ class CarteMagicDao():
         """
         pass
 
-    def trouver_par_id(self, id_carte) -> Carte :
+    def find_by_id(self, id_card):
         """Trouver une carte grace à son id
 
         Parameters
@@ -29,3 +31,6 @@ class CarteMagicDao():
         carte : Carte
             renvoie la carte que l'on cherche par id
         """
+
+    def get_all_embeddings(self):
+        pass
