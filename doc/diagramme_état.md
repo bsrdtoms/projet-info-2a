@@ -1,97 +1,29 @@
+# Diagramme d'état - Navigation utilisateur MagicSearch
+
 ```mermaid
 stateDiagram-v2
-    direction LR
-    title: Diagramme d'État - MagicSearch
-    
-    [*] --> Accueil
-    Accueil --> Authentification : choisir_menu("Connexion")
-    Accueil --> Recherche : choisir_menu("Rechercher")
-    Accueil --> Inscription : choisir_menu("Créer compte")
-    
-    state Authentification {
-        [*] --> SaisieIdentifiants
-        SaisieIdentifiants --> SessionActive : connexion() [succès]
-        SaisieIdentifiants --> SaisieIdentifiants : connexion() [échec]
-    }
-    
-    Authentification --> Accueil : annuler()
-    
-    state Inscription {
-        [*] --> SaisieDonnées
-        SaisieDonnées --> SessionActive : creer_compte() [succès]
-        SaisieDonnées --> SaisieDonnées : creer_compte() [échec]
-    }
-    
-    Inscription --> Accueil : annuler()
-    
-    state SessionActive {
-        [*] --> MenuUtilisateur
-        state MenuUtilisateur {
-            [*] --> Options
-            Options --> Options : choisir_menu()
-        }
-    }
-    
-    SessionActive --> Recherche : choisir_menu("Rechercher")
-    SessionActive --> GestionFavoris : choisir_menu("Mes Favoris")
-    SessionActive --> ConsultationHistorique : choisir_menu("Historique")
-    SessionActive --> Accueil : deconnexion()
-    
-    state GestionFavoris {
-        [*] --> ListeFavoris
-        ListeFavoris --> DetailFavori : selectionner_carte()
-    }
-    
-    state ConsultationHistorique {
-        [*] --> ListeRecherches
-        ListeRecherches --> ResultatsHistorique : selectionner_entree()
-    }
-    
-    GestionFavoris --> MenuUtilisateur : retour()
-    ConsultationHistorique --> MenuUtilisateur : retour()
-    DetailFavori --> ListeFavoris : fermerDetail()
-    ResultatsHistorique --> ListeRecherches : fermerDetail()
-    
-    state Recherche {
-        [*] --> SaisieRequete
-    }
-    
-    SaisieRequete --> AffichageResultats : executer_recherche(requête)\n/ CarteMagicService.rechercher()\n/ HistoriqueService.ajouter()
-    
-    state AffichageResultats {
-        [*] --> ListeCartes
-        ListeCartes --> ListeCartes : nouvelle_recherche()
-        ListeCartes --> DetailCarte : selectionner_carte()
-    }
-    
-    AffichageResultats --> SaisieRequete : nouvelle_recherche()
-    
-    state DetailCarte {
-        [*] --> AffichageComplet
-        AffichageComplet --> AffichageComplet : ajouter_favori()\n/ UtilisateurService.ajouter_favori()
-        AffichageComplet --> AffichageComplet : supprimer_favori()\n/ UtilisateurService.supprimer_favori()
-    }
-    
-    DetailCarte --> ListeCartes : fermerDetail()
-    
-    %% Transitions de retour vers l'accueil
-    Recherche --> Accueil : quitter()
-    AffichageResultats --> Accueil : quitter()
-    DetailCarte --> Accueil : quitter()
+    [*] --> "Écran d'accueil"
 
-    note right of Accueil
-        État initial de l'application
-        Vue: AccueilVue
-    end note
+    "Écran d'accueil" --> "Connexion": cliquer sur se connecter
+    "Écran d'accueil" --> "Création de compte": cliquer sur créer un compte
+    "Écran d'accueil" --> "Recherche de cartes": effectuer une recherche
+    "Écran d'accueil" --> "Historique": consulter l'historique
+    "Écran d'accueil" --> "Gestion de compte": gérer son compte
 
-    note left of SessionActive
-        Utilisateur connecté
-        Services: UtilisateurService, HistoriqueService
-    end note
+    "Connexion" --> "Écran d'accueil": connexion réussie
+    "Connexion" --> "Écran d'accueil": annuler
 
-    note right of AffichageResultats
-        Services: CarteMagicService
-        Dao: CarteMagicDao
-    end note
-```
+    "Création de compte" --> "Connexion": compte créé, se connecter
+    "Création de compte" --> "Écran d'accueil": annuler
 
+    "Recherche de cartes" --> "Navigation des résultats": afficher les résultats
+    "Navigation des résultats" --> "Recherche de cartes": nouvelle recherche
+    "Navigation des résultats" --> "Ajout aux favoris": ajouter une carte
+
+    "Ajout aux favoris" --> "Navigation des résultats": retour aux résultats
+
+    "Historique" --> "Écran d'accueil": retour accueil
+    "Gestion de compte" --> "Écran d'accueil": retour accueil
+    "Gestion de compte" --> "Déconnexion": cliquer sur déconnexion
+
+    "Déconnexion" --> [*]
