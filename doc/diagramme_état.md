@@ -2,28 +2,29 @@
 
 ```mermaid
 stateDiagram-v2
-    [*] --> "Écran d'accueil"
+    [*] --> Accueil
+    Accueil: Écran d'accueil
 
-    "Écran d'accueil" --> "Connexion": cliquer sur se connecter
-    "Écran d'accueil" --> "Création de compte": cliquer sur créer un compte
-    "Écran d'accueil" --> "Recherche de cartes": effectuer une recherche
-    "Écran d'accueil" --> "Historique": consulter l'historique
-    "Écran d'accueil" --> "Gestion de compte": gérer son compte
+    Accueil --> Connexion: cliquer sur se connecter
+    Accueil --> CreationCompte: cliquer sur créer un compte
+    Accueil --> Recherche: effectuer une recherche
+    Accueil --> Historique: consulter l'historique
+    Accueil --> GestionCompte: gérer son compte
 
-    "Connexion" --> "Écran d'accueil": connexion réussie
-    "Connexion" --> "Écran d'accueil": annuler
+    Connexion --> Accueil: connexion réussie
+    Connexion --> Accueil: annuler
 
-    "Création de compte" --> "Connexion": compte créé, se connecter
-    "Création de compte" --> "Écran d'accueil": annuler
+    CreationCompte --> Connexion: compte créé, se connecter
+    CreationCompte --> Accueil: annuler
 
-    "Recherche de cartes" --> "Navigation des résultats": afficher les résultats
-    "Navigation des résultats" --> "Recherche de cartes": nouvelle recherche
-    "Navigation des résultats" --> "Ajout aux favoris": ajouter une carte
+    Recherche --> Resultats: afficher les résultats
+    Resultats --> Recherche: nouvelle recherche
+    Resultats --> Favoris: ajouter une carte aux favoris
 
-    "Ajout aux favoris" --> "Navigation des résultats": retour aux résultats
+    Favoris --> Resultats: retour aux résultats
 
-    "Historique" --> "Écran d'accueil": retour accueil
-    "Gestion de compte" --> "Écran d'accueil": retour accueil
-    "Gestion de compte" --> "Déconnexion": cliquer sur déconnexion
+    Historique --> Accueil: retour accueil
+    GestionCompte --> Accueil: retour accueil
+    GestionCompte --> Deconnexion: cliquer sur déconnexion
 
-    "Déconnexion" --> [*]
+    Deconnexion --> [*]
