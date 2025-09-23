@@ -1,30 +1,35 @@
-# Diagramme d'état -  Point de vue utilisateur
+# Diagramme d'état - Navigation utilisateur MagicSearch
 
 ```mermaid
 stateDiagram-v2
     [*] --> Accueil
     Accueil: Écran d'accueil
 
-    Accueil --> Connexion: cliquer sur se connecter
-    Accueil --> CreationCompte: cliquer sur créer un compte
-    Accueil --> Recherche: effectuer une recherche
-    Accueil --> Historique: consulter l'historique
-    Accueil --> GestionCompte: gérer son compte
+    %% --- Connexion & Création ---
+    Accueil --> Connexion: Se connecter
+    Accueil --> CreationCompte: Créer un compte
 
-    Connexion --> Accueil: connexion réussie
-    Connexion --> Accueil: annuler
+    Connexion --> Accueil: Connexion réussie
+    Connexion --> Accueil: Annuler
 
-    CreationCompte --> Connexion: compte créé, se connecter
-    CreationCompte --> Accueil: annuler
+    CreationCompte --> Connexion: Compte créé → Connexion
+    CreationCompte --> Accueil: Annuler
 
-    Recherche --> Resultats: afficher les résultats
-    Resultats --> Recherche: nouvelle recherche
-    Resultats --> Favoris: ajouter une carte aux favoris
+    %% --- Recherche ---
+    Accueil --> Recherche: Rechercher une carte
+    Recherche --> Resultats: Afficher résultats
+    Resultats --> Recherche: Nouvelle recherche
+    Resultats --> Favoris: Ajouter aux favoris
+    Favoris --> Resultats: Retour résultats
 
-    Favoris --> Resultats: retour aux résultats
+    %% --- Historique ---
+    Accueil --> Historique: Consulter historique
+    Historique --> Accueil: Retour accueil
 
-    Historique --> Accueil: retour accueil
-    GestionCompte --> Accueil: retour accueil
-    GestionCompte --> Deconnexion: cliquer sur déconnexion
+    %% --- Gestion de compte ---
+    Accueil --> GestionCompte: Gérer compte
+    GestionCompte --> Accueil: Retour accueil
+    GestionCompte --> Deconnexion: Se déconnecter
 
+    %% --- Fin ---
     Deconnexion --> [*]
