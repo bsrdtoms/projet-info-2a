@@ -1,4 +1,4 @@
-# Diagramme d'état - Navigation utilisateur MagicSearch
+# Diagramme d'état -  Point de vue utilisateur
 
 ```mermaid
 stateDiagram-v2
