@@ -3,7 +3,7 @@
 ```mermaid
 stateDiagram-v2
     [*] --> Accueil
-    Accueil: Écran d'accueil
+    Accueil: Écran\nd'accueil
 
     %% --- Connexion & Création ---
     Accueil --> Connexion: Se connecter
@@ -12,24 +12,28 @@ stateDiagram-v2
     Connexion --> Accueil: Connexion réussie
     Connexion --> Accueil: Annuler
 
-    CreationCompte --> Connexion: Compte créé → Connexion
+    CreationCompte --> Connexion: Compte créé\nSe connecter
     CreationCompte --> Accueil: Annuler
 
+    
     %% --- Recherche ---
-    Accueil --> Recherche: Rechercher une carte
-    Recherche --> Resultats: Afficher résultats
-    Resultats --> Recherche: Nouvelle recherche
-    Resultats --> Favoris: Ajouter aux favoris
-    Favoris --> Resultats: Retour résultats
+    Accueil --> Recherche: Rechercher\nune carte
+    Recherche --> Resultats: Afficher\nrésultats
+    Resultats --> Recherche: Nouvelle\nrecherche
+    Resultats --> Favoris: Ajouter aux\nfavoris
+    Favoris --> Resultats: Retour\nrésultats
 
+    
     %% --- Historique ---
-    Accueil --> Historique: Consulter historique
+    Accueil --> Historique: Consulter\nhistorique
     Historique --> Accueil: Retour accueil
 
+    
     %% --- Gestion de compte ---
-    Accueil --> GestionCompte: Gérer compte
+    Accueil --> GestionCompte: Gérer\ncompte
     GestionCompte --> Accueil: Retour accueil
-    GestionCompte --> Deconnexion: Se déconnecter
+    GestionCompte --> Deconnexion: Se\ndéconnecter
 
+    
     %% --- Fin ---
     Deconnexion --> [*]
