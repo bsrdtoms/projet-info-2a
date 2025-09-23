@@ -2,6 +2,11 @@ import json
 import pandas as pd
 import requests
 from dao.db_connection import DBConnection
+from dotenv import load_dotenv
+
+
+# Charge les variables depuis .env
+load_dotenv()
 
 
 def get_cards_from_url(url: str) -> pd.DataFrame:
