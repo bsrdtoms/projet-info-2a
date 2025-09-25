@@ -96,4 +96,4 @@ def insert_all_cards(url: str):
 # Exemple d’utilisation
 if __name__ == "__main__":
     url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
-    insert_all_cards(url)
+    print(get_cards_from_url(url))
