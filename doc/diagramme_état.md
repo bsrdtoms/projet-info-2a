@@ -1,60 +1,60 @@
-# Diagramme d’état – Application MagicSearch (complet)
+# State Diagram – MagicSearch Application (Complete)
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Accueil
-    Accueil: Écran\nd'accueil
+    [*] --> Home
+    Home: Home\nscreen
 
-    %% --- Connexion & Création de compte ---
-    Accueil --> Connexion: Se connecter
-    Accueil --> CreationCompte: Créer un compte
-    Connexion --> Accueil: Connexion réussie
-    Connexion --> Accueil: Annuler
-    CreationCompte --> Connexion: Compte créé\nSe connecter
-    CreationCompte --> Accueil: Annuler
+    %% --- Login & Account Creation ---
+    Home --> Login: Log in
+    Home --> SignUp: Create an account
+    Login --> Home: Login successful
+    Login --> Home: Cancel
+    SignUp --> Login: Account created\nLog in
+    SignUp --> Home: Cancel
 
-    %% --- Recherche & Favoris ---
-    Accueil --> Recherche: Rechercher\nune carte
-    Recherche --> Resultats: Afficher\nrésultats
-    Resultats --> Recherche: Nouvelle\nrecherche
-    Resultats --> Favoris: Ajouter aux\nfavoris
-    Favoris --> Resultats: Retour\nrésultats
-    Resultats --> Clusters: Explorer\nclusters
-    Clusters --> Resultats: Retour\nrésultats
+    %% --- Search & Favorites ---
+    Home --> Search: Search\nfor a card
+    Search --> Results: Display\nresults
+    Results --> Search: New\nsearch
+    Results --> Favorites: Add to\nfavorites
+    Favorites --> Results: Back to\nresults
+    Results --> Clusters: Explore\nclusters
+    Clusters --> Results: Back to\nresults
 
-    %% --- Historique ---
-    Accueil --> Historique: Consulter\nhistorique
-    Historique --> Accueil: Retour accueil
+    %% --- History ---
+    Home --> History: View\nhistory
+    History --> Home: Back to\nhome
 
-    %% --- Gestion de compte utilisateur ---
-    Accueil --> GestionCompte: Gérer\ncompte
-    GestionCompte --> Accueil: Retour accueil
-    GestionCompte --> Deconnexion: Se\ndéconnecter
+    %% --- Account Management ---
+    Home --> AccountManagement: Manage\naccount
+    AccountManagement --> Home: Back to\nhome
+    AccountManagement --> Logout: Log out
 
-    %% --- Administrateur ---
-    Accueil --> Administrateur1: Accès admin 1
-    Accueil --> Administrateur2: Accès admin 2
+    %% --- Administrators ---
+    Home --> Admin1: Access\nAdmin 1
+    Home --> Admin2: Access\nAdmin 2
 
-    Administrateur1 --> GestionCartes: Gérer\nles cartes
-    GestionCartes --> AjouterCarte: Ajouter\nune carte
-    GestionCartes --> ModifierCarte: Modifier\nune carte
-    GestionCartes --> SupprimerCarte: Supprimer\nune carte
-    AjouterCarte --> GestionCartes
-    ModifierCarte --> GestionCartes
-    SupprimerCarte --> GestionCartes
-    GestionCartes --> Administrateur1
+    Admin1 --> CardManagement: Manage\ncards
+    CardManagement --> AddCard: Add\na card
+    CardManagement --> EditCard: Edit\na card
+    CardManagement --> DeleteCard: Delete\na card
+    AddCard --> CardManagement
+    EditCard --> CardManagement
+    DeleteCard --> CardManagement
+    CardManagement --> Admin1
 
-    Administrateur2 --> GestionUtilisateurs: Gérer\nles comptes
-    GestionUtilisateurs --> AjouterCompte: Ajouter\nun compte
-    GestionUtilisateurs --> ModifierCompte: Modifier\nun compte
-    GestionUtilisateurs --> SupprimerCompte: Supprimer\nun compte
-    AjouterCompte --> GestionUtilisateurs
-    ModifierCompte --> GestionUtilisateurs
-    SupprimerCompte --> GestionUtilisateurs
-    GestionUtilisateurs --> Administrateur2
+    Admin2 --> UserManagement: Manage\naccounts
+    UserManagement --> AddAccount: Add\nan account
+    UserManagement --> EditAccount: Edit\nan account
+    UserManagement --> DeleteAccount: Delete\nan account
+    AddAccount --> UserManagement
+    EditAccount --> UserManagement
+    DeleteAccount --> UserManagement
+    UserManagement --> Admin2
 
-    Administrateur1 --> Accueil: Retour accueil
-    Administrateur2 --> Accueil: Retour accueil
+    Admin1 --> Home: Back to\nhome
+    Admin2 --> Home: Back to\nhome
 
-    %% --- Fin ---
-    Deconnexion --> [*]
+    %% --- End ---
+    Logout --> [*]
