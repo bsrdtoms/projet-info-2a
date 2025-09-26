@@ -4,7 +4,7 @@
 stateDiagram-v2
     %% --- Initial State ---
     [*] --> Home
-    Home: Home\nscreen
+    Home: Home screen
 
     %% --- Login & Account Creation ---
     Home --> Login: Log in
@@ -17,23 +17,22 @@ stateDiagram-v2
     SignUp --> Home: Cancel
 
     %% --- Search & Favorites ---
-    Home --> Search: Search\nfor a card
-    Search --> Results: Display\nresults
+    Home --> Search: Search for a card
+    Search --> Results: Display results
 
     Results --> Search: New\nsearch
-    Results --> Favorites: Add to\nfavorites
-    Favorites --> Results: Back to\nresults
+    Results --> Favorites: Add to favorites
+    Favorites --> Results: Back to results
 
-    Results --> Clusters: Explore\nclusters
-    Clusters --> Results: Back to\nresults
+    Results --> Clusters: Explore clusters
+    Clusters --> Results: Back to results
 
     %% --- History ---
-    Home --> History: View\nhistory
-    History --> Home: Back to\nhome
+    Home --> History: View history
+    History --> Home: Back to home
 
     %% --- Account Management ---
-    Home --> AccountManagement: Manage\naccount
-    AccountManagement --> Home: Back to\nhome
+    Home --> AccountManagement: Manage account
     AccountManagement --> Logout: Log\nout
 
     %% --- Administrator 1 (Card Management) ---
