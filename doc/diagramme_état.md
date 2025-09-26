@@ -14,7 +14,7 @@ stateDiagram-v2
     Login --> Home: Cancel
 
     SignUp --> Login: Account created (Log in)
-    SignUp --> Home: Cancel
+    
 
     %% --- Search & Favorites ---
     Home --> Search: Search for a card
