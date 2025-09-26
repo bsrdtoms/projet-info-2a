@@ -1,4 +1,4 @@
-# Diagramme d'état - Navigation utilisateur MagicSearch
+# Diagramme d’état – Navigation utilisateur MagicSearch
 
 ```mermaid
 stateDiagram-v2
@@ -33,6 +33,14 @@ stateDiagram-v2
     Accueil --> GestionCompte: Gérer\ncompte
     GestionCompte --> Accueil: Retour accueil
     GestionCompte --> Deconnexion: Se\ndéconnecter
+
+    
+    %% --- Administrateurs ---
+    Accueil --> Administrateur1: Accès admin 1
+    Accueil --> Administrateur2: Accès admin 2
+
+    Administrateur1 --> Accueil: Retour accueil
+    Administrateur2 --> Accueil: Retour accueil
 
     
     %% --- Fin ---
