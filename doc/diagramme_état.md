@@ -20,7 +20,7 @@ stateDiagram-v2
     Home --> Search: Search for a card
     Search --> Results: Display results
 
-    Results --> Search: New\nsearch
+    Results --> Search: New search
     Results --> Favorites: Add to favorites
     Favorites --> Results: Back to results
 
@@ -29,41 +29,41 @@ stateDiagram-v2
 
     %% --- History ---
     Home --> History: View history
-    History --> Home: Back to home
+    
 
     %% --- Account Management ---
     Home --> AccountManagement: Manage account
-    AccountManagement --> Logout: Log\nout
+    AccountManagement --> Logout: Log out
 
     %% --- Administrator 1 (Card Management) ---
-    Home --> Admin1: Access\nAdmin 1
+    Home --> Admin1: Access Admin 1
 
-    Admin1 --> CardManagement: Manage\ncards
-    CardManagement --> AddCard: Add\na card
-    CardManagement --> EditCard: Edit\na card
-    CardManagement --> DeleteCard: Delete\na card
+    Admin1 --> CardManagement: Manage cards
+    CardManagement --> AddCard: Add a card
+    CardManagement --> EditCard: Edit a card
+    CardManagement --> DeleteCard: Delete a card
 
     AddCard --> CardManagement
     EditCard --> CardManagement
     DeleteCard --> CardManagement
     CardManagement --> Admin1
 
-    Admin1 --> Home: Back to\nhome
+    Admin1 --> Home: Back to home
 
     %% --- Administrator 2 (User Management) ---
-    Home --> Admin2: Access\nAdmin 2
+    Home --> Admin2: Access Admin 2
 
-    Admin2 --> UserManagement: Manage\nuser\naccounts
-    UserManagement --> AddAccount: Add\nan account
-    UserManagement --> EditAccount: Edit\nan account
-    UserManagement --> DeleteAccount: Delete\nan account
+    Admin2 --> UserManagement: Manage user accounts
+    UserManagement --> AddAccount: Add an account
+    UserManagement --> EditAccount: Edit an account
+    UserManagement --> DeleteAccount: Delete an account
 
     AddAccount --> UserManagement
     EditAccount --> UserManagement
     DeleteAccount --> UserManagement
     UserManagement --> Admin2
 
-    Admin2 --> Home: Back to\nhome
+    
 
     %% --- End ---
     Logout --> [*]
