@@ -8,12 +8,12 @@ stateDiagram-v2
 
     %% --- Login & Account Creation ---
     Home --> Login: Log in
-    Home --> SignUp: Create\nan account
+    Home --> SignUp: Create an account
 
-    Login --> Home: Login\nsuccessful
+    Login --> Home: Login successful
     Login --> Home: Cancel
 
-    SignUp --> Login: Account\ncreated\n(Log in)
+    SignUp --> Login: Account created (Log in)
     SignUp --> Home: Cancel
 
     %% --- Search & Favorites ---
