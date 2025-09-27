@@ -1,2 +1,1 @@
--- Toutes les attaques avec type
-SELECT * FROM project.card
+select text from project.cards

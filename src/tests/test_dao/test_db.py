@@ -2,30 +2,38 @@ from utils.singleton import Singleton
 from dao.db_connection import DBConnection
 
 
-class ResetDatabase(metaclass=Singleton):
+class TestDatabase:
     """
-    Reinitialisation de la base de données
+    Class for testing database queries
     """
 
-    def lancer(self):
-        print("Début du test de la base de données")
+    def run_and_print(self, sql_file: str = "data/request.sql"):
+        print("🚀 Starting database query test")
 
-        request_db = open("data/request.sql", encoding="utf-8")
-        request_db_as_string = request_db.read()
-
+        # 1. Load SQL from file
+        with open(sql_file, encoding="utf-8") as f:
+            sql_query = f.read()
 
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(request_db_as_string)
+                    cursor.execute(sql_query)
+
+                    # 2. If the query has results, fetch them
+                    if cursor.description:  # means the query returns rows
+                        rows = cursor.fetchall()
+                        print("📊 Query results:")
+                        print(rows)
+                    else:
+                        print("✅ Query executed successfully (no result set).")
+
         except Exception as e:
-            print(e)
+            print(f"❌ Database error: {e}")
             raise
 
-        print("test de la base de données - Terminée")
-
+        print("🏁 Database query test completed")
         return True
 
 
 if __name__ == "__main__":
-    ResetDatabase().lancer()
+    TestDatabase().run_and_print()
