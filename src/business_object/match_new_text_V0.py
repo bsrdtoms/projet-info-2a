@@ -1,8 +1,8 @@
-import json
 import pandas as pd
 import numpy as np
-from use_the_sspcloud_api import get_embedding
-from temporarly_openning_the_all_the_data_from_the_json import get_data_with_embeddings
+from business_object.use_the_sspcloud_api import get_embedding
+from dao.magic_card import MagicCardDao
+
 
 def cosine_similarity(vec1, vec2):
     """Calcule la similarité cosinus entre deux vecteurs"""
@@ -34,7 +34,8 @@ def match_new_text(text, top_k):
         pd.DataFrame: DataFrame avec les cartes les plus similaires
     """
     r = get_embedding(text)
-    df_with_embeddings = get_data_with_embeddings()
+    dao = MagicCardDao()
+    df_with_embeddings = dao.get_all_embeddings()
 
     similarities = []
 

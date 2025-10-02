@@ -1,7 +1,7 @@
-'''from dao.db_connection import DBConnection
+from dao.db_connection import DBConnection
 import os
 import requests
-import json
+
 
 def get_embedding(texts):
     """Call the embedding API and return a list of embeddings."""
@@ -22,9 +22,11 @@ def get_embedding(texts):
     response.raise_for_status()
     return response.json()  # assume it returns a list of embeddings
 
+
 def float_list_to_pg_array(floats):
     # Convert list of floats to PostgreSQL array literal
     return "{" + ",".join(str(f) for f in floats) + "}"
+
 
 def launch():
     sql_query = "SELECT id, text FROM project.cards"
@@ -41,31 +43,39 @@ def launch():
     if not rows:
         print("⚠️ No cards found in database.")
         return
+    print(type(rows[0]))
+    cleaned_dict_of_texts = [row for row in rows if row.get("text") is not None]
 
     # Extract texts for embeddings
-    list_of_texts = [row['text'] for row in rows]
-    # Get embeddings from the API
-    list_of_embeddings = get_embedding(list_of_texts[:270])
+    list_of_index = []
+    list_of_texts = []
+    for d in cleaned_dict_of_texts:
+        list_of_index.append(d['id'])
+        list_of_texts.append(d['text'])
+
+    size_of_slice = 10000
+
+    list_of_embeddings = []
+    for i in range(0, len(list_of_texts), size_of_slice):
+        print("carte", i)
+        # Get embeddings from the API
+        list_of_embeddings.extend(get_embedding(list_of_texts[i:i+size_of_slice])['embeddings'])
+    print("end of embeddings")
+
+    # print(list_of_texts[270])
     # Update embeddings in the database
     try:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                for idx, emb in enumerate(list_of_embeddings):
-                    card_id = rows[idx]["id"]
+                for i in range(len(list_of_embeddings)):
+                    card_id = list_of_index[i]
+                    emb = list_of_embeddings[i]
                     # Convert Python list to PostgreSQL array literal
-                    pg_array = "{" + ",".join(map(str, emb)) + "}"
+                    pg_array = float_list_to_pg_array(emb)
                     update_sql = f"""
                         UPDATE project.cards
                         SET embedding_of_text = '{pg_array}'
                         WHERE id = {card_id};
-                    """
-                    embedding = list_of_embeddings["embeddings"][idx]  # assuming API returns {"embedding": [...]}
-                    pg_array = float_list_to_pg_array(embedding)
-
-                    update_sql = f"""
-                    UPDATE project.cards
-                    SET embedding_of_text = '{pg_array}'
-                    WHERE id = {rows[idx]['id']};
                     """
 
                     cursor.execute(update_sql)
@@ -169,3 +179,4 @@ def launch():
 
 if __name__ == "__main__":
     launch()
+'''
