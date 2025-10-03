@@ -4,7 +4,6 @@ import requests
 
 def get_embedding(text):
     token = os.getenv("API_TOKEN")
-    print(token)
     url = "https://llm.lab.sspcloud.fr/ollama/api/embed"
 
     headers = {
