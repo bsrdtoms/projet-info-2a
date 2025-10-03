@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from business_object.match_new_text_V0 import match_new_card
-from business_object.class_of_cards import CardModel
+from business_object.match_new_text_V0 import match_new_text
+# from business_object.class_of_cards import CardModel
 
 
 app = FastAPI(title="Find Magic cards")
@@ -14,8 +14,8 @@ async def redirect_to_docs():
 
 
 @app.post("/find_corresponding_text/", tags=["match"])
-async def find_corresponding_text(c: CardModel):
-    result_card = match_new_card(c.text)
+async def find_corresponding_text(text: str):
+    result_card = match_new_text(text, 1)
     return result_card
 
 

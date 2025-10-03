@@ -33,7 +33,7 @@ def match_new_text(text, top_k):
     Returns:
         pd.DataFrame: DataFrame avec les cartes les plus similaires
     """
-    r = get_embedding(text)
+    r = get_embedding(text)["embeddings"][0]
     dao = MagicCardDao()
     df_with_embeddings = dao.get_all_embeddings()
 
@@ -49,10 +49,12 @@ def match_new_text(text, top_k):
     # 5. Trier par similarité décroissante et prendre le top K
     results = df_with_embeddings.nlargest(top_k, 'similarity')
 
-    return results
+    return results.iloc[0]["name"]
 
 
 # Exemple simple
 results = match_new_text("Flying creature with deathtouch", top_k=5)
 
-print(results)
+print(type(results))
+
+

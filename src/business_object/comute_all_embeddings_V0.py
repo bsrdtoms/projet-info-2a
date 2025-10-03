@@ -74,7 +74,7 @@ def launch():
                     pg_array = float_list_to_pg_array(emb)
                     update_sql = f"""
                         UPDATE project.cards
-                        SET embedding_of_text = '{pg_array}'
+                        SET   = '{pg_array}'
                         WHERE id = {card_id};
                     """
 
