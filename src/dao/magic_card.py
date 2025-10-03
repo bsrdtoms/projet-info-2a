@@ -42,7 +42,7 @@ class MagicCardDao():
                 with connection.cursor() as cursor:
                     cursor.execute(sql_query)
                     rows = cursor.fetchall()  # rows = [(id, name, embedding_of_text), ...]
-                    colnames = [desc[0] for desc in cursor.description]  # récupère les noms des colonnes
+                    colnames = [desc[0] for desc in cursor.description]
         except Exception as e:
             print(f"❌ Database error: {e}")
             raise

@@ -6,54 +6,7 @@ CREATE SCHEMA project;
 --------------------------------------------------------------
 
 DROP TABLE IF EXISTS project.cards CASCADE ;
-/*CREATE TABLE project.cards (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    type TEXT,
-    mana_cost TEXT,
-    mana_value FLOAT,
-    layout TEXT,
-    text TEXT,
-    colors JSONB,
-    color_identity JSONB,
-    first_printing TEXT,
-    printings JSONB,
-    is_funny BOOLEAN,
-    power TEXT,
-    toughness TEXT,
-    loyalty TEXT,
-    identifiers JSONB,
-    purchase_urls JSONB,
-    foreign_data JSONB,
-    legalities JSONB,
-    rulings JSONB,
-    embedding_of_text JSONB
-);*
 
-CREATE TABLE project.cards (
-    id SERIAL PRIMARY KEY,          -- identifiant auto-incrémenté
-    name TEXT NOT NULL,             -- nom de la carte
-    type TEXT,                      -- type de la carte
-    mana_cost TEXT,                 -- coût en mana
-    mana_value FLOAT,               -- valeur numérique du mana
-    layout TEXT,                    -- layout de la carte
-    text TEXT,                      -- texte de la carte
-    colors TEXT[],                  -- tableau des couleurs (ex: {G,R})
-    color_identity TEXT[],          -- tableau des identités de couleurs
-    first_printing TEXT,            -- première édition
-    printings TEXT[],               -- éditions de la carte
-    is_funny BOOLEAN,               -- carte humoristique
-    power TEXT,                     -- force (nullable)
-    toughness TEXT,                 -- endurance (nullable)
-    loyalty TEXT,                   -- fidélité (nullable)
-    identifiers JSONB,              -- identifiants (stockés en JSON)
-    purchase_urls JSONB,            -- URLs d'achat (JSON)
-    foreign_data JSONB,             -- données étrangères (JSON)
-    legalities JSONB,               -- légalité (JSON)
-    rulings JSONB,                  -- règles (JSON)
-    embedding_of_text FLOAT[]       -- vecteur d'embedding (tableau de flottants)
-);
-*/
 
 CREATE TABLE project.cards (
     id SERIAL PRIMARY KEY,                -- auto increment ID

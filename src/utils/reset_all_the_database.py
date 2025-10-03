@@ -67,6 +67,7 @@ class ResetDatabase(metaclass=Singleton):
             "identifiers", "purchase_urls", "foreign_data", "legalities", "rulings",
             "related_cards", "leadership_skills", "embedding_of_text"
         ]
+        f"<SE {}"
 
         all_values = []
         for card in cards:
