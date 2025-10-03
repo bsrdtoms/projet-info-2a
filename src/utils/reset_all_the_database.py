@@ -53,7 +53,7 @@ class ResetDatabase(metaclass=Singleton):
     def generate_insert_sql_many(self, cards: list[dict]) -> str:
         """Build a single INSERT INTO project.cards statement for many cards"""
 
-        # Match all columns of project.cards
+        # Columns in the SQL table (order matters)
         columns = [
             "name", "ascii_name", "type", "types", "subtypes", "supertypes",
             "mana_cost", "mana_value", "converted_mana_cost", "layout", "text",
@@ -67,62 +67,48 @@ class ResetDatabase(metaclass=Singleton):
             "identifiers", "purchase_urls", "foreign_data", "legalities", "rulings",
             "related_cards", "leadership_skills", "embedding_of_text"
         ]
-        f"<SE {}"
+
+        # Map JSON keys → SQL column names when different
+        key_map = {
+            "ascii_name": "asciiName",
+            "mana_cost": "manaCost",
+            "mana_value": "manaValue",
+            "converted_mana_cost": "convertedManaCost",
+            "color_identity": "colorIdentity",
+            "color_indicator": "colorIndicator",
+            "first_printing": "firstPrinting",
+            "is_funny": "isFunny",
+            "is_game_changer": "isGameChanger",
+            "is_reserved": "isReserved",
+            "attraction_lights": "attractionLights",
+            "face_converted_mana_cost": "faceConvertedManaCost",
+            "face_mana_value": "faceManaValue",
+            "face_name": "faceName",
+            "edhrec_rank": "edhrecRank",
+            "edhrec_saltiness": "edhrecSaltiness",
+            "has_alternative_deck_limit": "hasAlternativeDeckLimit",
+            "purchase_urls": "purchaseUrls",
+            "foreign_data": "foreignData",
+            "related_cards": "relatedCards",
+            "leadership_skills": "leadershipSkills",
+            "embedding_of_text": "embedding_of_text",  # same name, just explicit
+        }
 
         all_values = []
         for card in cards:
-            values = [
-                self.sql_value_string(card.get("name")),
-                self.sql_value_string(card.get("asciiName")),
-                self.sql_value_string(card.get("type")),
-                self.sql_value_string(card.get("types", [])),
-                self.sql_value_string(card.get("subtypes", [])),
-                self.sql_value_string(card.get("supertypes", [])),
-                self.sql_value_string(card.get("manaCost")),
-                self.sql_value_string(card.get("manaValue")),
-                self.sql_value_string(card.get("convertedManaCost")),
-                self.sql_value_string(card.get("layout")),
-                self.sql_value_string(card.get("text")),
-                self.sql_value_string(card.get("colors", [])),
-                self.sql_value_string(card.get("colorIdentity", [])),
-                self.sql_value_string(card.get("colorIndicator", [])),
-                self.sql_value_string(card.get("firstPrinting")),
-                self.sql_value_string(card.get("printings", [])),
-                self.sql_value_string(card.get("isFunny")),
-                self.sql_value_string(card.get("isGameChanger")),
-                self.sql_value_string(card.get("isReserved")),
-                self.sql_value_string(card.get("keywords", [])),
-                self.sql_value_string(card.get("power")),
-                self.sql_value_string(card.get("toughness")),
-                self.sql_value_string(card.get("defense")),
-                self.sql_value_string(card.get("loyalty")),
-                self.sql_value_string(card.get("hand")),
-                self.sql_value_string(card.get("life")),
-                self.sql_value_string(card.get("side")),
-                self.sql_value_string(card.get("subsets", [])),
-                self.sql_value_string(card.get("attractionLights", [])),
-                self.sql_value_string(card.get("faceConvertedManaCost")),
-                self.sql_value_string(card.get("faceManaValue")),
-                self.sql_value_string(card.get("faceName")),
-                self.sql_value_string(card.get("edhrecRank")),
-                self.sql_value_string(card.get("edhrecSaltiness")),
-                self.sql_value_string(card.get("hasAlternativeDeckLimit")),
-                self.sql_value_string(card.get("identifiers", {})),
-                self.sql_value_string(card.get("purchaseUrls", {})),
-                self.sql_value_string(card.get("foreignData", [])),
-                self.sql_value_string(card.get("legalities", {})),
-                self.sql_value_string(card.get("rulings", [])),
-                self.sql_value_string(card.get("relatedCards", {})),
-                self.sql_value_string(card.get("leadershipSkills", {})),
-                self.sql_value_string(card.get("embedding_of_text"))
-            ]
+            values = []
+            for col in columns:
+                key = key_map.get(col, col)  # map to JSON key if needed
+                values.append(self.sql_value_string(card.get(key)))
             all_values.append(f"({', '.join(values)})")
 
-        sql = f"""INSERT INTO project.cards (
-    {", ".join(columns)}
-) VALUES
-{",\n".join(all_values)}
-;"""
+        sql = (
+            f"INSERT INTO project.cards (\n"
+            f"    {', '.join(columns)}\n"
+            f") VALUES\n"
+            f"{',\n'.join(all_values)}\n"
+            f";"
+        )
         return sql
 
     def launch(self):
