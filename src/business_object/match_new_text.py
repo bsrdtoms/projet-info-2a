@@ -55,5 +55,3 @@ def match_new_text(text, top_k):
 results = match_new_text("Flying creature with deathtouch", top_k=5)
 
 print(type(results))
-
-
