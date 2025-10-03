@@ -188,6 +188,30 @@ classDiagram
     HistoriqueDao ..> HistoriqueRecherche : manipule
 
 
+    %% ====================
+    %% CLUSTERING
+    %% ====================
+    class ClusteringService {
+        +entrainer(list[CarteMagic], modele: EmbeddingModel, algo: ClusteringModel)
+        +obtenir_clusters(): dict[int, list[CarteMagic]]
+        +trouver_cluster(CarteMagic): int
+    }
+
+    class ClusteringModel {
+        +entrainer(list[list[float]])
+        +predire(list[float]) : int
+    }
+
+    class ModelClust1
+    class ModelClust2
+
+    RechercheVue ..> ClusteringService : use
+    ClusteringService ..> CarteMagicDao : utilise
+    ClusteringService ..> ClusteringModel : utilise algo
+
+    ClusteringModel <|.. ModelClust1
+    ClusteringModel <|.. ModelClust2
+
 
     %% ====================
     %% AUTRES RELATIONS

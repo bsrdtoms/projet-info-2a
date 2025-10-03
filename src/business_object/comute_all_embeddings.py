@@ -41,8 +41,6 @@ def launch():
         list_of_embeddings.extend(get_embedding(list_of_texts[i:i+size_of_slice])['embeddings'])
     print("end of embeddings")
 
-    # print(list_of_texts[270])
-    # Update embeddings in the database
     try:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -53,7 +51,7 @@ def launch():
                     pg_array = float_list_to_pg_array(emb)
                     update_sql = f"""
                         UPDATE project.cards
-                        SET   = '{pg_array}'
+                        SET embedding_of_text = '{pg_array}'
                         WHERE id = {card_id};
                     """
 

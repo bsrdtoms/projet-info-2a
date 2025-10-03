@@ -1,97 +1,69 @@
+# State Diagram – MagicSearch Application (Improved Layout)
+
 ```mermaid
 stateDiagram-v2
-    direction LR
-    title: Diagramme d'État - MagicSearch
-    
-    [*] --> Accueil
-    Accueil --> Authentification : choisir_menu("Connexion")
-    Accueil --> Recherche : choisir_menu("Rechercher")
-    Accueil --> Inscription : choisir_menu("Créer compte")
-    
-    state Authentification {
-        [*] --> SaisieIdentifiants
-        SaisieIdentifiants --> SessionActive : connexion() [succès]
-        SaisieIdentifiants --> SaisieIdentifiants : connexion() [échec]
-    }
-    
-    Authentification --> Accueil : annuler()
-    
-    state Inscription {
-        [*] --> SaisieDonnées
-        SaisieDonnées --> SessionActive : creer_compte() [succès]
-        SaisieDonnées --> SaisieDonnées : creer_compte() [échec]
-    }
-    
-    Inscription --> Accueil : annuler()
-    
-    state SessionActive {
-        [*] --> MenuUtilisateur
-        state MenuUtilisateur {
-            [*] --> Options
-            Options --> Options : choisir_menu()
-        }
-    }
-    
-    SessionActive --> Recherche : choisir_menu("Rechercher")
-    SessionActive --> GestionFavoris : choisir_menu("Mes Favoris")
-    SessionActive --> ConsultationHistorique : choisir_menu("Historique")
-    SessionActive --> Accueil : deconnexion()
-    
-    state GestionFavoris {
-        [*] --> ListeFavoris
-        ListeFavoris --> DetailFavori : selectionner_carte()
-    }
-    
-    state ConsultationHistorique {
-        [*] --> ListeRecherches
-        ListeRecherches --> ResultatsHistorique : selectionner_entree()
-    }
-    
-    GestionFavoris --> MenuUtilisateur : retour()
-    ConsultationHistorique --> MenuUtilisateur : retour()
-    DetailFavori --> ListeFavoris : fermerDetail()
-    ResultatsHistorique --> ListeRecherches : fermerDetail()
-    
-    state Recherche {
-        [*] --> SaisieRequete
-    }
-    
-    SaisieRequete --> AffichageResultats : executer_recherche(requête)\n/ CarteMagicService.rechercher()\n/ HistoriqueService.ajouter()
-    
-    state AffichageResultats {
-        [*] --> ListeCartes
-        ListeCartes --> ListeCartes : nouvelle_recherche()
-        ListeCartes --> DetailCarte : selectionner_carte()
-    }
-    
-    AffichageResultats --> SaisieRequete : nouvelle_recherche()
-    
-    state DetailCarte {
-        [*] --> AffichageComplet
-        AffichageComplet --> AffichageComplet : ajouter_favori()\n/ UtilisateurService.ajouter_favori()
-        AffichageComplet --> AffichageComplet : supprimer_favori()\n/ UtilisateurService.supprimer_favori()
-    }
-    
-    DetailCarte --> ListeCartes : fermerDetail()
-    
-    %% Transitions de retour vers l'accueil
-    Recherche --> Accueil : quitter()
-    AffichageResultats --> Accueil : quitter()
-    DetailCarte --> Accueil : quitter()
+    %% --- Initial State ---
+    [*] --> Home
+    Home: Home screen
 
-    note right of Accueil
-        État initial de l'application
-        Vue: AccueilVue
-    end note
+    %% --- Login & Account Creation ---
+    Home --> Login: Log in
+    Home --> SignUp: Create an account
 
-    note left of SessionActive
-        Utilisateur connecté
-        Services: UtilisateurService, HistoriqueService
-    end note
+    Login --> Home: Login successful
+    Login --> Home: Cancel
 
-    note right of AffichageResultats
-        Services: CarteMagicService
-        Dao: CarteMagicDao
-    end note
-```
+    SignUp --> Login: Account created (Log in)
+    
 
+    %% --- Search & Favorites ---
+    Home --> Search: Search for a card
+    Search --> Results: Display results
+
+    Results --> Search: New search
+    Results --> Favorites: Add to favorites
+    Favorites --> Results: Back to results
+
+    Results --> Clusters: Explore clusters
+    Clusters --> Results: Back to results
+
+    %% --- History ---
+    Home --> History: View history
+    
+
+    %% --- Account Management ---
+    Home --> AccountManagement: Manage account
+    AccountManagement --> Logout: Log out
+
+    %% --- Administrator 1 (Card Management) ---
+    Home --> Admin1: Access Admin 1
+
+    Admin1 --> CardManagement: Manage cards
+    CardManagement --> AddCard: Add a card
+    CardManagement --> EditCard: Edit a card
+    CardManagement --> DeleteCard: Delete a card
+
+    AddCard --> CardManagement
+    EditCard --> CardManagement
+    DeleteCard --> CardManagement
+    CardManagement --> Admin1
+
+    Admin1 --> Home: Back to home
+
+    %% --- Administrator 2 (User Management) ---
+    Home --> Admin2: Access Admin 2
+
+    Admin2 --> UserManagement: Manage user accounts
+    UserManagement --> AddAccount: Add an account
+    UserManagement --> EditAccount: Edit an account
+    UserManagement --> DeleteAccount: Delete an account
+
+    AddAccount --> UserManagement
+    EditAccount --> UserManagement
+    DeleteAccount --> UserManagement
+    UserManagement --> Admin2
+
+    
+
+    %% --- End ---
+    Logout --> [*]

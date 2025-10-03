@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from business_object.match_new_text_V0 import match_new_text
+from business_object.match_new_text import match_new_text
 # from business_object.class_of_cards import CardModel
 
 
