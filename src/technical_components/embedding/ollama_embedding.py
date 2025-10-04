@@ -1,6 +1,3 @@
-""" A SUPPRIMER !!!!!!!! """
-
-
 import os
 import requests
 

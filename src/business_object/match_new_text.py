@@ -1,3 +1,6 @@
+""" A SUPPRIMER !!!!!!!! """
+
+
 import numpy as np
 from business_object.use_the_sspcloud_api import get_embedding
 from dao.magic_card import MagicCardDao

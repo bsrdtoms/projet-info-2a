@@ -5,6 +5,7 @@ from business_object.card import Card
 class CardDao():
     """Classe contenant les méthodes pour accéder aux Cartes de la base de données"""
 
+    # dans l'idée c'est ça mais revoir la requête sql, etc.
     def create(self, carte) -> bool:
         """Création d'une carte dans la base de données
 
@@ -18,7 +19,20 @@ class CardDao():
             True si la création est un succès
             False sinon
         """
-        pass
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                        INSERT INTO cards (name, type, text)
+                        VALUES (%s, %s, %s)
+                        """,
+                        (carte.name, carte.type, carte.text)
+                    )
+            return True
+        except Exception as e:
+            print(f"❌ Erreur lors de l'insertion: {e}")
+            return False
 
     def delete(self, carte) -> bool:
         """Supression d'une carte dans la base de données
@@ -85,17 +99,38 @@ class CardDao():
         """
         pass
 
-    def modify(self):
-        """ 
+    def modify(self, card_id: int, champ: str, valeur) -> bool:
+        """
+        Met à jour un champ d'une carte dans la table project.cards.
 
         Parameters
         ----------------
+        card_id : int
+            identifiant unique de la carte
+        champ : str
+            nom de la colonne à modifier
+        valeur : any
+            nouvelle valeur à affecter
 
         Returns
         ----------------
-        
+        created : bool
+            True si la modification est un succès (au moins 1 ligne modifiée),
+            False sinon.
         """
-        pass
+        update_sql = f"UPDATE project.cards SET {champ} = %s WHERE id = %s;"
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(update_sql, (valeur, card_id))
+                    modified_rows = cursor.rowcount  # nombre de lignes affectées
+                connection.commit()
+            return modified_rows > 0
+        except Exception as e:
+            print(f"❌ SQL error: {e}")
+            return False
+
 
     # vérifier comment sont les colonnes de la BDD, et quels paramètres sont attendus
     #  pour un objet de type Card
@@ -108,7 +143,7 @@ class CardDao():
         cards : list[Carte]
             renvoie une liste d'objets Card avec toutes les cartes de la base de données.
         """
-        sql_query = "SELECT id, name, embedding_of_text FROM project.cards"
+        sql_query = "SELECT id, name, text, embedding_of_text FROM project.cards"
         cards = []
 
         try:
@@ -118,7 +153,7 @@ class CardDao():
                     rows = cursor.fetchall()  # [(id, name, embedding_of_text), ...]
 
                     for row in rows:
-                        card = Card(id=row[0], name=row[1], embedding_of_text=row[2])
+                        card = Card(id=row[0], name=row[1], text=row[2], embedding_of_text=row[3])
                         cards.append(card)
 
         except Exception as e:

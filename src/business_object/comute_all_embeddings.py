@@ -1,3 +1,6 @@
+""" A SUPPRIMER !!!!!!!! """
+
+
 from dao.db_connection import DBConnection
 from business_object.use_the_sspcloud_api import get_embedding
 
