@@ -2,12 +2,14 @@ import pandas as pd
 from components.embedding.ollama_embedding import get_embedding
 from components.embedding.similarity import cosine_similarity
 from dao.card_dao import CardDAO
+from business_object.card import Card
+
 
 class CardService:
     def __init__(self):
         self.dao = CardDAO()
 
-    def add_card(self, carte):
+    def add_card(self, carte: Card):
         """
         Ajoute une carte en générant son embedding avant insertion
         """
@@ -22,6 +24,42 @@ class CardService:
         except Exception as e:
             print(f"❌ Impossible d’ajouter la carte: {e}")
             return False
+
+    def modify_card(self):
+        """ 
+
+        Parameters
+        ----------------
+
+        Returns
+        ----------------
+        
+        """
+        pass
+
+    def delete_card(self):
+        """ 
+
+        Parameters
+        ----------------
+
+        Returns
+        ----------------
+        
+        """
+        pass
+
+    def search_by_name(self):
+        """ 
+
+        Parameters
+        ----------------
+
+        Returns
+        ----------------
+        
+        """
+        pass
 
     def get_all_embeddings(self):
         """
@@ -68,3 +106,15 @@ class CardService:
         results = df_with_embeddings.nlargest(top_k, 'similarity')
 
         return results.iloc[0]["name"]
+
+    def random(self):
+        """ 
+
+        Parameters
+        ----------------
+
+        Returns
+        ----------------
+        
+        """
+        pass
