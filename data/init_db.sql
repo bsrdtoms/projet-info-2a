@@ -2,6 +2,11 @@ DROP SCHEMA IF EXISTS project CASCADE;
 CREATE SCHEMA project;
 
 --------------------------------------------------------------
+-- Extension pgvector pour recherche sémantique
+--------------------------------------------------------------
+CREATE EXTENSION IF NOT EXISTS vector;
+
+--------------------------------------------------------------
 -- Types d Attaques
 --------------------------------------------------------------
 
@@ -52,5 +57,17 @@ CREATE TABLE project.cards (
     rulings JSONB,                        -- rulings
     related_cards JSONB,                  -- relatedCards
     leadership_skills JSONB,              -- leadershipSkills
-    embedding_of_text FLOAT[]             -- embedding vector
+    embedding_of_text vector(1024)        -- embedding vector (pgvector)
 );
+
+--------------------------------------------------------------
+-- Index pour accélérer les recherches sémantiques
+--------------------------------------------------------------
+CREATE INDEX IF NOT EXISTS cards_embedding_idx 
+ON project.cards 
+USING ivfflat (embedding_of_text vector_cosine_ops)
+WITH (lists = 100);
+
+-- Index pour les recherches par nom
+CREATE INDEX IF NOT EXISTS cards_name_idx 
+ON project.cards (name);
