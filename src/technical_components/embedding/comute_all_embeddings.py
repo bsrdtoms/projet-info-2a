@@ -1,5 +1,7 @@
 from dao.db_connection import DBConnection
-from business_object.use_the_sspcloud_api import get_embedding
+from service.card_service import CardService
+from dao.card_dao import CardDao
+
 
 
 def float_list_to_pg_array(floats):
@@ -10,7 +12,7 @@ def float_list_to_pg_array(floats):
 
 
 def launch():
-    cards = dao.list_all()
+    cards = CardDao().list_all()
 
     if not cards:
         print("⚠️ No cards found in database.")
@@ -32,14 +34,14 @@ def launch():
     for i in range(0, len(list_of_texts), size_of_slice):
         print("carte", i)
         # Get embeddings from the API
-        response = get_embedding(list_of_texts[i:i+size_of_slice])
+        response = CardService().get_embedding(list_of_texts[i:i+size_of_slice])
         list_of_embeddings.extend(response['embeddings'])
     print("✅ End of embeddings generation.")
 
     # mise à jour
     for card, emb in zip(cards_with_text, list_of_embeddings):
         pg_array = float_list_to_pg_array(emb)
-        success = dao.modify(card.id, "embedding_of_text", pg_array)
+        success = CardDao().modify(card.id, "embedding_of_text", pg_array)
         if not success:
             print(f"⚠️ Failed to update card {card.id}")
 
