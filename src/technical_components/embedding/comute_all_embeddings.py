@@ -1,6 +1,7 @@
 from dao.db_connection import DBConnection
 from service.card_service import CardService
 from dao.card_dao import CardDao
+from technical_components.embedding.ollama_embedding import get_embedding
 
 
 
@@ -34,7 +35,7 @@ def launch():
     for i in range(0, len(list_of_texts), size_of_slice):
         print("carte", i)
         # Get embeddings from the API
-        response = CardService().get_embedding(list_of_texts[i:i+size_of_slice])
+        response = get_embedding(list_of_texts[i:i+size_of_slice])
         list_of_embeddings.extend(response['embeddings'])
     print("✅ End of embeddings generation.")
 

@@ -142,7 +142,7 @@ class CardDao():
                     rows = cursor.fetchall()  # [(id, name, embedding_of_text), ...]
 
                     for row in rows:
-                        card = Card(id=row[0], name=row[1], text=row[2], embedding_of_text=row[3])
+                        card = Card(id=row['id'], name=row['name'], text=row['text'], embedding_of_text=row['embedding_of_text'])
                         cards.append(card)
 
         except Exception as e:
