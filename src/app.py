@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from business_object.match_new_text import match_new_text
+from service.card_service import CardService
 # from business_object.class_of_cards import CardModel
 
 
@@ -15,7 +15,7 @@ async def redirect_to_docs():
 
 @app.post("/find_corresponding_text/", tags=["match"])
 async def find_corresponding_text(text: str):
-    result_card = match_new_text(text, 1)
+    result_card = CardService().semantic_search(text, 1)
     return result_card
 
 
