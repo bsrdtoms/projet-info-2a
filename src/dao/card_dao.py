@@ -87,17 +87,6 @@ class CardDao():
         """
         pass
 
-    def random(self):
-        """ 
-
-        Parameters
-        ----------------
-
-        Returns
-        ----------------
-        
-        """
-        pass
 
     def modify(self, card_id: int, champ: str, valeur) -> bool:
         """

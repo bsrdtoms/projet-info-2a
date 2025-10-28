@@ -1,5 +1,5 @@
 from views.abstract_view import AbstractView
-from services.card_service import CardService
+from service.card_service import CardService
 
 
 class SearchView(AbstractView):

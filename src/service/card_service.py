@@ -1,13 +1,14 @@
 import pandas as pd
-from components.embedding.ollama_embedding import get_embedding
-from components.embedding.similarity import cosine_similarity
-from dao.card_dao import CardDAO
+from technical_components.embedding.ollama_embedding import get_embedding
+from technical_components.embedding.cosine_similarity import cosine_similarity
+from dao.card_dao import CardDao
 from business_object.card import Card
+import random
 
 
 class CardService:
     def __init__(self):
-        self.dao = CardDAO()
+        self.dao = CardDao()
 
     def add_card(self, carte: Card):
         """
@@ -22,7 +23,7 @@ class CardService:
             return self.dao.create(carte)
 
         except Exception as e:
-            print(f"❌ Impossible d’ajouter la carte: {e}")
+            print(f"Impossible d’ajouter la carte: {e}")
             return False
 
     def modify_card(self):
@@ -49,7 +50,7 @@ class CardService:
         """
         pass
 
-    def search_by_name(self):
+    def search_by_name(self, name):
         """ 
 
         Parameters
@@ -59,7 +60,8 @@ class CardService:
         ----------------
         
         """
-        pass
+        card = self.dao.search_by_name(name)
+        return card
 
     def get_all_embeddings(self):
         """
@@ -117,4 +119,7 @@ class CardService:
         ----------------
         
         """
-        pass
+        cartes = self.dao.list_all()
+        if not cartes:
+            return None
+        return random.choice(cartes)
