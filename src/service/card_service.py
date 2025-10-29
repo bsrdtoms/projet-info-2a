@@ -51,17 +51,29 @@ class CardService:
         pass
 
     def search_by_name(self, name):
-        """ 
+        """
+        Recherche les cartes dont le nom contient 'name'.
 
         Parameters
         ----------------
+        name : str
+            Nom (ou partie du nom) de la carte à rechercher.
 
         Returns
         ----------------
-        
+        cards : list[Card]
+            Liste d'objets Card correspondant aux résultats de la recherche.
         """
-        card = self.dao.search_by_name(name)
-        return card
+        if not name or not isinstance(name, str):
+            raise ValueError("Le nom de la carte doit être une chaîne de caractère non vide.")
+
+        cartes_trouvees = self.dao.search_by_name(name)
+
+        if not cartes_trouvees:
+            print(f"Aucune carte trouvée pour '{name}'.")
+            return []
+
+        return cartes_trouvees
 
     def get_all_embeddings(self):
         """

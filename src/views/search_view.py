@@ -19,12 +19,13 @@ class SearchView(AbstractView):
             choice = self.get_input()
 
             if choice == "1":
-                result = card_service.random_card()
+                result = card_service.random()
                 self.show_message(result)
             elif choice == "2":
                 name = self.get_input("Enter the card name: ")
                 result = card_service.search_by_name(name)
-                self.show_message(result)
+                for card in result:
+                    self.show_message(card)
             elif choice == "3":
                 query = self.get_input("Describe the card you're looking for: ")
                 result = card_service.semantic_search(query)

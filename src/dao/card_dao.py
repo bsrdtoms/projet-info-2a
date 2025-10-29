@@ -63,17 +63,48 @@ class CardDao():
             renvoie la carte que l'on cherche par id
         """
 
-    def search_by_name(self):
-        """ 
+    def search_by_name(self, name):
+        """
+        Recherche les cartes dont le nom contient le texte donné (insensible à la casse).
 
         Parameters
         ----------------
+        name : str
+            Le nom (ou une partie du nom) de la carte à rechercher.
 
         Returns
         ----------------
-
+        cards : list[Card]
+            Liste d'objets Card correspondant aux résultats de la recherche.
         """
-        pass
+        sql_query = """
+            SELECT id, name, text, embedding_of_text
+            FROM project.cards
+            WHERE LOWER(name) LIKE LOWER(%s)
+        """
+        cards = []
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_query, (f"%{name}%",))
+                    rows = cursor.fetchall()
+
+                    for row in rows:
+                        card = Card(
+                            id=row['id'],
+                            name=row['name'],
+                            text=row['text'],
+                            embedding_of_text=row['embedding_of_text']
+                        )
+                        cards.append(card)
+
+        except Exception as e:
+            print(f"❌ Database error: {e}")
+            raise
+
+        return cards
+
 
     def semantic_search(self):
         """ 
