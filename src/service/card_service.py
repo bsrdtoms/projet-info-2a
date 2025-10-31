@@ -20,6 +20,7 @@ class CardService:
             carte.embedding_of_text = embedding
 
             # Persister via DAO
+            print(f"Création de la carte : {carte.name}")
             return self.dao.create(carte)
 
         except Exception as e:
@@ -38,17 +39,23 @@ class CardService:
         """
         pass
 
-    def delete_card(self):
-        """ 
+    def delete_card(self, carte: Card):
+        """
+        Supprime une carte en base de données
 
         Parameters
         ----------------
+        carte : Card
+            Objet représentant la carte à supprimer
 
         Returns
         ----------------
-        
+        deleted : bool
+            True si la suppression a réussi
+            False sinon
         """
-        pass
+        print(f"Tentative de suppression de la carte : {carte.name} (id={carte.id})")
+        return self.dao.delete(carte)
 
     def search_by_name(self, name):
         """

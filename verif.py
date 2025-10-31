@@ -1,20 +1,25 @@
-import os
-import dotenv
+from business_object.card import Card
+from service.card_service import CardService
 
-dotenv.load_dotenv()
-print(os.environ["POSTGRES_USER"])
+service = CardService()
 
-# 🔧 Remplace par la valeur que tu attends
-valeur_attendue = "user-id2638"
+nouvelle_carte = Card(
+    id=None,
+    name="Lightning Bolt",
+    text="Lightning Bolt deals 3 damage to any target.",
+    embedding_of_text=None
+)
 
-# ✅ Récupération de la variable d'environnement
-valeur_actuelle = os.getenv("POSTGRE_USER")
-
-# 🧠 Vérification
-if valeur_actuelle is None:
-    print("❌ La variable d'environnement POSTGRE_USER n'est pas définie.")
-elif valeur_actuelle == valeur_attendue:
-    print(f"✅ POSTGRE_USER est bien définie avec la bonne valeur : {valeur_actuelle}")
+"""
+if service.add_card(nouvelle_carte):
+    print("✅ Carte ajouté avec succès !")
 else:
-    print(f"⚠️ POSTGRE_USER est définie avec une autre valeur : {valeur_actuelle}")
-    print(f"👉 Valeur attendue : {valeur_attendue}")
+    print("❌ Échec de l'ajout.")
+"""
+
+"""
+if service.delete_card(nouvelle_carte):
+    print("✅ Carte supprimée avec succès !")
+else:
+    print("❌ Échec de la suppression.")
+"""

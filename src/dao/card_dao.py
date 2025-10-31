@@ -5,13 +5,13 @@ from business_object.card import Card
 class CardDao():
     """Classe contenant les méthodes pour accéder aux Cartes de la base de données"""
 
-    # dans l'idée c'est ça mais revoir la requête sql, etc.
     def create(self, carte) -> bool:
         """Création d'une carte dans la base de données
 
         Parameters
         ----------------
-        carte : CarteMagic
+        carte : Card
+            Objet représentant la carte à insérer
 
         Returns
         ----------------
@@ -22,16 +22,18 @@ class CardDao():
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
+                    # On n'insère pas l'id, car il est souvent AUTO_INCREMENT
+                    # embedding_of_text peut être None
                     cursor.execute(
                         """
-                        INSERT INTO cards (name, type, text)
+                        INSERT INTO project.cards (name, text, embedding_of_text)
                         VALUES (%s, %s, %s)
                         """,
-                        (carte.name, carte.type, carte.text)
+                        (carte.name, carte.text, carte.embedding_of_text)
                     )
             return True
         except Exception as e:
-            print(f"❌ Erreur lors de l'insertion: {e}")
+            print(f"Erreur lors de l'insertion: {e}")
             return False
 
     def delete(self, carte) -> bool:
@@ -39,15 +41,33 @@ class CardDao():
 
         Parameters
         ----------------
-        carte : CarteMagic
+        carte : Card
+            Objet représentant la carte à supprimer
 
         Returns
         ----------------
-        created : bool
+        deleted : bool
             True si la suppression est un succès
             False sinon
         """
-        pass
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                        DELETE FROM project.cards
+                        WHERE id = %s
+                        """,
+                        (carte.id,)
+                    )
+                    # Vérifie qu'une ligne a bien été supprimée
+                    if cursor.rowcount == 0:
+                        print(f"Aucune carte trouvée avec l'id {carte.id} ({carte.name})")
+                        return False
+            return True
+        except Exception as e:
+            print(f"Erreur lors de la suppression: {e}")
+            return False
 
     def find_by_id(self, id_card):
         """Trouver une carte grace à son id
@@ -100,24 +120,10 @@ class CardDao():
                         cards.append(card)
 
         except Exception as e:
-            print(f"❌ Database error: {e}")
+            print(f"Database error: {e}")
             raise
 
         return cards
-
-
-    def semantic_search(self):
-        """ 
-
-        Parameters
-        ----------------
-
-        Returns
-        ----------------
-        
-        """
-        pass
-
 
     def modify(self, card_id: int, champ: str, valeur) -> bool:
         """
