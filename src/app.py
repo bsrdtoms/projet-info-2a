@@ -19,11 +19,6 @@ async def find_corresponding_text(text: str):
     return result_card
 
 
-@app.get("/hello/{name}")
-async def hello_name(name: str):
-    """Afficher Hello"""
-    return f"message : Hello {name}"
-
 
 # Run the FastAPI application
 if __name__ == "__main__":

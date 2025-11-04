@@ -3,6 +3,7 @@
 import json
 import requests
 from utils.singleton import Singleton
+from utils.sql_helpers import sql_value_string
 from dao.db_connection import DBConnection
 
 
@@ -72,7 +73,7 @@ class ResetDatabase(metaclass=Singleton):
             values = []
             for col in columns:
                 key = key_map.get(col, col)  # map to JSON key if needed
-                values.append(self.sql_value_string(card.get(key)))
+                values.append(sql_value_string(card.get(key)))
             all_values.append(f"({', '.join(values)})")
 
         sql = (

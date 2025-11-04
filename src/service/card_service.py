@@ -131,27 +131,6 @@ class CardService:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
 
-    def semantic_search_simple(self, text: str, top_k: int = 1) -> str:
-        """
-        Version simplifiée qui retourne juste le nom de la meilleure carte
-        Compatible avec l'ancien code pour match_new_text
-
-        Parameters
-        ----------
-        text : str
-            Texte de recherche
-        top_k : int
-            Nombre de résultats (par défaut 1)
-
-        Returns
-        -------
-        str
-            Nom de la carte la plus similaire
-        """
-        results = self.semantic_search(text, top_k)
-        if results:
-            return results[0]["name"]
-        return None
 
     def random(self):
         """
