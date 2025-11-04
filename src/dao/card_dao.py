@@ -179,10 +179,10 @@ class CardDao:
                             id, 
                             name, 
                             text,
-                            1 - (embedding_of_text <=> %s::vector) AS similarity
+                            1 - (embedding_of_text <-> %s::vector) AS similarity
                         FROM project.cards
                         WHERE embedding_of_text IS NOT NULL
-                        ORDER BY embedding_of_text <=> %s::vector ASC
+                        ORDER BY embedding_of_text <-> %s::vector ASC
                         LIMIT %s;
                         """,
                         (embedding_str, embedding_str, top_k),
