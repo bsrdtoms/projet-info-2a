@@ -82,6 +82,29 @@ class CardDao():
         carte : Carte
             renvoie la carte que l'on cherche par id
         """
+        sql_query = """
+            SELECT id, name, text, embedding_of_text
+            FROM project.cards
+            WHERE id = %s
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_query, (id_card,))
+                    row = cursor.fetchone()
+
+                    card = Card(
+                            id=row['id'],
+                            name=row['name'],
+                            text=row['text'],
+                            embedding_of_text=row['embedding_of_text']
+                        )
+    
+        except Exception as e:
+            print(f"Database error: {e}")
+            raise
+
+        return card
 
     def search_by_name(self, name):
         """
@@ -187,3 +210,31 @@ class CardDao():
             raise
 
         return cards
+
+
+    def get_all_ids(self) -> list[int]:
+        """
+        Récupère tous les identifiants de la table project.cards.
+        
+        Returns
+        ----------------
+        ids : list[int]
+            renvoie une liste d'entiers avec les identifiants de toutes les cartes de la base de données.
+        """
+        sql_query = "SELECT id FROM project.cards"
+        ids = []
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_query)
+                    rows = cursor.fetchall()  
+
+                    for row in rows:
+                        ids.append(row['id'])
+
+        except Exception as e:
+            print(f"❌ Database error: {e}")
+            raise
+
+        return ids

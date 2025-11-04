@@ -32,6 +32,10 @@ class CardService:
 
         Parameters
         ----------------
+        card_id : int
+            Identifiant de la carte à modifier
+        updates : dict
+            Dictionnaire {colonne: nouvelle_valeur} à mettre à jour
 
         Returns
         ----------------
@@ -142,3 +146,11 @@ class CardService:
         if not cartes:
             return None
         return random.choice(cartes)
+
+    def random_by_id(self):
+        """méthode random plus rapide"""
+        ids = self.dao.get_all_ids()
+        if not ids:
+            return None
+        random_id = random.choice(ids)
+        return self.dao.search_by_id(random_id)
