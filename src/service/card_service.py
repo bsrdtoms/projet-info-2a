@@ -127,7 +127,7 @@ class CardService:
             similarities.append(similarity)
 
         df_with_embeddings['similarity'] = similarities
-
+        print(max(df_with_embeddings['similarity']))
         results = df_with_embeddings.nlargest(top_k, 'similarity')
 
         return results.iloc[0]["name"]
