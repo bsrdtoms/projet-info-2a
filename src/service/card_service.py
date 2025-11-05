@@ -2,7 +2,7 @@ from technical_components.embedding.ollama_embedding import get_embedding
 from dao.card_dao import CardDao
 from business_object.card import Card
 import random
-
+from utils.log_decorator import log
 
 class CardService:
     """Service pour gérer les opérations sur les cartes"""
@@ -10,6 +10,7 @@ class CardService:
     def __init__(self):
         self.dao = CardDao()
 
+    @log
     def add_card(self, carte: Card) -> bool:
         """
         Ajoute une carte en générant son embedding avant insertion
@@ -38,6 +39,7 @@ class CardService:
             print(f"Impossible d’ajouter la carte: {e}")
             return False
 
+    @log
     def modify_card(self, card: Card, updates: dict) -> bool:
         """
         Modifie les champs spécifiés dans un dictionnaire d'une carte existante.
@@ -63,6 +65,7 @@ class CardService:
             print("Échec de la modification.")
         return success
     
+    @log
     def delete_card(self, carte: Card):
         """
         Supprime une carte en base de données
@@ -81,6 +84,7 @@ class CardService:
         print(f"Tentative de suppression de la carte : {carte.name} (id={carte.id})")
         return self.dao.delete(carte)
 
+    @log
     def search_by_name(self, name):
         """
         Recherche les cartes dont le nom contient 'name'.
@@ -108,6 +112,7 @@ class CardService:
 
         return cartes_trouvees
 
+    @log
     def find_by_id(self, id):
         """
         
@@ -135,7 +140,7 @@ class CardService:
 
         return carte_trouvee
 
-
+    @log
     def semantic_search(self, text: str, top_k: int = 5):
         """
         Recherche sémantique OPTIMISÉE avec pgvector
@@ -170,6 +175,7 @@ class CardService:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
 
+    @log
     def random(self):
         """
         Récupérer une carte aléatoire

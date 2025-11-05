@@ -6,9 +6,11 @@ from pydantic import BaseModel
 
 from service.card_service import CardService
 from business_object.card import Card
+from utils.log_init import initialiser_logs
 
 app = FastAPI(title="Magic Cards API")
-logging.basicConfig(level=logging.INFO)
+
+initialiser_logs("MagicSearch API")
 
 card_service = CardService()
 
@@ -118,4 +120,4 @@ if __name__ == "__main__":
 
     uvicorn.run(app, host="0.0.0.0", port=9876)
 
-    logging.info("Arret du Webservice")
+    logging.info("Arret de MagicSearch API")

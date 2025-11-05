@@ -5,11 +5,12 @@ Remplace src/dao/card_dao.py
 
 from dao.db_connection import DBConnection
 from business_object.card import Card
-
+from utils.log_decorator import log
 
 class CardDao:
     """Classe contenant les méthodes pour accéder aux Cartes de la base de données"""
 
+    @log
     def create(self, carte) -> bool:
         """Création d'une carte dans la base de données
 
@@ -42,6 +43,7 @@ class CardDao:
             print(f"Erreur lors de l'insertion: {e}")
             return False
 
+    @log
     def delete(self, carte) -> bool:
         """Supression d'une carte dans la base de données
 
@@ -77,6 +79,7 @@ class CardDao:
             print(f"Erreur lors de la suppression: {e}")
             return False
 
+    @log
     def modify_card(self, card: Card, updates: dict) -> bool:
         """
         Met à jour les colonnes spécifiées d'une carte donnée.
@@ -122,6 +125,7 @@ class CardDao:
             print(f"Erreur lors de la modification : {e}")
             return False
 
+    @log
     def find_by_id(self, id_card):
         """Trouver une carte grace à son id
 
@@ -159,6 +163,7 @@ class CardDao:
 
         return card
 
+    @log
     def search_by_name(self, name):
         """
         Recherche les cartes dont le nom contient le texte donné (insensible à la casse).
@@ -201,6 +206,7 @@ class CardDao:
 
         return cards
 
+    @log
     def semantic_search(self, query_embedding: list[float], top_k: int = 5):
         """
         Recherche sémantique utilisant pgvector (OPTIMISÉ!)
@@ -254,7 +260,7 @@ class CardDao:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
 
-
+    @log
     def list_all(self):
         """
         Récupère toutes les cartes de la table project.cards.
@@ -288,6 +294,7 @@ class CardDao:
 
         return cards
 
+    @log
     def get_all_ids(self) -> list[int]:
         """
         Récupère tous les identifiants de la table project.cards.
