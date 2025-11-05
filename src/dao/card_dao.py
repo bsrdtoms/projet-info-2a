@@ -19,7 +19,7 @@ class CardDao:
 
         Returns
         ----------------
-        created : bool
+        bool
             True si la création est un succès
             False sinon
         """
@@ -51,7 +51,7 @@ class CardDao:
 
         Returns
         ----------------
-        deleted : bool
+        bool
             True si la suppression est un succès
             False sinon
         """
@@ -221,14 +221,12 @@ class CardDao:
 
         Returns
         ----------------
-        created : bool
+        bool
             True si la modification est un succès (au moins 1 ligne modifiée),
             False sinon.
         """
         update_sql = f"UPDATE project.cards SET {champ} = %s WHERE id = %s;"
-        bool
-            True si la modification est un succès (au moins 1 ligne modifiée), False sinon
-        """
+        
         # Gestion spéciale pour les embeddings
         if champ == "embedding_of_text" and isinstance(valeur, list):
             valeur = "[" + ",".join(str(f) for f in valeur) + "]"
