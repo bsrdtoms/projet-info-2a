@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 
 class AbstractView(ABC):
@@ -5,6 +6,10 @@ class AbstractView(ABC):
     Classe de base pour toutes les vues CLI.
     Fournit les méthodes génériques d'affichage et de saisie utilisateur.
     """
+
+    def __init__(self, message=""):
+        self.message = message
+        logging.info(f"Vue créée : {type(self).__name__}")
 
     @abstractmethod
     def display(self):

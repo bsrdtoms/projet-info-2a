@@ -1,18 +1,36 @@
-import argparse     # Sert à lire les arguments passés au lancement (ex: --mode api)
+import logging
+import dotenv
+
+from utils.log_init import initialiser_logs
 from views.welcome_view import WelcomeView
 
-
-def main():
-    parser = argparse.ArgumentParser(description="MagicSearch Application")
-    parser.add_argument("--mode", choices=["cli", "api"], default="cli",
-                        help="Mode d'exécution : CLI ou API (défaut: CLI)")
-    args = parser.parse_args()
-
-    if args.mode == "cli":
-        WelcomeView().menu_choice()
-
-    elif args.mode == "api":
-        pass
-
 if __name__ == "__main__":
-    main()
+    # Charger les variables d'environnement
+    dotenv.load_dotenv(override=True)
+
+    # Initialiser les logs
+    initialiser_logs("MagicSearch Application")
+
+    # Vue de départ
+    vue_courante = WelcomeView()
+    nb_erreurs = 0
+
+    while vue_courante:
+        if nb_erreurs > 100:
+            print("Le programme recense trop d'erreurs et va s'arrêter")
+            break
+        try:
+            # Affichage du menu
+            vue_courante = vue_courante.menu_choice()
+            
+        except Exception as e:
+            logging.error(f"{type(e).__name__} : {e}", exc_info=True)
+            nb_erreurs += 1
+            print("Une erreur est survenue, retour au menu principal.\n"
+                  "Consultez les logs pour plus d'informations.")
+            vue_courante = WelcomeView()
+
+    # Fin de l'application
+    print("----------------------------------")
+    print("Goodbye!")
+    logging.info("Fin de l'application")

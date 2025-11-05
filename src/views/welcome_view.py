@@ -27,7 +27,6 @@ class WelcomeView(AbstractView):
                 self.show_message("Logging in...")
                 pass
             elif choice == "5":
-                self.show_message("Goodbye!")
-                break
+                return None
             else:
                 self.show_message("Invalid choice, please try again.")
