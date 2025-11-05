@@ -15,9 +15,10 @@ class CardDao:
         Création d'une carte dans la base de données
 
         Parameters
-        ----------
+
+        ----------------
         carte : Card
-            Carte à insérer
+            Objet représentant la carte à insérer
 
         Returns
         -------
@@ -27,29 +28,56 @@ class CardDao:
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    # Convertir l'embedding en format pgvector
-                    embedding_str = None
-                    if carte.embedding_of_text:
-                        embedding_str = (
-                            "[" + ",".join(str(f) for f in carte.embedding_of_text) + "]"
-                        )
-
+                    # On n'insère pas l'id, car il est souvent AUTO_INCREMENT
+                    # embedding_of_text peut être None
                     cursor.execute(
                         """
-                        INSERT INTO project.cards (name, type, text, embedding_of_text)
-                        VALUES (%s, %s, %s, %s::vector)
+                        INSERT INTO project.cards (name, text, embedding_of_text)
+                        VALUES (%s, %s, %s)
                         """,
-                        (carte.name, carte.type, carte.text, embedding_str),
+                        (carte.name, carte.text, carte.embedding_of_text)
                     )
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur lors de l'insertion: {e}")
+            print(f"Erreur lors de l'insertion: {e}")
             return False
 
     def delete(self, carte) -> bool:
+        """Supression d'une carte dans la base de données
+
+        Parameters
+        ----------------
+        carte : Card
+            Objet représentant la carte à supprimer
+
+        Returns
+        ----------------
+        deleted : bool
+            True si la suppression est un succès
+            False sinon
         """
-        Suppression d'une carte dans la base de données
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                        DELETE FROM project.cards
+                        WHERE id = %s
+                        """,
+                        (carte.id,)
+                    )
+                    # Vérifie qu'une ligne a bien été supprimée
+                    if cursor.rowcount == 0:
+                        print(f"Aucune carte trouvée avec l'id {carte.id} ({carte.name})")
+                        return False
+            return True
+        except Exception as e:
+            print(f"Erreur lors de la suppression: {e}")
+            return False
+
+    def find_by_id(self, id_card):
+        """Trouver une carte grace à son id
 
         Parameters
         ----------
@@ -60,94 +88,71 @@ class CardDao:
         bool
             True si la suppression est un succès, False sinon
         """
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        "DELETE FROM project.cards WHERE id = %s",
-                        (carte.id,),
-                    )
-                connection.commit()
-            return True
-        except Exception as e:
-            print(f"❌ Erreur lors de la suppression: {e}")
-            return False
-
-    def find_by_id(self, id_card: int):
-        """
-        Trouver une carte grâce à son id
-
-        Parameters
-        ----------
-        id_card : int
-            Numéro id de la carte que l'on souhaite trouver
-
-        Returns
-        -------
-        Card ou None
-            Renvoie la carte trouvée ou None
+        sql_query = """
+            SELECT id, name, text, embedding_of_text
+            FROM project.cards
+            WHERE id = %s
         """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(
-                        "SELECT id, name, text, embedding_of_text FROM project.cards WHERE id = %s",
-                        (id_card,),
-                    )
+                    cursor.execute(sql_query, (id_card,))
                     row = cursor.fetchone()
-                    if row:
-                        return Card(
-                            id=row["id"],
-                            name=row["name"],
-                            text=row["text"],
-                            embedding_of_text=row["embedding_of_text"],
-                        )
-            return None
-        except Exception as e:
-            print(f"❌ Erreur lors de la recherche: {e}")
-            return None
 
-    def search_by_name(self, name: str, limit: int = 10):
+                    card = Card(
+                            id=row['id'],
+                            name=row['name'],
+                            text=row['text'],
+                            embedding_of_text=row['embedding_of_text']
+                        )
+    
+        except Exception as e:
+            print(f"Database error: {e}")
+            raise
+
+        return card
+
+    def search_by_name(self, name):
         """
-        Rechercher des cartes par nom (recherche partielle)
+        Recherche les cartes dont le nom contient le texte donné (insensible à la casse).
 
         Parameters
-        ----------
+        ----------------
         name : str
-            Nom ou partie du nom à chercher
-        limit : int
-            Nombre maximum de résultats
+            Le nom (ou une partie du nom) de la carte à rechercher.
 
         Returns
-        -------
-        list[Card]
-            Liste des cartes correspondantes
+        ----------------
+        cards : list[Card]
+            Liste d'objets Card correspondant aux résultats de la recherche.
         """
+        sql_query = """
+            SELECT id, name, text, embedding_of_text
+            FROM project.cards
+            WHERE LOWER(name) LIKE LOWER(%s)
+        """
+        cards = []
+
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        SELECT id, name, text, embedding_of_text 
-                        FROM project.cards 
-                        WHERE name ILIKE %s
-                        LIMIT %s
-                        """,
-                        (f"%{name}%", limit),
-                    )
+                    cursor.execute(sql_query, (f"%{name}%",))
                     rows = cursor.fetchall()
-                    return [
-                        Card(
-                            id=row["id"],
-                            name=row["name"],
-                            text=row["text"],
-                            embedding_of_text=row["embedding_of_text"],
+
+                    for row in rows:
+                        card = Card(
+                            id=row['id'],
+                            name=row['name'],
+                            text=row['text'],
+                            embedding_of_text=row['embedding_of_text']
                         )
-                        for row in rows
-                    ]
+                        cards.append(card)
+
         except Exception as e:
-            print(f"❌ Erreur lors de la recherche: {e}")
-            return []
+            print(f"Database error: {e}")
+            raise
+
+        return cards
 
     def semantic_search(self, query_embedding: list[float], top_k: int = 5):
         """
@@ -175,9 +180,9 @@ class CardDao:
                     # Plus petit = plus similaire (distance cosinus)
                     cursor.execute(
                         """
-                        SELECT 
-                            id, 
-                            name, 
+                        SELECT
+                            id,
+                            name,
                             text,
                             1 - (embedding_of_text <-> %s::vector) AS similarity
                         FROM project.cards
@@ -201,38 +206,6 @@ class CardDao:
         except Exception as e:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
-
-    def random(self):
-        """
-        Récupérer une carte aléatoire
-
-        Returns
-        -------
-        Card ou None
-        """
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        SELECT id, name, text, embedding_of_text 
-                        FROM project.cards 
-                        ORDER BY RANDOM() 
-                        LIMIT 1
-                        """
-                    )
-                    row = cursor.fetchone()
-                    if row:
-                        return Card(
-                            id=row["id"],
-                            name=row["name"],
-                            text=row["text"],
-                            embedding_of_text=row["embedding_of_text"],
-                        )
-            return None
-        except Exception as e:
-            print(f"❌ Erreur lors de la récupération aléatoire: {e}")
-            return None
 
     def modify(self, card_id: int, champ: str, valeur) -> bool:
         """
@@ -289,12 +262,7 @@ class CardDao:
                     rows = cursor.fetchall()
 
                     for row in rows:
-                        card = Card(
-                            id=row["id"],
-                            name=row["name"],
-                            text=row["text"],
-                            embedding_of_text=row["embedding_of_text"],
-                        )
+                        card = Card(id=row['id'], name=row['name'], text=row['text'], embedding_of_text=row['embedding_of_text'])
                         cards.append(card)
 
         except Exception as e:
@@ -302,3 +270,31 @@ class CardDao:
             raise
 
         return cards
+
+
+    def get_all_ids(self) -> list[int]:
+        """
+        Récupère tous les identifiants de la table project.cards.
+        
+        Returns
+        ----------------
+        ids : list[int]
+            renvoie une liste d'entiers avec les identifiants de toutes les cartes de la base de données.
+        """
+        sql_query = "SELECT id FROM project.cards"
+        ids = []
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_query)
+                    rows = cursor.fetchall()  
+
+                    for row in rows:
+                        ids.append(row['id'])
+
+        except Exception as e:
+            print(f"❌ Database error: {e}")
+            raise
+
+        return ids

@@ -1,16 +1,9 @@
-"""
-Service pour les cartes Magic avec support pgvector optimisé
-Remplace src/service/card_service.py
-
-CHANGEMENTS PRINCIPAUX:
-- Plus de boucle Python pour calculer les similarités
-- Tout se passe en SQL avec pgvector
-- Plus besoin de pandas ni de cosine_similarity manuel
-"""
-
+import pandas as pd
 from technical_components.embedding.ollama_embedding import get_embedding
+from technical_components.embedding.cosine_similarity import cosine_similarity
 from dao.card_dao import CardDao
 from business_object.card import Card
+import random
 
 
 class CardService:
@@ -40,10 +33,11 @@ class CardService:
                 carte.embedding_of_text = embedding_response["embeddings"][0]
 
             # Persister via DAO
+            print(f"Création de la carte : {carte.name}")
             return self.dao.create(carte)
 
         except Exception as e:
-            print(f"❌ Impossible d'ajouter la carte: {e}")
+            print(f"Impossible d’ajouter la carte: {e}")
             return False
 
     def modify_card(self, card_id: int, field: str, value) -> bool:
@@ -51,56 +45,65 @@ class CardService:
         Modifier un champ d'une carte
 
         Parameters
-        ----------
+        ----------------
         card_id : int
-            ID de la carte
-        field : str
-            Nom du champ à modifier
-        value : any
-            Nouvelle valeur
+            Identifiant de la carte à modifier
+        updates : dict
+            Dictionnaire {colonne: nouvelle_valeur} à mettre à jour
 
         Returns
         -------
         bool
         """
         return self.dao.modify(card_id, field, value)
-
-    def delete_card(self, carte: Card) -> bool:
+        
+    def delete_card(self, carte: Card):
         """
-        Supprimer une carte
+        Supprime une carte en base de données
 
         Parameters
-        ----------
+        ----------------
         carte : Card
-            Carte à supprimer
+            Objet représentant la carte à supprimer
 
         Returns
-        -------
-        bool
+        ----------------
+        deleted : bool
+            True si la suppression a réussi
+            False sinon
         """
+        print(f"Tentative de suppression de la carte : {carte.name} (id={carte.id})")
         return self.dao.delete(carte)
 
-    def search_by_name(self, name: str, limit: int = 10):
+    def search_by_name(self, name):
         """
-        Rechercher des cartes par nom
+        Recherche les cartes dont le nom contient 'name'.
 
         Parameters
-        ----------
+        ----------------
         name : str
-            Nom ou partie du nom
-        limit : int
-            Nombre max de résultats
+            Nom (ou partie du nom) de la carte à rechercher.
 
         Returns
-        -------
-        list[Card]
+        ----------------
+        cards : list[Card]
+            Liste d'objets Card correspondant aux résultats de la recherche.
         """
-        return self.dao.search_by_name(name, limit)
+        if not name or not isinstance(name, str):
+            raise ValueError("Le nom de la carte doit être une chaîne de caractère non vide.")
+
+        cartes_trouvees = self.dao.search_by_name(name)
+
+        if not cartes_trouvees:
+            print(f"Aucune carte trouvée pour '{name}'.")
+            return []
+
+        return cartes_trouvees
 
     def semantic_search(self, text: str, top_k: int = 5):
         """
         Recherche sémantique OPTIMISÉE avec pgvector
-        
+
         AVANT: Récupérait toutes les cartes, calculait en Python (lent)
         APRÈS: Tout le calcul se fait en SQL (rapide)
 
@@ -131,7 +134,6 @@ class CardService:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
 
-
     def random(self):
         """
         Récupérer une carte aléatoire
@@ -140,30 +142,15 @@ class CardService:
         -------
         Card ou None
         """
-        return self.dao.random()
+        cartes = self.dao.list_all()
+        if not cartes:
+            return None
+        return random.choice(cartes)
 
-    def get_card_by_id(self, card_id: int):
-        """
-        Récupérer une carte par son ID
-
-        Parameters
-        ----------
-        card_id : int
-
-        Returns
-        -------
-        Card ou None
-        """
-        return self.dao.find_by_id(card_id)
-
-    def list_all_cards(self):
-        """
-        Lister toutes les cartes
-
-        Returns
-        -------
-        list[Card]
-        """
-        return self.dao.list_all()
-
-
+    def random_by_id(self):
+        """méthode random plus rapide"""
+        ids = self.dao.get_all_ids()
+        if not ids:
+            return None
+        random_id = random.choice(ids)
+        return self.dao.search_by_id(random_id)
