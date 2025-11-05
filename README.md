@@ -1,78 +1,269 @@
-Pour afficher le diagramme de classe, penser à installer "Markdown Preview Mermaid Support" puis ctrl + shift + v
+To display class diagrams, install "Markdown Preview Mermaid Support" then press ctrl + shift + v
 
 # Card Search Service
 
-This project provides a service to search and work with Magic: The Gathering cards using PostgreSQL and embeddings.
-
-There are **two ways** to use this repository, depending on whether you already have a PostgreSQL database filled with pre-computed card embeddings or not.
+Semantic search service for Magic: The Gathering cards using PostgreSQL, pgvector, and embeddings.
 
 ---
 
-## Prerequisites
-
-* Python 3.10+
-* A running PostgreSQL service
-* Environment variables properly configured
-
-Required environment variables:
+## 🚀 Quick Start
 
 ```bash
-# Token to access the embedding API
-export API_TOKEN=your_token_here
+# 1. Set up environment variables (see below)
+# 2. Initialize database (with embeddings included)
+python reset_all_the_database.py
+# 3. Start the application
+python src/app.py
+```
 
-# PostgreSQL service configuration
-export DB_HOST=your_host
-export DB_PORT=5432
-export DB_NAME=your_database
-export DB_USER=your_user
-export DB_PASSWORD=your_password
+That's it! 🎉
+
+---
+
+## 📋 Prerequisites
+
+### 1. Python 3.10+
+
+Check your version:
+```bash
+python --version
+```
+
+Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+### 2. PostgreSQL Service
+
+You need access to a PostgreSQL instance with:
+- `pgvector` extension available (configured automatically)
+- Permissions to create schemas and tables
+
+### 3. API Token for Embeddings
+
+A token is required to access the embedding API (SSPCloud).
+
+### 4. Environment Variables
+
+Create a `.env` file at the root of the project:
+
+```bash
+# API Token for embedding generation
+API_TOKEN=your_token_here
+
+# PostgreSQL Configuration
+POSTGRES_HOST=your_host
+POSTGRES_PORT=5432
+POSTGRES_DATABASE=your_database
+POSTGRES_USER=your_user
+POSTGRES_PASSWORD=your_password
+POSTGRES_SCHEMA=project
+```
+
+**Important:** The `.env` file is already in `.gitignore` to protect your credentials.
+
+---
+
+## 📥 Database Setup
+
+### Option 1: Quick Setup with Embeddings (Recommended)
+
+Import cards with pre-computed embeddings:
+
+```bash
+python reset_all_the_database.py
+```
+
+**What happens:**
+- ✅ Database schema initialized
+- ✅ ~27,000 cards imported with embeddings
+- ✅ pgvector configured automatically
+- ✅ Ready for semantic search
+- ⏱️ Time: ~2 minutes
+
+### Option 2: Import without Embeddings
+
+If you want to compute embeddings yourself:
+
+```bash
+# Import cards without embeddings
+python reset_all_the_database.py --no-embeddings
+
+# Compute embeddings (takes 2-4 hours)
+python src/technical_components/embedding/compute_all_embeddings.py
 ```
 
 ---
 
-## Usage
+## 🎮 Usage
 
-### 1. If you already have a PostgreSQL service with embedded cards
-
-In this case, you only need to:
+### Start the API
 
 ```bash
-# Make sure your environment variables are set
-export API_TOKEN=your_token_here
-# Start the application
-python app.py
+python src/app.py
+```
+
+The API will be available at: `http://localhost:9876/docs`
+
+### Semantic Search Example
+
+```python
+from service.card_service import CardService
+
+# Search for cards
+results = CardService().semantic_search("flying dragon", top_k=5)
+
+# Display results
+for card in results:
+    print(f"{card['name']} - Similarity: {card['similarity']:.3f}")
+```
+
+### CLI Interface
+
+```bash
+python src/main.py
+```
+
+Interactive menu to:
+- Search cards by name
+- Random card
+- Semantic search
+- And more...
+
+---
+
+## 🛠️ Additional Tools
+
+### Export Database to JSON
+
+Backup your database with embeddings:
+
+```bash
+python export_cards_to_json.py
+```
+
+Creates `data/AtomicCardsWithEmbeddings.json`
+
+### Reset Database
+
+⚠️ **Warning:** This will drop all existing data!
+
+```bash
+python reset_all_the_database.py
 ```
 
 ---
 
-### 2. If you do **not** have a pre-filled PostgreSQL service
+## 📁 Project Structure
 
-In this case, you must:
-
-1. Set up the environment variables (see [Prerequisites](#prerequisites))
-
-2. Initialize and populate the database schema:
-
-   ```bash
-   python reset_all_th_database.py
-   ```
-
-3. Compute embeddings for all cards:
-
-   ```bash
-   python compute_all_embeddings.py
-   ```
-
-4. Finally, start the application:
-
-   ```bash
-   python app.py
-   ```
+```
+projet-info-2a/
+├── data/
+│   └── init_db.sql              # Database schema
+├── src/
+│   ├── app.py                   # FastAPI application
+│   ├── main.py                  # CLI interface
+│   ├── business_object/         # Data models
+│   ├── dao/                     # Database access
+│   ├── service/                 # Business logic
+│   ├── views/                   # CLI views
+│   ├── utils/                   # Utilities
+│   │   └── reset_all_the_database.py
+│   └── technical_components/
+│       └── embedding/           # Embedding generation
+├── .env                         # Environment variables (create this)
+├── requirements.txt             # Python dependencies
+└── README.md                    # This file
+```
 
 ---
 
-## Notes
+## 🧪 Testing
 
-* The **`API_TOKEN`** environment variable must be set in **all cases**, since the embedding service depends on it.
-* The PostgreSQL database will contain the card data and their corresponding embeddings.
-* If you re-run `reset_all_th_database.py`, your existing database schema and data will be dropped and recreated from scratch.
+Run tests:
+
+```bash
+pytest src/tests/
+```
+
+---
+
+## 📚 API Documentation
+
+Once the API is running, access the interactive documentation:
+
+```
+http://localhost:9876/docs
+```
+
+### Available Endpoints
+
+- `POST /find_corresponding_text/` - Semantic search
+- More endpoints coming soon...
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables Reference
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `API_TOKEN` | Token for embedding API | `your_token_here` |
+| `POSTGRES_HOST` | PostgreSQL host | `localhost` |
+| `POSTGRES_PORT` | PostgreSQL port | `5432` |
+| `POSTGRES_DATABASE` | Database name | `magic_cards` |
+| `POSTGRES_USER` | Database user | `postgres` |
+| `POSTGRES_PASSWORD` | Database password | `your_password` |
+| `POSTGRES_SCHEMA` | Schema name | `project` |
+
+---
+
+## 🐛 Troubleshooting
+
+### Database Connection Error
+
+Check your `.env` file and ensure PostgreSQL is running:
+
+```bash
+psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DATABASE
+```
+
+### pgvector Extension Not Found
+
+The extension is configured automatically by `reset_all_the_database.py`.
+If issues persist, run manually:
+
+```bash
+python src/utils/setup_pgvector.py
+```
+
+### API Token Invalid
+
+Verify your `API_TOKEN` in the `.env` file is valid.
+
+---
+
+## 📝 Notes
+
+- The **`API_TOKEN`** is required for embedding generation
+- `reset_all_the_database.py` will **drop and recreate** the entire schema
+- Pre-computed embeddings are included by default (no need to compute them)
+- The database uses `pgvector` for efficient semantic search
+
+---
+
+## 🤝 Contributing
+
+See documentation in `doc/` folder for:
+- Class diagrams
+- Sequence diagrams
+- ER diagrams
+- Use case diagrams
+
+---
+
+## 📄 License
+
+[Your License Here]

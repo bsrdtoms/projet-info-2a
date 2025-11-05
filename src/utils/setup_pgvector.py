@@ -148,6 +148,7 @@ class PgVectorSetup:
         return True
 
 
+# Si on utilise l'application comme définie dans le README, ce code ne tournera jamais
 if __name__ == "__main__":
     dotenv.load_dotenv()
     setup = PgVectorSetup()

@@ -13,6 +13,7 @@ import argparse
 from utils.singleton import Singleton
 from utils.sql_helpers import sql_value_string
 from dao.db_connection import DBConnection
+from utils.setup_pgvector import PgVectorSetup
 
 
 class ResetDatabase(metaclass=Singleton):
@@ -210,7 +211,10 @@ class ResetDatabase(metaclass=Singleton):
         except Exception as e:
             print(f"❌ Could not insert all cards: {e}")
             return False
-
+        
+        # Maintenant on appel automatiquement setup_pgvector.py
+        pgvector_setup = PgVectorSetup()
+        pgvector_setup.setup()
 
 def main():
     """Main function with argument parsing"""
