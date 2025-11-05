@@ -1,6 +1,8 @@
 class Card:
-    
-    def __init__(self, id: int | None, name: str, text: str | None, embedding_of_text=None):
+
+    def __init__(
+        self, id: int | None, name: str, text: str | None, embedding_of_text=None
+    ):
         """
         Représente une carte Magic.
 
@@ -38,4 +40,4 @@ class Card:
         """
         texte = self.text or ""  # si self.text est None, on met une chaîne vide
         text_preview = texte if len(texte) < 100 else texte[:100] + "..."
-        return f"Card(id={self.id}, name='{self.name}', text='{text_preview}', embedding={'Yes' if self.embedding_of_text else 'No'})"
+        return f"Card(id={self.id}, name='{self.name}', text='{text_preview}'"

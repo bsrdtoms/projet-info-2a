@@ -3,9 +3,8 @@ from business_object.historical_search import HistoricalSearch
 from business_object.user import User
 
 
-class HistoricalDao():
-    """
-    """
+class HistoricalDao:
+    """ """
 
     def add(self, HistoricalSearch, User):
         """

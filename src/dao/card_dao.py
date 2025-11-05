@@ -2,6 +2,7 @@
 DAO pour les cartes Magic avec support pgvector
 Remplace src/dao/card_dao.py
 """
+
 from dao.db_connection import DBConnection
 from business_object.card import Card
 
@@ -33,7 +34,7 @@ class CardDao:
                         INSERT INTO project.cards (name, text, embedding_of_text)
                         VALUES (%s, %s, %s)
                         """,
-                        (carte.name, carte.text, carte.embedding_of_text)
+                        (carte.name, carte.text, carte.embedding_of_text),
                     )
                 connection.commit()
             return True
@@ -63,11 +64,13 @@ class CardDao:
                         DELETE FROM project.cards
                         WHERE id = %s
                         """,
-                        (carte.id,)
+                        (carte.id,),
                     )
                     # Vérifie qu'une ligne a bien été supprimée
                     if cursor.rowcount == 0:
-                        print(f"Aucune carte trouvée avec l'id {carte.id} ({carte.name})")
+                        print(
+                            f"Aucune carte trouvée avec l'id {carte.id} ({carte.name})"
+                        )
                         return False
             return True
         except Exception as e:
@@ -99,12 +102,12 @@ class CardDao:
                     row = cursor.fetchone()
 
                     card = Card(
-                            id=row['id'],
-                            name=row['name'],
-                            text=row['text'],
-                            embedding_of_text=row['embedding_of_text']
-                        )
-    
+                        id=row["id"],
+                        name=row["name"],
+                        text=row["text"],
+                        embedding_of_text=row["embedding_of_text"],
+                    )
+
         except Exception as e:
             print(f"Database error: {e}")
             raise
@@ -140,10 +143,10 @@ class CardDao:
 
                     for row in rows:
                         card = Card(
-                            id=row['id'],
-                            name=row['name'],
-                            text=row['text'],
-                            embedding_of_text=row['embedding_of_text']
+                            id=row["id"],
+                            name=row["name"],
+                            text=row["text"],
+                            embedding_of_text=row["embedding_of_text"],
                         )
                         cards.append(card)
 
@@ -226,7 +229,7 @@ class CardDao:
             False sinon.
         """
         update_sql = f"UPDATE project.cards SET {champ} = %s WHERE id = %s;"
-        
+
         # Gestion spéciale pour les embeddings
         if champ == "embedding_of_text" and isinstance(valeur, list):
             valeur = "[" + ",".join(str(f) for f in valeur) + "]"
@@ -264,7 +267,12 @@ class CardDao:
                     rows = cursor.fetchall()
 
                     for row in rows:
-                        card = Card(id=row['id'], name=row['name'], text=row['text'], embedding_of_text=row['embedding_of_text'])
+                        card = Card(
+                            id=row["id"],
+                            name=row["name"],
+                            text=row["text"],
+                            embedding_of_text=row["embedding_of_text"],
+                        )
                         cards.append(card)
 
         except Exception as e:
@@ -273,11 +281,10 @@ class CardDao:
 
         return cards
 
-
     def get_all_ids(self) -> list[int]:
         """
         Récupère tous les identifiants de la table project.cards.
-        
+
         Returns
         ----------------
         ids : list[int]
@@ -290,10 +297,10 @@ class CardDao:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(sql_query)
-                    rows = cursor.fetchall()  
+                    rows = cursor.fetchall()
 
                     for row in rows:
-                        ids.append(row['id'])
+                        ids.append(row["id"])
 
         except Exception as e:
             print(f"❌ Database error: {e}")

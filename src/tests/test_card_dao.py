@@ -3,7 +3,8 @@ from dao.card_dao import CardDao
 from business_object.card import Card
 from dao.db_connection import DBConnection
 
-## IMPORTANT !!! le nettoyage 
+
+## IMPORTANT !!! le nettoyage
 @pytest.fixture(autouse=True)
 def cleanup_before_tests():
     """Nettoie les cartes Fireball avant chaque test"""

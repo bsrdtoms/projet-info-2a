@@ -38,9 +38,9 @@ class CardService:
             print(f"Impossible d’ajouter la carte: {e}")
             return False
 
-    def modify_card(self, card_id: int, field: str, value) -> bool:
+    def modify_card(self, card: Card, modif: dict) -> bool:
         """
-        Modifier un champ d'une carte
+        Modifier un/des champ(s) d'une carte
 
         Parameters
         ----------------
@@ -54,7 +54,7 @@ class CardService:
         bool
         """
         return self.dao.modify(card_id, field, value)
-        
+
     def delete_card(self, carte: Card):
         """
         Supprime une carte en base de données
@@ -88,7 +88,9 @@ class CardService:
             Liste d'objets Card correspondant aux résultats de la recherche.
         """
         if not name or not isinstance(name, str):
-            raise ValueError("Le nom de la carte doit être une chaîne de caractère non vide.")
+            raise ValueError(
+                "Le nom de la carte doit être une chaîne de caractère non vide."
+            )
 
         cartes_trouvees = self.dao.search_by_name(name)
 
@@ -140,15 +142,8 @@ class CardService:
         -------
         Card ou None
         """
-        cartes = self.dao.list_all()
-        if not cartes:
-            return None
-        return random.choice(cartes)
-
-    def random_by_id(self):
-        """méthode random plus rapide"""
         ids = self.dao.get_all_ids()
         if not ids:
             return None
         random_id = random.choice(ids)
-        return self.dao.search_by_id(random_id)
+        return self.dao.find_by_id(random_id)

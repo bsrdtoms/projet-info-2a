@@ -1,6 +1,7 @@
 from views.abstract_view_bis import AbstractView
 from views.search_view import SearchView
 
+
 class WelcomeView(AbstractView):
     def display(self):
         self.show_title("MAGICSEARCH")
@@ -18,7 +19,7 @@ class WelcomeView(AbstractView):
             return SearchView()  # Retourne la vue suivante
         elif choice == "2":
             self.show_message("Exploring clusters...")
-            return self      # On reste dans la même vue
+            return self  # On reste dans la même vue
         elif choice == "3":
             self.show_message("Creating an account...")
             return self

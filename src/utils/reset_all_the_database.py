@@ -1,4 +1,4 @@
-""" à revoir """
+"""à revoir"""
 
 import json
 import requests
@@ -23,23 +23,54 @@ class ResetDatabase(metaclass=Singleton):
             raise
         return True
 
-    
     def generate_insert_sql_many(self, cards: list[dict]) -> str:
         """Build a single INSERT INTO project.cards statement for many cards"""
 
         # Columns in the SQL table (order matters)
         columns = [
-            "name", "ascii_name", "type", "types", "subtypes", "supertypes",
-            "mana_cost", "mana_value", "converted_mana_cost", "layout", "text",
-            "colors", "color_identity", "color_indicator",
-            "first_printing", "printings",
-            "is_funny", "is_game_changer", "is_reserved",
-            "keywords", "power", "toughness", "defense", "loyalty",
-            "hand", "life", "side", "subsets",
-            "attraction_lights", "face_converted_mana_cost", "face_mana_value", "face_name",
-            "edhrec_rank", "edhrec_saltiness", "has_alternative_deck_limit",
-            "identifiers", "purchase_urls", "foreign_data", "legalities", "rulings",
-            "related_cards", "leadership_skills", "embedding_of_text"
+            "name",
+            "ascii_name",
+            "type",
+            "types",
+            "subtypes",
+            "supertypes",
+            "mana_cost",
+            "mana_value",
+            "converted_mana_cost",
+            "layout",
+            "text",
+            "colors",
+            "color_identity",
+            "color_indicator",
+            "first_printing",
+            "printings",
+            "is_funny",
+            "is_game_changer",
+            "is_reserved",
+            "keywords",
+            "power",
+            "toughness",
+            "defense",
+            "loyalty",
+            "hand",
+            "life",
+            "side",
+            "subsets",
+            "attraction_lights",
+            "face_converted_mana_cost",
+            "face_mana_value",
+            "face_name",
+            "edhrec_rank",
+            "edhrec_saltiness",
+            "has_alternative_deck_limit",
+            "identifiers",
+            "purchase_urls",
+            "foreign_data",
+            "legalities",
+            "rulings",
+            "related_cards",
+            "leadership_skills",
+            "embedding_of_text",
         ]
 
         # Map JSON keys → SQL column names when different

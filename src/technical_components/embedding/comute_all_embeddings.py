@@ -6,9 +6,10 @@ from technical_components.embedding.ollama_embedding import get_embedding
 
 def float_list_to_pg_array(floats):
     """
-    Convert list of floats to PostgreSQL array literal. 
+    Convert list of floats to PostgreSQL array literal.
     """
     return "[" + ",".join(str(f) for f in floats) + "]"
+
 
 def launch():
     cards = CardDao().list_all()
@@ -26,15 +27,15 @@ def launch():
 
     list_of_texts = [card.text for card in cards_with_text]
 
-    # pour que l'API get_embeddings n'ait pas à traiter trop de textes d'un coup, 
+    # pour que l'API get_embeddings n'ait pas à traiter trop de textes d'un coup,
     # on découpe par lots de 10000.
     size_of_slice = 10000
     list_of_embeddings = []
     for i in range(0, len(list_of_texts), size_of_slice):
         print("carte", i)
         # Get embeddings from the API
-        response = get_embedding(list_of_texts[i:i+size_of_slice])
-        list_of_embeddings.extend(response['embeddings'])
+        response = get_embedding(list_of_texts[i : i + size_of_slice])
+        list_of_embeddings.extend(response["embeddings"])
     print("✅ End of embeddings generation.")
 
     # mise à jour

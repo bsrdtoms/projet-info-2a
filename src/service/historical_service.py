@@ -7,25 +7,25 @@ class HistoricalService:
         self.dao = HistoricalDao()
 
     def add_search(self):
-        """ 
+        """
 
         Parameters
         ----------------
 
         Returns
         ----------------
-        
+
         """
         pass
 
     def consult(self):
-        """ 
+        """
 
         Parameters
         ----------------
 
         Returns
         ----------------
-        
+
         """
         pass

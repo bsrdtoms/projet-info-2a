@@ -1,6 +1,7 @@
 from views.abstract_view import AbstractView
 from views.search_view import SearchView
 
+
 class UserView(AbstractView):
     """Vue principale pour un utilisateur connecté (client, admin ou game designer)."""
 
@@ -33,7 +34,7 @@ class UserView(AbstractView):
             elif choice == "3":
                 SearchView().menu_choice()
             elif choice == "4":
-                pass            
+                pass
             elif choice == "5":
                 pass
             elif choice == "6":

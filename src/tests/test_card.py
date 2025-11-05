@@ -1,5 +1,4 @@
-from src.business_object.card import Card  
-
+from src.business_object.card import Card
 
 
 def test_card_basic():

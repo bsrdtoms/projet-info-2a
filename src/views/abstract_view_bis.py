@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
+
 class AbstractView(ABC):
     """
     Classe de base pour toutes les vues CLI.

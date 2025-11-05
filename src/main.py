@@ -22,12 +22,14 @@ if __name__ == "__main__":
         try:
             # Affichage du menu
             vue_courante = vue_courante.menu_choice()
-            
+
         except Exception as e:
             logging.error(f"{type(e).__name__} : {e}", exc_info=True)
             nb_erreurs += 1
-            print("Une erreur est survenue, retour au menu principal.\n"
-                  "Consultez les logs pour plus d'informations.")
+            print(
+                "Une erreur est survenue, retour au menu principal.\n"
+                "Consultez les logs pour plus d'informations."
+            )
             vue_courante = WelcomeView()
 
     # Fin de l'application

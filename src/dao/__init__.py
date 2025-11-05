@@ -83,7 +83,7 @@ def insert_all_cards(url: str):
                             foreign_data,
                             legalities,
                             rulings,
-                            embedding_of_text
+                            embedding_of_text,
                         ),
                     )
                 except Exception as e:
