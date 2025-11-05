@@ -39,4 +39,3 @@ class Card:
         texte = self.text or ""  # si self.text est None, on met une chaîne vide
         text_preview = texte if len(texte) < 100 else texte[:100] + "..."
         return f"Card(id={self.id}, name='{self.name}', text='{text_preview}', embedding={'Yes' if self.embedding_of_text else 'No'})"
-

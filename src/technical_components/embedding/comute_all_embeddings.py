@@ -4,13 +4,11 @@ from dao.card_dao import CardDao
 from technical_components.embedding.ollama_embedding import get_embedding
 
 
-
 def float_list_to_pg_array(floats):
     """
     Convert list of floats to PostgreSQL array literal. 
     """
-    return "{" + ",".join(str(f) for f in floats) + "}"
-
+    return "[" + ",".join(str(f) for f in floats) + "]"
 
 def launch():
     cards = CardDao().list_all()
@@ -49,5 +47,4 @@ def launch():
     print(f"✅ Updated embeddings for {len(cards_with_text)} cards.")
 
 
-if __name__ == "__main__":
-    launch()
+launch()

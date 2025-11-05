@@ -7,17 +7,30 @@ import random
 
 
 class CardService:
+    """Service pour gérer les opérations sur les cartes"""
+
     def __init__(self):
         self.dao = CardDao()
 
-    def add_card(self, carte: Card):
+    def add_card(self, carte: Card) -> bool:
         """
         Ajoute une carte en générant son embedding avant insertion
+
+        Parameters
+        ----------
+        carte : Card
+            Carte à ajouter
+
+        Returns
+        -------
+        bool
+            True si succès, False sinon
         """
         try:
-            # Générer l'embedding
-            embedding = get_embedding(carte.text)["embeddings"][0]
-            carte.embedding_of_text = embedding
+            # Générer l'embedding si un texte existe
+            if carte.text:
+                embedding_response = get_embedding(carte.text)
+                carte.embedding_of_text = embedding_response["embeddings"][0]
 
             # Persister via DAO
             print(f"Création de la carte : {carte.name}")
@@ -27,8 +40,9 @@ class CardService:
             print(f"Impossible d’ajouter la carte: {e}")
             return False
 
-    def modify_card(self):
-        """ 
+    def modify_card(self, card_id: int, field: str, value) -> bool:
+        """
+        Modifier un champ d'une carte
 
         Parameters
         ----------------
@@ -38,11 +52,11 @@ class CardService:
             Dictionnaire {colonne: nouvelle_valeur} à mettre à jour
 
         Returns
-        ----------------
-        
+        -------
+        bool
         """
-        pass
-
+        return self.dao.modify(card_id, field, value)
+        
     def delete_card(self, carte: Card):
         """
         Supprime une carte en base de données
@@ -86,61 +100,47 @@ class CardService:
 
         return cartes_trouvees
 
-    def get_all_embeddings(self):
+    def semantic_search(self, text: str, top_k: int = 5):
         """
-        Utilise le DAO pour récupérer toutes les cartes
-        et les transforme en DataFrame exploitable.
-        """
-        cards = self.dao.list_all()
+        Recherche sémantique OPTIMISÉE avec pgvector
 
-        if not cards:
-            print("⚠️ No cards found in database.")
-            return pd.DataFrame(columns=["id", "name", "embedding_of_text"])       # pourquoi on retourne ça du coup ?
-
-        # Transformation des objets Card en dictionnaires
-        data = [
-            {"id": card.id, "name": card.name, "embedding_of_text": card.embedding_of_text}
-            for card in cards
-        ]
-
-        df = pd.DataFrame(data, columns=["id", "name", "embedding_of_text"])
-        return df
-
-    def semantic_search(self, text: str, top_k: int = 5) -> str:
-        """
-        Trouve les cartes les plus similaires à un texte donné.
-
-        Args:
-            text (str): Le texte à matcher
-            top_k (int): Nombre de cartes similaires à retourner
-
-        Returns:
-            str: Le nom de la carte la plus proche
-        """
-        r = get_embedding(text)["embeddings"][0]
-        df_with_embeddings = self.get_all_embeddings()
-
-        similarities = []
-        for _, row in df_with_embeddings.iterrows():
-            embedding = row['embedding_of_text']
-            similarity = cosine_similarity(r, embedding)
-            similarities.append(similarity)
-
-        df_with_embeddings['similarity'] = similarities
-        print(max(df_with_embeddings['similarity']))
-        results = df_with_embeddings.nlargest(top_k, 'similarity')
-
-        return results.iloc[0]["name"]
-
-    def random(self):
-        """ 
+        AVANT: Récupérait toutes les cartes, calculait en Python (lent)
+        APRÈS: Tout le calcul se fait en SQL (rapide)
 
         Parameters
-        ----------------
+        ----------
+        text : str
+            Texte de recherche
+        top_k : int
+            Nombre de résultats à retourner
 
         Returns
-        ----------------
-        
+        -------
+        list[dict]
+            Liste de résultats avec id, name, text, similarity
+        """
+        try:
+            # 1. Générer l'embedding du texte de recherche
+            embedding_response = get_embedding(text)
+            query_embedding = embedding_response["embeddings"][0]
+
+            # 2. Recherche directe en SQL via pgvector (RAPIDE!)
+            # Plus besoin de boucle Python ni de pandas!
+            results = self.dao.semantic_search(query_embedding, top_k)
+
+            return results
+
+        except Exception as e:
+            print(f"❌ Erreur lors de la recherche sémantique: {e}")
+            raise
+
+    def random(self):
+        """
+        Récupérer une carte aléatoire
+
+        Returns
+        -------
+        Card ou None
         """
         cartes = self.dao.list_all()
         if not cartes:
