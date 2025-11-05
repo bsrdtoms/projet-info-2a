@@ -1,6 +1,4 @@
-import pandas as pd
 from technical_components.embedding.ollama_embedding import get_embedding
-from technical_components.embedding.cosine_similarity import cosine_similarity
 from dao.card_dao import CardDao
 from business_object.card import Card
 import random
