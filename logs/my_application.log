@@ -50,3 +50,24 @@ Flying
 Whenever an opponent draws their second card each turn, you draw a card.
 {3}{U}: Each p...
 05/11/2025 15:34:27 - INFO     - Arret du Webservice
+05/11/2025 15:36:39 - INFO     - --------------------------------------------------
+05/11/2025 15:36:39 - INFO     - Lancement MagicSearch Application                           
+05/11/2025 15:36:39 - INFO     - --------------------------------------------------
+05/11/2025 15:36:39 - INFO     - Vue créée : WelcomeView
+05/11/2025 15:36:42 - INFO     - Vue créée : SearchView
+05/11/2025 15:36:44 - INFO     -     CardService.random() - DEBUT
+05/11/2025 15:36:44 - INFO     -         CardDao.get_all_ids() - DEBUT
+05/11/2025 15:36:44 - INFO     -         CardDao.get_all_ids() - FIN
+05/11/2025 15:36:44 - INFO     -            └─> Sortie : ['12877', '12878', '25400'] ... (32548 elements)
+05/11/2025 15:36:44 - INFO     -         CardDao.find_by_id(23154,) - DEBUT
+05/11/2025 15:36:44 - INFO     -         CardDao.find_by_id(23154,) - FIN
+05/11/2025 15:36:44 - INFO     -            └─> Sortie : Carte 23154
+Nom : Saber-Tooth Moose-Lion
+Texte : Reach
+Forestcycling {2} ({2}, Discard this card: Search your library for a Forest card, reveal it, p...
+05/11/2025 15:36:44 - INFO     -     CardService.random() - FIN
+05/11/2025 15:36:44 - INFO     -        └─> Sortie : Carte 23154
+Nom : Saber-Tooth Moose-Lion
+Texte : Reach
+Forestcycling {2} ({2}, Discard this card: Search your library for a Forest card, reveal it, p...
+05/11/2025 15:36:49 - INFO     - Fin de l'application
