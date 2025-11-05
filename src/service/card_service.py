@@ -38,23 +38,31 @@ class CardService:
             print(f"Impossible d’ajouter la carte: {e}")
             return False
 
-    def modify_card(self, card: Card, modif: dict) -> bool:
+    def modify_card(self, card: Card, updates: dict) -> bool:
         """
-        Modifier un/des champ(s) d'une carte
+        Modifie les champs spécifiés dans un dictionnaire d'une carte existante.
 
         Parameters
         ----------------
-        card_id : int
-            Identifiant de la carte à modifier
+        card : Card
+            Carte à modifier
         updates : dict
             Dictionnaire {colonne: nouvelle_valeur} à mettre à jour
 
         Returns
-        -------
+        ----------------
         bool
+            True si la modification est un succès
+            False sinon
         """
-        return self.dao.modify(card_id, field, value)
-
+        print(f"Tentative de modification de la carte ID {card.id}...")
+        success = self.dao.modify_card(card, updates)
+        if success:
+            print("Carte modifiée avec succès.")
+        else:
+            print("Échec de la modification.")
+        return success
+    
     def delete_card(self, carte: Card):
         """
         Supprime une carte en base de données
@@ -99,6 +107,34 @@ class CardService:
             return []
 
         return cartes_trouvees
+
+    def find_by_id(self, id):
+        """
+        
+
+        Parameters
+        ----------------
+        id : int
+            identifiant de la carte à rechercher.
+
+        Returns
+        ----------------
+        card : Card
+            objet Card correspondant au résultat de la recherche.
+        """
+        if not id or not isinstance(id, int):
+            raise ValueError(
+                "L'identifiant de la carte doit être un entier."
+            )
+
+        carte_trouvee = self.dao.find_by_id(id)
+
+        if not carte_trouvee:
+            print(f"Aucune carte trouvée pour l'identifiant '{id}'.")
+            return []
+
+        return carte_trouvee
+
 
     def semantic_search(self, text: str, top_k: int = 5):
         """

@@ -77,6 +77,51 @@ class CardDao:
             print(f"Erreur lors de la suppression: {e}")
             return False
 
+    def modify_card(self, card: Card, updates: dict) -> bool:
+        """
+        Met à jour les colonnes spécifiées d'une carte donnée.
+
+        Parameters
+        ----------------
+        card : Card
+            Carte à modifier
+        updates : dict
+            Dictionnaire {colonne: nouvelle_valeur} des champs à modifier
+
+        Returns
+        ----------------
+        bool
+            True si la modification est un succès
+            False sinon
+        """
+        cols = []
+        values = []
+        for col, val in updates.items():
+            cols.append(f"{col} = %s")
+            values.append(val)
+
+        set_clause = ", ".join(cols)
+        values.append(card.id)
+
+        query = f"""
+            UPDATE project.cards
+            SET {set_clause}
+            WHERE id = %s
+        """
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(query, values)
+                    if cursor.rowcount == 0:
+                        print("Aucun enregistrement trouvé avec cet ID.")
+                        return False
+                    return True
+
+        except Exception as e:
+            print(f"Erreur lors de la modification : {e}")
+            return False
+
     def find_by_id(self, id_card):
         """Trouver une carte grace à son id
 
@@ -209,44 +254,6 @@ class CardDao:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
 
-    def modify(self, card_id: int, champ: str, valeur) -> bool:
-        """
-        Met à jour un champ d'une carte dans la table project.cards.
-
-        Parameters
-        ----------------
-        card_id : int
-            Identifiant unique de la carte
-        champ : str
-            Nom de la colonne à modifier
-        valeur : any
-            Nouvelle valeur à affecter
-
-        Returns
-        ----------------
-        bool
-            True si la modification est un succès (au moins 1 ligne modifiée),
-            False sinon.
-        """
-        update_sql = f"UPDATE project.cards SET {champ} = %s WHERE id = %s;"
-
-        # Gestion spéciale pour les embeddings
-        if champ == "embedding_of_text" and isinstance(valeur, list):
-            valeur = "[" + ",".join(str(f) for f in valeur) + "]"
-            update_sql = f"UPDATE project.cards SET {champ} = %s::vector WHERE id = %s;"
-        else:
-            update_sql = f"UPDATE project.cards SET {champ} = %s WHERE id = %s;"
-
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(update_sql, (valeur, card_id))
-                    modified_rows = cursor.rowcount
-                connection.commit()
-            return modified_rows > 0
-        except Exception as e:
-            print(f"❌ SQL error: {e}")
-            return False
 
     def list_all(self):
         """

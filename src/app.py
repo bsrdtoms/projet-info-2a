@@ -81,19 +81,16 @@ async def create_card(card: CardModel):
 
 
 @app.put("/card/{card_id}", tags=["Cards"])
-async def update_card(card_id: int, updates: dict):
+async def update_card(card_id: int, name: str, updates: dict):
     """Modifier un ou plusieurs champs d'une carte"""
     logging.info(f"Modification de la carte {card_id}")
-    success = True
-    for field, value in updates.items():
-        ok = card_service.modify_card(card_id, field, value)
-        if not ok:
-            success = False
+    carte_objet = card_service.find_by_id(card_id)
+    success = card_service.modify_card(carte_objet, updates)
     if not success:
         raise HTTPException(
             status_code=400, detail="Une ou plusieurs modifications ont échoué"
         )
-    return {"message": f"Carte {card_id} mise à jour", "updates": updates}
+    return {"message": f"Carte {name} (id={card_id}) mise à jour", "updates": updates}
 
 
 @app.delete("/card/{card_id}", tags=["Cards"])
