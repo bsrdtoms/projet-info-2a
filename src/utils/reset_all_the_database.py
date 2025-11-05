@@ -1,7 +1,15 @@
-"""à revoir"""
+"""
+Reset the database and insert cards from JSON
+Two modes:
+1. Default: download from URL AtomicCardsWithEmbeddings.json (WITH embeddings)
+2. With parameter: download from URL AtomicCards.json (WITHOUT embeddings)
 
-import json
+Usage:
+    python reset_all_the_database.py                    # Default: with embeddings from URL
+    python reset_all_the_database.py --no-embeddings    # From URL without embeddings
+"""
 import requests
+import argparse
 from utils.singleton import Singleton
 from utils.sql_helpers import sql_value_string
 from dao.db_connection import DBConnection
@@ -9,7 +17,7 @@ from dao.db_connection import DBConnection
 
 class ResetDatabase(metaclass=Singleton):
     """
-    Reset the database and insert cards from the AtomicCards JSON
+    Reset the database and insert cards from JSON
     """
 
     def run_sql_string_sql(self, sql_code: str) -> bool:
@@ -23,8 +31,19 @@ class ResetDatabase(metaclass=Singleton):
             raise
         return True
 
-    def generate_insert_sql_many(self, cards: list[dict]) -> str:
-        """Build a single INSERT INTO project.cards statement for many cards"""
+    def generate_insert_sql_many(
+        self, cards: list[dict], with_embeddings: bool = True
+    ) -> str:
+        """
+        Build a single INSERT INTO project.cards statement for many cards
+
+        Parameters
+        ----------
+        cards : list[dict]
+            List of card dictionaries
+        with_embeddings : bool
+            If True, include embedding_of_text column
+        """
 
         # Columns in the SQL table (order matters)
         columns = [
@@ -70,8 +89,10 @@ class ResetDatabase(metaclass=Singleton):
             "rulings",
             "related_cards",
             "leadership_skills",
-            "embedding_of_text",
         ]
+
+        if with_embeddings:
+            columns.append("embedding_of_text")
 
         # Map JSON keys → SQL column names when different
         key_map = {
@@ -96,7 +117,7 @@ class ResetDatabase(metaclass=Singleton):
             "foreign_data": "foreignData",
             "related_cards": "relatedCards",
             "leadership_skills": "leadershipSkills",
-            "embedding_of_text": "embedding_of_text",  # same name, just explicit
+            "embedding_of_text": "embedding_of_text",
         }
 
         all_values = []
@@ -104,7 +125,19 @@ class ResetDatabase(metaclass=Singleton):
             values = []
             for col in columns:
                 key = key_map.get(col, col)  # map to JSON key if needed
-                values.append(sql_value_string(card.get(key)))
+
+                # Special handling for embeddings
+                if col == "embedding_of_text" and key in card:
+                    embedding = card[key]
+                    if embedding is not None and isinstance(embedding, list):
+                        # Convert list to pgvector format: [0.1,0.2,0.3]
+                        embedding_str = "[" + ",".join(str(f) for f in embedding) + "]"
+                        values.append(f"'{embedding_str}'::vector")
+                    else:
+                        values.append("NULL")
+                else:
+                    values.append(sql_value_string(card.get(key)))
+
             all_values.append(f"({', '.join(values)})")
 
         sql = (
@@ -116,7 +149,17 @@ class ResetDatabase(metaclass=Singleton):
         )
         return sql
 
-    def launch(self):
+    def launch(self, use_embeddings: bool = True):
+        """
+        Reset database and import cards
+
+        Parameters
+        ----------
+        use_embeddings : bool
+            If True (default), download AtomicCardsWithEmbeddings.json WITH embeddings
+            If False, download AtomicCards.json WITHOUT embeddings
+        """
+
         print("🚀 Resetting database")
 
         # 1. Run initialization SQL script
@@ -125,24 +168,80 @@ class ResetDatabase(metaclass=Singleton):
         self.run_sql_string_sql(init_db_as_string)
         print("✅ Database initialized")
 
-        # 2. Load cards from the JSON URL
-        url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
-        response = requests.get(url)
-        response.raise_for_status()
-        data = response.json()
-        print(f"📦 Found {len(data['data'].keys())} cards")
+        # 2. Download cards from appropriate URL
+        if use_embeddings:
+            # Mode 1: Download WITH embeddings
+            url = (
+                "https://minio.lab.sspcloud.fr/thomasfr/AtomicCardsWithEmbeddings.json"
+            )
+            print(f"📦 Downloading cards from {url} (WITH embeddings ✨)")
+            with_embeddings = True
+        else:
+            # Mode 2: Download WITHOUT embeddings
+            url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
+            print(f"📦 Downloading cards from {url} (WITHOUT embeddings)")
+            with_embeddings = False
 
-        # 3. Build one big INSERT for all cards
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+        except Exception as e:
+            print(f"❌ Error downloading from {url}: {e}")
+            return False
+
+        print(f"📊 Found {len(data['data'].keys())} unique card names")
+
+        # 3. Build one big INSERT for all cards (first version of each card)
         all_cards = [versions[0] for _, versions in data["data"].items()]
-        sql_string = self.generate_insert_sql_many(all_cards)
+
+        print(f"💾 Preparing to insert {len(all_cards)} cards...")
+        sql_string = self.generate_insert_sql_many(
+            all_cards, with_embeddings=with_embeddings
+        )
 
         try:
             self.run_sql_string_sql(sql_string)
-            print("✅ All cards inserted in one big query")
+            embeddings_status = (
+                "WITH embeddings ✨" if with_embeddings else "WITHOUT embeddings"
+            )
+            print(f"✅ All {len(all_cards)} cards inserted {embeddings_status}")
+            return True
         except Exception as e:
             print(f"❌ Could not insert all cards: {e}")
+            return False
 
 
-# Example usage
+def main():
+    """Main function with argument parsing"""
+    parser = argparse.ArgumentParser(
+        description="Reset database and import Magic cards from URL",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python reset_all_the_database.py                  # Default: download with embeddings
+  python reset_all_the_database.py --no-embeddings  # Download without embeddings
+
+URLs used:
+  - With embeddings: https://minio.lab.sspcloud.fr/thomasfr/AtomicCardsWithEmbeddings.json
+  - Without embeddings: https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json
+        """,
+    )
+
+    parser.add_argument(
+        "--no-embeddings",
+        action="store_true",
+        help="Download AtomicCards.json (without embeddings) instead of AtomicCardsWithEmbeddings.json",
+    )
+
+    args = parser.parse_args()
+
+    # Default: download WITH embeddings
+    # With --no-embeddings: download WITHOUT embeddings
+    use_embeddings = not args.no_embeddings
+
+    ResetDatabase().launch(use_embeddings=use_embeddings)
+
+
 if __name__ == "__main__":
-    ResetDatabase().launch()
+    main()
