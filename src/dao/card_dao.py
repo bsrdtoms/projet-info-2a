@@ -125,6 +125,58 @@ class CardDao:
             print(f"Erreur lors de la modification : {e}")
             return False
 
+
+    def get_card_details(self, card_id: int) -> dict:
+        """
+        Get detailed information about a card for description generation
+
+        Parameters
+        ----------
+        card_id : int
+            Card ID
+
+        Returns
+        -------
+        dict
+            Dictionary with card details (name, type, mana_cost, text, colors, power, toughness, etc.)
+        """
+        sql_query = """
+            SELECT 
+                id, name, type, mana_cost, text, 
+                colors, power, toughness, loyalty,
+                types, subtypes, supertypes
+            FROM project.cards
+            WHERE id = %s
+        """
+        
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_query, (card_id,))
+                    row = cursor.fetchone()
+                    
+                    if not row:
+                        return None
+                    
+                    return {
+                        'id': row['id'],
+                        'name': row['name'],
+                        'type': row['type'],
+                        'mana_cost': row['mana_cost'],
+                        'text': row['text'],
+                        'colors': row['colors'],
+                        'power': row['power'],
+                        'toughness': row['toughness'],
+                        'loyalty': row['loyalty'],
+                        'types': row['types'],
+                        'subtypes': row['subtypes'],
+                        'supertypes': row['supertypes']
+                    }
+                    
+        except Exception as e:
+            print(f"Database error: {e}")
+            raise
+
     @log
     def find_by_id(self, id_card):
         """Trouver une carte grace à son id

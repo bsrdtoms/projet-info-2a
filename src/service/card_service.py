@@ -4,6 +4,7 @@ from business_object.card import Card
 import random
 from utils.log_decorator import log
 
+
 class CardService:
     """Service pour gérer les opérations sur les cartes"""
 
@@ -64,7 +65,7 @@ class CardService:
         else:
             print("Échec de la modification.")
         return success
-    
+
     @log
     def delete_card(self, carte: Card):
         """
@@ -83,6 +84,117 @@ class CardService:
         """
         print(f"Tentative de suppression de la carte : {carte.name} (id={carte.id})")
         return self.dao.delete(carte)
+
+
+    def describe_card(self, card_id: int) -> str:
+        """
+        Generate a natural language description of a card
+
+        Parameters
+        ----------
+        card_id : int
+            ID of the card to describe
+
+        Returns
+        -------
+        str
+            A sentence describing the card
+
+        Example
+        -------
+        >>> service.describe_card(1234)
+        "Lightning Bolt is a red Instant that costs {R}. Lightning Bolt deals 3 damage to any target."
+        """
+        try:
+            # Get card details from DAO
+            details = self.dao.get_card_details(card_id)
+
+            if not details:
+                return f"Card with ID {card_id} not found."
+
+            # Build the description
+            description_parts = []
+
+            # Card name and types
+            name = details['name']
+
+            # Build type with colors if present
+            card_type = details['type'] or "Card"
+
+            # Add color adjective before type if single color
+            if details['colors'] and len(details['colors']) == 1:
+                color = details['colors'][0].lower()
+                # Add color before the main type
+                # Example: "Creature" -> "blue Creature"
+                # But not for "Legendary Creature" -> keep "Legendary blue Creature"
+                type_parts = card_type.split()
+                # Insert color before the main type (Creature, Instant, etc.)
+                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 'Artifact', 'Planeswalker', 'Land']
+                for i, part in enumerate(type_parts):
+                    if any(mt in part for mt in main_types):
+                        type_parts.insert(i, color)
+                        break
+                else:
+                    # If no main type found, just add at the beginning
+                    type_parts.insert(0, color)
+                card_type = ' '.join(type_parts)
+            elif details['colors'] and len(details['colors']) > 1:
+                colors = ', '.join([c.lower() for c in details['colors']])
+                type_parts = card_type.split()
+                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 'Artifact', 'Planeswalker', 'Land']
+                for i, part in enumerate(type_parts):
+                    if any(mt in part for mt in main_types):
+                        type_parts.insert(i, f"multicolor ({colors})")
+                        break
+                else:
+                    type_parts.insert(0, f"multicolor ({colors})")
+                card_type = ' '.join(type_parts)
+
+            description_parts.append(f"{name} is a {card_type}")
+
+            # Add mana cost if present
+            if details['mana_cost']:
+                description_parts.append(f"that costs {details['mana_cost']}")
+
+            # Join first part
+            first_sentence = ' '.join(description_parts) + '.'
+
+            # Add power/toughness for creatures
+            if details['power'] and details['toughness']:
+                first_sentence += f" It is a {details['power']}/{details['toughness']} creature."
+
+            # Add loyalty for planeswalkers
+            if details['loyalty']:
+                first_sentence += f" It has {details['loyalty']} loyalty."
+
+            # Add card text if present
+            result = first_sentence
+            if details['text']:
+                text = details['text']
+
+                # Remove reminder text (in parentheses) for cleaner output
+                import re
+                # Remove content in parentheses (reminder text)
+                text_cleaned = re.sub(r'\([^)]*\)', '', text)
+                # Remove extra spaces
+                text_cleaned = ' '.join(text_cleaned.split())
+
+                # Truncate if too long (keep first sentence or 200 chars)
+                if len(text_cleaned) > 200:
+                    # Try to cut at sentence end
+                    sentences = text_cleaned.split('. ')
+                    if sentences[0] and len(sentences[0]) < 200:
+                        text_cleaned = sentences[0] + '.'
+                    else:
+                        text_cleaned = text_cleaned[:200] + "..."
+
+                result += f" {text_cleaned}"
+
+            return result
+
+        except Exception as e:
+            print(f"❌ Error describing card: {e}")
+            return f"Error: Could not describe card {card_id}"
 
     @log
     def search_by_name(self, name):
@@ -115,7 +227,7 @@ class CardService:
     @log
     def find_by_id(self, id):
         """
-        
+
 
         Parameters
         ----------------

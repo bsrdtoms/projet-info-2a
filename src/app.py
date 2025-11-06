@@ -45,6 +45,18 @@ async def search_by_name(name: str):
     return result
 
 
+@app.get("/card/describe/{id}", tags=["Cards"])
+async def describe_by_id(id: int):
+    """Rechercher une carte par son id"""
+    logging.info(f"Recherche d'une carte par nom : {id}")
+    result = card_service.describe_card(id)
+    if not result:
+        raise HTTPException(
+            status_code=404, detail=f"Aucune carte trouvée pour l'id' : {id}"
+        )
+    return result
+
+
 @app.post("/card/semantic_search/", tags=["Cards"])
 async def semantic_search(query: str):
     """Recherche sémantique de carte (par description)"""
