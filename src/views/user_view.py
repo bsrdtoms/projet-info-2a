@@ -1,5 +1,7 @@
 from views.abstract_view import AbstractView
 from views.search_view import SearchView
+from views.favorite_view import FavoriteView
+
 
 
 class UserView(AbstractView):
@@ -27,7 +29,7 @@ class UserView(AbstractView):
             choice = self.get_input()
 
             if choice == "1":
-                pass
+                FavoriteView(self.user).menu_choice()
             elif choice == "2":
                 pass
             elif choice == "3":

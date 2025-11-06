@@ -32,8 +32,16 @@ async def redirect_to_docs():
 
 card_service = CardService()
 
+# ---------- MODELE Pydantic ----------
+class CardModel(BaseModel):
+    """Modèle Pydantic pour les cartes Magic"""
+
+    id: int | None = None
+    name: str
+    text: str | None = None
+
 # ---------- ROUTES PRINCIPALES ----------
-@app.get("/card/random", tags=["Cards"])
+@app.get("/card/random", response_model=CardModel, tags=["Cards"])
 async def random_card():
     """Récupérer une carte aléatoire"""
     logging.info("Recherche d'une carte aléatoire")
@@ -63,14 +71,6 @@ async def semantic_search(query: str):
             status_code=404, detail="Aucune carte correspondante trouvée"
         )
     return result
-
-# ---------- MODELE Pydantic ----------
-class CardModel(BaseModel):
-    """Modèle Pydantic pour les cartes Magic"""
-
-    id: int | None = None
-    name: str
-    text: str | None = None
 
 # ---------- CRUD ----------
 @app.post("/card/", tags=["Cards"])
