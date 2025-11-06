@@ -4,11 +4,13 @@ from dao.db_connection import DBConnection
 from business_object.session import Session
 from typing import Optional, List
 from datetime import datetime
+from utils.log_decorator import log
 
 
 class SessionDao:
     """Classe pour gérer les sessions en base de données"""
 
+    @log
     def create(self, session: Session) -> bool:
         """
         Crée une nouvelle session
@@ -46,6 +48,7 @@ class SessionDao:
             print(f"❌ Erreur création session: {e}")
             return False
 
+    @log
     def find_by_id(self, session_id: str) -> Optional[Session]:
         """
         Trouve une session par son ID
@@ -85,6 +88,7 @@ class SessionDao:
             print(f"❌ Erreur recherche session: {e}")
             return None
 
+    @log
     def find_active_by_user_id(self, user_id: int) -> Optional[Session]:
         """
         Trouve la session active d'un utilisateur
@@ -126,6 +130,7 @@ class SessionDao:
             print(f"❌ Erreur recherche session active: {e}")
             return None
 
+    @log
     def update_activity(self, session_id: str) -> bool:
         """
         Met à jour la dernière activité d'une session
@@ -157,6 +162,7 @@ class SessionDao:
             print(f"❌ Erreur mise à jour session: {e}")
             return False
 
+    @log
     def deactivate(self, session_id: str) -> bool:
         """
         Désactive une session (logout)
@@ -188,6 +194,7 @@ class SessionDao:
             print(f"❌ Erreur désactivation session: {e}")
             return False
 
+    @log
     def deactivate_all_user_sessions(self, user_id: int) -> bool:
         """
         Désactive toutes les sessions d'un utilisateur

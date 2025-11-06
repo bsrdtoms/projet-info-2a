@@ -4,6 +4,7 @@ from dao.session_dao import SessionDao
 from business_object.user import User, Client, create_user_from_type
 from business_object.session import Session
 from typing import Optional, Tuple
+from utils.log_decorator import log
 
 
 class UserService:
@@ -14,6 +15,7 @@ class UserService:
         self.session_dao = SessionDao()
         self.current_session: Optional[Session] = None
 
+    @log
     def hash_password(self, password: str) -> str:
         """
         Hash un mot de passe avec bcrypt
@@ -31,6 +33,7 @@ class UserService:
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
+    @log
     def verify_password(self, password: str, password_hash: str) -> bool:
         """
         Vérifie qu'un mot de passe correspond au hash
@@ -49,14 +52,14 @@ class UserService:
         """
         return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
 
+    @log
     def create_account(
         self,
         email: str,
         password: str,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
-        user_type: str = "client"
-    ) -> Tuple[bool, str, Optional[User]]:
+        user_type: str = "client") -> Tuple[bool, str, Optional[User]]:
         """
         Crée un nouveau compte utilisateur
 
@@ -107,6 +110,7 @@ class UserService:
         else:
             return False, "Erreur lors de la création du compte", None
 
+    @log
     def login(self, email: str, password: str) -> Tuple[bool, str, Optional[Session]]:
         """
         Connecte un utilisateur
@@ -144,6 +148,7 @@ class UserService:
         else:
             return False, "Erreur lors de la connexion", None
 
+    @log
     def logout(self) -> Tuple[bool, str]:
         """
         Déconnecte l'utilisateur courant
@@ -162,6 +167,7 @@ class UserService:
         else:
             return False, "Erreur lors de la déconnexion"
 
+    @log
     def get_current_user(self) -> Optional[User]:
         """
         Récupère l'utilisateur actuellement connecté
@@ -175,10 +181,12 @@ class UserService:
             return None
         return self.user_dao.find_by_id(self.current_session.user_id)
 
+    @log
     def is_logged_in(self) -> bool:
         """Vérifie si un utilisateur est connecté"""
         return self.current_session is not None and self.current_session.is_active
 
+    @log
     def delete_account(self, user_id: int) -> Tuple[bool, str]:
         """
         Supprime un compte utilisateur (admin uniquement)
@@ -206,10 +214,12 @@ class UserService:
         else:
             return False, "Erreur lors de la suppression"
 
+    @log
     def list_all_users(self):
         """Liste tous les utilisateurs (admin uniquement)"""
         return self.user_dao.list_all()
 
+    @log
     def find_by_id(self, user_id: int) -> Optional[User]:
         """Trouve un utilisateur par ID"""
         return self.user_dao.find_by_id(user_id)

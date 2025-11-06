@@ -1,11 +1,13 @@
 from dao.db_connection import DBConnection
 from business_object.user import User, create_user_from_type
 from typing import Optional, List
+from utils.log_decorator import log
 
 
 class UserDao:
     """Classe pour accéder aux utilisateurs dans la base de données"""
 
+    @log
     def create(self, user: User) -> bool:
         """
         Crée un nouvel utilisateur dans la base
@@ -46,6 +48,7 @@ class UserDao:
             print(f"❌ Erreur création utilisateur: {e}")
             return False
 
+    @log
     def find_by_id(self, user_id: int) -> Optional[User]:
         """
         Trouve un utilisateur par son ID
@@ -90,6 +93,7 @@ class UserDao:
             print(f"❌ Erreur recherche utilisateur: {e}")
             return None
 
+    @log
     def find_by_email(self, email: str) -> Optional[User]:
         """
         Trouve un utilisateur par son email
@@ -134,6 +138,7 @@ class UserDao:
             print(f"❌ Erreur recherche utilisateur par email: {e}")
             return None
 
+    @log
     def list_all(self) -> List[User]:
         """
         Liste tous les utilisateurs
@@ -172,6 +177,7 @@ class UserDao:
             print(f"❌ Erreur liste utilisateurs: {e}")
         return users
 
+    @log
     def delete(self, user: User) -> bool:
         """
         Supprime un utilisateur
@@ -200,6 +206,7 @@ class UserDao:
             print(f"❌ Erreur suppression utilisateur: {e}")
             return False
 
+    @log
     def update(self, user: User) -> bool:
         """
         Met à jour un utilisateur

@@ -1,1 +1,71 @@
 06/11/2025 09:45:01 - INFO     - Arret de MagicSearch API
+06/11/2025 10:17:02 - INFO     - --------------------------------------------------
+06/11/2025 10:17:02 - INFO     - Lancement MagicSearch Application                           
+06/11/2025 10:17:02 - INFO     - --------------------------------------------------
+06/11/2025 10:17:02 - INFO     - Vue créée : WelcomeView
+06/11/2025 10:17:38 - INFO     - Fin de l'application
+06/11/2025 10:19:40 - INFO     - --------------------------------------------------
+06/11/2025 10:19:40 - INFO     - Lancement MagicSearch Application                           
+06/11/2025 10:19:40 - INFO     - --------------------------------------------------
+06/11/2025 10:20:49 - INFO     - Fin de l'application
+06/11/2025 10:21:02 - INFO     - --------------------------------------------------
+06/11/2025 10:21:02 - INFO     - Lancement MagicSearch Application                           
+06/11/2025 10:21:02 - INFO     - --------------------------------------------------
+06/11/2025 10:21:45 - ERROR    - TypeError : UserView.__init__() got an unexpected keyword argument 'user_service'
+Traceback (most recent call last):
+  File "/home/onyxia/work/projet-info-2a/src/main.py", line 24, in <module>
+    vue_courante = vue_courante.menu_choice()
+  File "/home/onyxia/work/projet-info-2a/src/views/welcome_view.py", line 81, in menu_choice
+    self.login_flow()
+    ~~~~~~~~~~~~~~~^^
+  File "/home/onyxia/work/projet-info-2a/src/views/welcome_view.py", line 64, in login_flow
+    UserView(user_service=self.user_service, user=user).menu_choice()
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: UserView.__init__() got an unexpected keyword argument 'user_service'
+06/11/2025 10:21:48 - INFO     - Fin de l'application
+06/11/2025 10:51:42 - INFO     - --------------------------------------------------
+06/11/2025 10:51:42 - INFO     - Lancement MagicSearch API                           
+06/11/2025 10:51:42 - INFO     - --------------------------------------------------
+06/11/2025 10:53:14 - INFO     - Tentative de création du compte test@example.com
+06/11/2025 10:56:05 - INFO     - Tentative de connexion pour test@example.com
+06/11/2025 11:04:26 - INFO     - Récupération de la liste des utilisateurs
+06/11/2025 11:06:11 - INFO     - Récupération de la liste des utilisateurs
+06/11/2025 11:06:22 - INFO     - Récupération de la liste des utilisateurs
+06/11/2025 11:08:01 - INFO     - Suppression de l'utilisateur 3
+06/11/2025 11:08:12 - INFO     - Récupération de la liste des utilisateurs
+06/11/2025 11:10:14 - INFO     - Récupération de la liste des utilisateurs
+06/11/2025 11:35:20 - INFO     - Arret de MagicSearch API
+06/11/2025 11:38:52 - INFO     - --------------------------------------------------
+06/11/2025 11:38:52 - INFO     - Lancement MagicSearch API                           
+06/11/2025 11:38:52 - INFO     - --------------------------------------------------
+06/11/2025 11:39:18 - INFO     - Récupération de la liste des utilisateurs
+06/11/2025 11:39:18 - INFO     -     UserService.list_all_users() - DEBUT
+06/11/2025 11:39:18 - INFO     -         UserDao.list_all() - DEBUT
+06/11/2025 11:39:18 - INFO     -         UserDao.list_all() - FIN
+06/11/2025 11:39:18 - INFO     -            └─> Sortie : ['Client - lau ltp (lau.ltp@gmail.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (2 elements)
+06/11/2025 11:39:18 - INFO     -     UserService.list_all_users() - FIN
+06/11/2025 11:39:18 - INFO     -        └─> Sortie : ['Client - lau ltp (lau.ltp@gmail.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (2 elements)
+06/11/2025 11:39:49 - INFO     - Tentative de connexion pour lau.ltp@gmail.com
+06/11/2025 11:39:49 - INFO     -     UserService.login('lau.ltp@gmail.com', '*****') - DEBUT
+06/11/2025 11:39:49 - INFO     -         UserDao.find_by_email('lau.ltp@gmail.com',) - DEBUT
+06/11/2025 11:39:49 - INFO     -         UserDao.find_by_email('lau.ltp@gmail.com',) - FIN
+06/11/2025 11:39:49 - INFO     -            └─> Sortie : Client - lau ltp (lau.ltp@gmail.com)
+06/11/2025 11:39:49 - INFO     -         UserService.verify_password('*****', '$2b$12$wiuSb2UOc0hLtPJx/jMkO.8DaYNtYC/H4FqAibcVEiwvl3qx6ZsQa') - DEBUT
+06/11/2025 11:39:49 - INFO     -         UserService.verify_password('*****', '$2b$12$wiuSb2UOc0hLtPJx/jMkO.8DaYNtYC/H4FqAibcVEiwvl3qx6ZsQa') - FIN
+06/11/2025 11:39:49 - INFO     -            └─> Sortie : True
+06/11/2025 11:39:49 - INFO     -         SessionDao.create('Session aed9f975... (user_id=2)',) - DEBUT
+06/11/2025 11:39:49 - INFO     -         SessionDao.create('Session aed9f975... (user_id=2)',) - FIN
+06/11/2025 11:39:49 - INFO     -            └─> Sortie : True
+06/11/2025 11:39:49 - INFO     -     UserService.login('lau.ltp@gmail.com', '*****') - FIN
+06/11/2025 11:39:49 - INFO     -        └─> Sortie : (True, 'Bienvenue lau ltp!', Session(id='aed9f975...', user_id=2, active=True))
+06/11/2025 11:40:25 - INFO     -     UserService.logout() - DEBUT
+06/11/2025 11:40:25 - INFO     -         SessionDao.deactivate('aed9f975-862d-472d-98af-3e47170b4c50',) - DEBUT
+06/11/2025 11:40:25 - INFO     -         SessionDao.deactivate('aed9f975-862d-472d-98af-3e47170b4c50',) - FIN
+06/11/2025 11:40:25 - INFO     -            └─> Sortie : True
+06/11/2025 11:40:25 - INFO     -     UserService.logout() - FIN
+06/11/2025 11:40:25 - INFO     -        └─> Sortie : (True, 'Déconnexion réussie')
+06/11/2025 11:41:00 - INFO     - Arret de MagicSearch API
+06/11/2025 13:06:23 - INFO     - --------------------------------------------------
+06/11/2025 13:06:23 - INFO     - Lancement MagicSearch API                           
+06/11/2025 13:06:23 - INFO     - --------------------------------------------------
+06/11/2025 13:13:57 - INFO     - Arret de MagicSearch API

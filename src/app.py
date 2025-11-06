@@ -127,7 +127,6 @@ async def create_user(user: UserModel):
         password=user.password,
         first_name=user.first_name,
         last_name=user.last_name,
-        user_type=user.user_type
     )
     if not success:
         raise HTTPException(status_code=400, detail=message)
