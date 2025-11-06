@@ -2,17 +2,19 @@ import logging
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 from service.card_service import CardService
-from business_object.card import Card
+from business_object.card import Card # attention, l'API doit communiquer avec le service uniquement
+
+from service.user_service import UserService
+
 from utils.log_init import initialiser_logs
 
 app = FastAPI(title="Magic Cards API")
 
 initialiser_logs("MagicSearch API")
-
-card_service = CardService()
 
 
 # ---------- REDIRECTION ----------
@@ -21,6 +23,9 @@ async def redirect_to_docs():
     """Redirect to the API documentation"""
     return RedirectResponse(url="/docs")
 
+# 1. ---------- CARTES ----------
+
+card_service = CardService()
 
 # ---------- ROUTES PRINCIPALES ----------
 @app.get("/card/random", tags=["Cards"])
@@ -31,7 +36,6 @@ async def random_card():
     if not result:
         raise HTTPException(status_code=404, detail="Aucune carte trouvée")
     return result
-
 
 @app.get("/card/name/{name}", tags=["Cards"])
 async def search_by_name(name: str):
@@ -44,7 +48,6 @@ async def search_by_name(name: str):
         )
     return result
 
-
 @app.post("/card/semantic_search/", tags=["Cards"])
 async def semantic_search(query: str):
     """Recherche sémantique de carte (par description)"""
@@ -56,7 +59,6 @@ async def semantic_search(query: str):
         )
     return result
 
-
 # ---------- MODELE Pydantic ----------
 class CardModel(BaseModel):
     """Modèle Pydantic pour les cartes Magic"""
@@ -64,7 +66,6 @@ class CardModel(BaseModel):
     id: int | None = None
     name: str
     text: str | None = None
-
 
 # ---------- CRUD ----------
 @app.post("/card/", tags=["Cards"])
@@ -81,7 +82,6 @@ async def create_card(card: CardModel):
 
     return {"message": f"Carte '{card.name}' créée avec succès"}
 
-
 @app.put("/card/{card_id}", tags=["Cards"])
 async def update_card(card_id: int, name: str, updates: dict):
     """Modifier un ou plusieurs champs d'une carte"""
@@ -94,7 +94,6 @@ async def update_card(card_id: int, name: str, updates: dict):
         )
     return {"message": f"Carte {name} (id={card_id}) mise à jour", "updates": updates}
 
-
 @app.delete("/card/{card_id}", tags=["Cards"])
 async def delete_card(card_id: int, name: str):
     """Supprimer une carte"""
@@ -105,13 +104,86 @@ async def delete_card(card_id: int, name: str):
         raise HTTPException(status_code=404, detail="Carte non trouvée")
     return {"message": f"Carte {name} (id={card_id}) supprimée avec succès"}
 
+# 1. ---------- USER ----------
+user_service = UserService()
 
-# ---------- HELLO ----------
-@app.get("/hello/{name}", tags=["Test"])
-async def hello_name(name: str):
-    """Test de l'API"""
-    logging.info(f"Hello demandé pour {name}")
-    return {"message": f"Hello {name}"}
+# ---------- MODELE Pydantic ----------
+class UserModel(BaseModel):
+    id: Optional[int] = None
+    email: EmailStr
+    password: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    user_type: str = "client"
+    is_active: bool = True
+
+# ---------- ROUTES PRINCIPALES ----------
+@app.post("/user/", tags=["Users"])
+async def create_user(user: UserModel):
+    """Créer un nouveau compte utilisateur"""
+    logging.info(f"Tentative de création du compte {user.email}")
+    success, message, created_user = user_service.create_account(
+        email=user.email,
+        password=user.password,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        user_type=user.user_type
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message, "user": created_user.email}
+
+@app.post("/user/login", tags=["Users"])
+async def login(email: str, password: str):
+    """Connecter un utilisateur"""
+    logging.info(f"Tentative de connexion pour {email}")
+    success, message, session = user_service.login(email, password)
+    if not success:
+        raise HTTPException(status_code=401, detail=message)
+    return {"message": message, "session_id": session.session_id}
+
+@app.post("/user/logout", tags=["Users"])
+async def logout():
+    """Déconnecter l’utilisateur courant"""
+    success, message = user_service.logout()
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+@app.get("/user/", tags=["Users"])
+async def list_all_users():
+    """Lister tous les utilisateurs (admin uniquement)"""
+    logging.info("Récupération de la liste des utilisateurs")
+    return user_service.list_all_users()
+
+@app.get("/user/{user_id}", tags=["Users"])
+async def find_user(user_id: int):
+    """Trouver un utilisateur par ID"""
+    user = user_service.find_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "user_type": user.user_type,
+        "is_active": user.is_active
+    }
+
+@app.delete("/user/{user_id}", tags=["Users"])
+async def delete_user(user_id: int):
+    """Supprimer un utilisateur"""
+    logging.info(f"Suppression de l'utilisateur {user_id}")
+    success, message = user_service.delete_account(user_id)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+
+# ---------- CRUD ----------
+
+
 
 
 # ---------- RUN THE FASTAPI APPLICATION ----------
