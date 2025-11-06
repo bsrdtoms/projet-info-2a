@@ -10,6 +10,8 @@ from business_object.card import Card # attention, l'API doit communiquer avec l
 
 from service.user_service import UserService
 
+from service.favorite_service import FavoriteService
+
 from utils.log_init import initialiser_logs
 
 app = FastAPI(title="Magic Cards API")
@@ -22,6 +24,9 @@ initialiser_logs("MagicSearch API")
 async def redirect_to_docs():
     """Redirect to the API documentation"""
     return RedirectResponse(url="/docs")
+
+
+
 
 # 1. ---------- CARTES ----------
 
@@ -104,7 +109,10 @@ async def delete_card(card_id: int, name: str):
         raise HTTPException(status_code=404, detail="Carte non trouvée")
     return {"message": f"Carte {name} (id={card_id}) supprimée avec succès"}
 
-# 1. ---------- USER ----------
+
+
+
+# 2. ---------- USER ----------
 user_service = UserService()
 
 # ---------- MODELE Pydantic ----------
@@ -180,8 +188,41 @@ async def delete_user(user_id: int):
     return {"message": message}
 
 
-# ---------- CRUD ----------
 
+
+# 3. ---------- FAVORIS ----------
+favorite_service = FavoriteService()
+
+@app.post("/favorites/{card_id}", tags=["Favorites"])
+async def add_favorite(card_id: int, user_id: int):
+    """Ajouter une carte aux favoris"""
+    logging.info(f"Ajout d’un favori : user={user_id}, card={card_id}")
+    success, message = favorite_service.add_favorite(user_id, card_id)
+    if not success and "Erreur interne" in message:
+        raise HTTPException(status_code=500, detail=message)
+    elif not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+@app.delete("/favorites/{card_id}", tags=["Favorites"])
+async def remove_favorite(card_id: int, user_id: int):
+    """Supprimer une carte des favoris"""
+    logging.info(f"Suppression d’un favori : user={user_id}, card={card_id}")
+    success, message = favorite_service.remove_favorite(user_id, card_id)
+    if not success and "Erreur interne" in message:
+        raise HTTPException(status_code=500, detail=message)
+    elif not success:
+        raise HTTPException(status_code=404, detail=message)
+    return {"message": message}
+
+@app.get("/favorites/{user_id}", tags=["Favorites"])
+async def list_favorites(user_id: int):
+    """Lister les cartes favorites d’un utilisateur"""
+    logging.info(f"Liste des favoris pour user={user_id}")
+    favorites = favorite_service.list_favorites(user_id)
+    if not favorites:
+        return {"message": "Aucune carte en favori"}
+    return favorites
 
 
 

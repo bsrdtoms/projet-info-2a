@@ -13,9 +13,9 @@ class WelcomeView(AbstractView):
     def display(self):
         self.show_title("MAGICSEARCH")
         print("1. Search for a card (guest)")
-        print("3. Create an account")
-        print("4. Log in")
-        print("5. Leave the application")
+        print("2. Create an account")
+        print("3. Log in")
+        print("4. Leave the application")
 
     def create_account_flow(self):
         """Flux de création de compte"""
