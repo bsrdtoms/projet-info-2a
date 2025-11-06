@@ -57,11 +57,23 @@ async def describe_by_id(id: int):
     return result
 
 
-@app.post("/card/semantic_search/", tags=["Cards"])
+@app.post("/card/semantic_search_with_L2_distance/", tags=["Cards"])
 async def semantic_search(query: str):
     """Recherche sémantique de carte (par description)"""
     logging.info(f"Recherche sémantique avec : {query}")
     result = card_service.semantic_search(query, 1)
+    if not result:
+        raise HTTPException(
+            status_code=404, detail="Aucune carte correspondante trouvée"
+        )
+    return result
+
+
+@app.post("/card/semantic_search_with_cosine_distance/", tags=["Cards"])
+async def semantic_search_cos(query: str):
+    """Recherche sémantique de carte (par description)"""
+    logging.info(f"Recherche sémantique avec : {query}")
+    result = card_service.semantic_search(query, 1, "cosine")
     if not result:
         raise HTTPException(
             status_code=404, detail="Aucune carte correspondante trouvée"
@@ -129,6 +141,27 @@ async def hello_name(name: str):
 # ---------- RUN THE FASTAPI APPLICATION ----------
 if __name__ == "__main__":
     import uvicorn
+    import os
+    from technical_components.embedding.ollama_embedding import get_embedding
+
+    # A few tests to verify that the user set up well it's environement variable
+    required_vars = ['API_TOKEN', 'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DATABASE',
+                     'POSTGRES_USER', 'POSTGRES_PASSWORD', 'POSTGRES_SCHEMA']
+    missing = [var for var in required_vars if not os.getenv(var)]
+    if missing:
+        print(f"❌ Missing: {', '.join(missing)}")
+        exit(1)
+
+    try:
+        response = get_embedding("test")
+
+        if "embeddings" not in response:
+            print("❌ Invalid API_TOKEN")
+            exit(1)
+
+    except Exception as e:
+        print(f"❌ API Error: {e}")
+        exit(1)
 
     uvicorn.run(app, host="0.0.0.0", port=9876)
 

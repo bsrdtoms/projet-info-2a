@@ -253,7 +253,7 @@ class CardService:
         return carte_trouvee
 
     @log
-    def semantic_search(self, text: str, top_k: int = 5):
+    def semantic_search(self, text: str, top_k: int = 5, distance: str = "L2"):
         """
         Recherche sémantique OPTIMISÉE avec pgvector
 
@@ -279,7 +279,7 @@ class CardService:
 
             # 2. Recherche directe en SQL via pgvector (RAPIDE!)
             # Plus besoin de boucle Python ni de pandas!
-            results = self.dao.semantic_search(query_embedding, top_k)
+            results = self.dao.semantic_search(query_embedding, top_k, distance)
 
             return results
 
