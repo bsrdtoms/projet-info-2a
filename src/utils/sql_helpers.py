@@ -1,5 +1,6 @@
 import json
 
+
 def sql_value_string(value):
     """Convert a Python value to a SQL literal string"""
     if value is None:

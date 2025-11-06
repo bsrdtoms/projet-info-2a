@@ -1,6 +1,6 @@
 from views.abstract_view import AbstractView
 from views.search_view import SearchView
-                
+
 
 class WelcomeView(AbstractView):
     def display(self):

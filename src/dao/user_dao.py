@@ -2,7 +2,7 @@ from dao.db_connection import DBConnection
 from business_object.user import User
 
 
-class UserDao():
+class UserDao:
     """Classe contenant les méthodes pour accéder aux utilisateurs de la base de données"""
 
     def create(self) -> bool:
@@ -38,7 +38,7 @@ class UserDao():
         """
 
     def add_favorite(self):
-        """ 
+        """
 
         Parameters
         ----------------
@@ -50,26 +50,26 @@ class UserDao():
         pass
 
     def delete_favorite(self):
-        """ 
+        """
 
         Parameters
         ----------------
 
         Returns
         ----------------
-        
+
         """
         pass
 
     def historical(self):
-        """ 
+        """
 
         Parameters
         ----------------
 
         Returns
         ----------------
-        
+
         """
         pass
 

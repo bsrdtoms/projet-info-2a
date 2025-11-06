@@ -5,8 +5,8 @@ service = CardService()
 
 nouvelle_carte = Card(
     id=None,
-    name="Lightning Bolt",
-    text="Lightning Bolt deals 3 damage to any target.",
+    name="Lena",
+    text="student data science",
     embedding_of_text=None
 )
 
@@ -17,7 +17,7 @@ else:
     print("❌ Échec de l'ajout.")
 """
 
-"""
+
 if service.delete_card(nouvelle_carte):
     print("✅ Carte supprimée avec succès !")
 else:
@@ -26,8 +26,8 @@ else:
 """
 
 carte = Card(
-    id=32553,
-    name="Laurine",
+    id=32555,
+    name="Laulau",
     text="student data science",
     embedding_of_text=None
 )
