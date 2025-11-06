@@ -1,11 +1,9 @@
-#import bcrypt
+import bcrypt
 from dao.user_dao import UserDao
 from dao.session_dao import SessionDao
 from business_object.user import User, Client, create_user_from_type
 from business_object.session import Session
 from typing import Optional, Tuple
-
-import hashlib
 
 
 class UserService:
@@ -16,14 +14,8 @@ class UserService:
         self.session_dao = SessionDao()
         self.current_session: Optional[Session] = None
 
-    def hash_password(password, sel=""):
-        """Hachage du mot de passe"""
-        password_bytes = password.encode("utf-8") + sel.encode("utf-8")
-        hash_object = hashlib.sha256(password_bytes)
-        return hash_object.hexdigest()
-    """
     def hash_password(self, password: str) -> str:
-        #doc
+        """
         Hash un mot de passe avec bcrypt
 
         Parameters
@@ -35,10 +27,9 @@ class UserService:
         -------
         str
             Hash du mot de passe
-        #findoc
+        """
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
-    """
 
     def verify_password(self, password: str, password_hash: str) -> bool:
         """
