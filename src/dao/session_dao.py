@@ -1,5 +1,3 @@
-# Fichier : src/dao/session_dao.py
-
 from dao.db_connection import DBConnection
 from business_object.session import Session
 from typing import Optional, List
