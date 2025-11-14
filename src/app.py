@@ -50,7 +50,7 @@ async def random_card():
         raise HTTPException(status_code=404, detail="Aucune carte trouvée")
     return result
 
-@app.get("/card/name/{name}", tags=["Cards"])
+@app.get("/card/name/{name}", response_model=list[CardModel], tags=["Cards"])
 async def search_by_name(name: str):
     """Rechercher une carte par son nom"""
     logging.info(f"Recherche d'une carte par nom : {name}")
@@ -73,22 +73,21 @@ async def semantic_search(query: str):
     return result
 
 # ---------- CRUD ----------
-@app.post("/card/", tags=["Cards"])
-async def create_card(card: CardModel):
+@app.post("/card/{name}/{text}", tags=["Cards"])
+async def create_card(name: str, text: str):
     """Créer une nouvelle carte"""
     logging.info("Création d'une carte")
-    carte_objet = Card(None, card.name, card.text)
-
+    carte_objet = Card(None, name, text)
     success = card_service.add_card(carte_objet)
     if not success:
         raise HTTPException(
             status_code=500, detail="Erreur lors de la création de la carte"
         )
 
-    return {"message": f"Carte '{card.name}' créée avec succès"}
+    return {"message": f"Carte '{carte_objet.name}' créée avec succès"}
 
 @app.put("/card/{card_id}", tags=["Cards"])
-async def update_card(card_id: int, name: str, updates: dict):
+async def update_card(card_id: int, updates: dict):
     """Modifier un ou plusieurs champs d'une carte"""
     logging.info(f"Modification de la carte {card_id}")
     carte_objet = card_service.find_by_id(card_id)
@@ -97,13 +96,14 @@ async def update_card(card_id: int, name: str, updates: dict):
         raise HTTPException(
             status_code=400, detail="Une ou plusieurs modifications ont échoué"
         )
-    return {"message": f"Carte {name} (id={card_id}) mise à jour", "updates": updates}
+    return {"message": f"Carte {carte_objet.name} (id={card_id}) mise à jour", "updates": updates}
 
 @app.delete("/card/{card_id}", tags=["Cards"])
-async def delete_card(card_id: int, name: str):
+async def delete_card(card_id: int):
     """Supprimer une carte"""
     logging.info(f"Suppression de la carte {card_id}")
-    carte_objet = Card(card_id, name, None)
+    carte_objet = card_service.find_by_id(card_id)
+    name = carte_objet.name
     success = card_service.delete_card(carte_objet)
     if not success:
         raise HTTPException(status_code=404, detail="Carte non trouvée")
@@ -193,7 +193,7 @@ async def delete_user(user_id: int):
 # 3. ---------- FAVORIS ----------
 favorite_service = FavoriteService()
 
-@app.post("/favorites/{card_id}", tags=["Favorites"])
+@app.post("/favorites/{card_id}/{user_id}", tags=["Favorites"])
 async def add_favorite(card_id: int, user_id: int):
     """Ajouter une carte aux favoris"""
     logging.info(f"Ajout d’un favori : user={user_id}, card={card_id}")
@@ -204,7 +204,7 @@ async def add_favorite(card_id: int, user_id: int):
         raise HTTPException(status_code=400, detail=message)
     return {"message": message}
 
-@app.delete("/favorites/{card_id}", tags=["Favorites"])
+@app.delete("/favorites/{card_id}/{user_id}", tags=["Favorites"])
 async def remove_favorite(card_id: int, user_id: int):
     """Supprimer une carte des favoris"""
     logging.info(f"Suppression d’un favori : user={user_id}, card={card_id}")
