@@ -207,7 +207,7 @@ class CardDao:
         return cards
 
     @log
-    def semantic_search(self, query_embedding: list[float], top_k: int = 5):
+    def semantic_search(self, query_embedding: list[float], top_k: int = 5, distance: str = "L2"):
         """
         Recherche sémantique utilisant pgvector (OPTIMISÉ!)
 
@@ -231,20 +231,39 @@ class CardDao:
                 with connection.cursor() as cursor:
                     # Utilisation de l'opérateur <=> de pgvector
                     # Plus petit = plus similaire (distance cosinus)
-                    cursor.execute(
-                        """
-                        SELECT
-                            id,
-                            name,
-                            text,
-                            1 - (embedding_of_text <-> %s::vector) AS similarity
-                        FROM project.cards
-                        WHERE embedding_of_text IS NOT NULL
-                        ORDER BY embedding_of_text <-> %s::vector ASC
-                        LIMIT %s;
-                        """,
-                        (embedding_str, embedding_str, top_k),
-                    )
+                    if distance == "L2":
+                        cursor.execute(
+                            """
+                            SELECT
+                                id,
+                                name,
+                                text,
+                                1 - (embedding_of_text <-> %s::vector) AS similarity
+                            FROM project.cards
+                            WHERE embedding_of_text IS NOT NULL
+                            ORDER BY embedding_of_text <-> %s::vector ASC
+                            LIMIT %s;
+                            """,
+                            (embedding_str, embedding_str, top_k),
+                        )
+                    elif distance == "cosine":
+                        cursor.execute(
+                            """
+                            SELECT
+                                id,
+                                name,
+                                text,
+                                1 - (embedding_of_text <=> %s::vector) AS similarity
+                            FROM project.cards
+                            WHERE embedding_of_text IS NOT NULL
+                            ORDER BY embedding_of_text <=> %s::vector ASC
+                            LIMIT %s;
+                            """,
+                            (embedding_str, embedding_str, top_k),
+                        )
+                    else:
+                        print("❌ Error distance selected in semantic search does not exist")
+
                     rows = cursor.fetchall()
 
                     return [

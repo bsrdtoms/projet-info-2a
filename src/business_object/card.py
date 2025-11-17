@@ -27,6 +27,7 @@ class Card:
         Représentation lisible (affichée quand on fait print(card)).
         """
         texte = self.text or ""  # si self.text est None, on met une chaîne vide
+        self.is_truncated = len(texte) >= 100
         text_preview = texte if len(texte) < 100 else texte[:100] + "..."
         return (
             f"Carte {self.id if self.id is not None else '(non enregistrée)'}\n"

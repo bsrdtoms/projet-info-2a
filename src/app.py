@@ -61,11 +61,22 @@ async def search_by_name(name: str):
         )
     return result
 
-@app.post("/card/semantic_search/", tags=["Cards"])
+@app.post("/card/semantic_search_with_L2_distance/", tags=["Cards"])
 async def semantic_search(query: str):
     """Recherche sémantique de carte (par description)"""
     logging.info(f"Recherche sémantique avec : {query}")
-    result = card_service.semantic_search(query, 1)
+    result = card_service.semantic_search(query, 3)
+    if not result:
+        raise HTTPException(
+            status_code=404, detail="Aucune carte correspondante trouvée"
+        )
+    return result
+
+@app.post("/card/semantic_search_with_cosine_distance/", tags=["Cards"])
+async def semantic_search_cos(query: str):
+    """Recherche sémantique de carte (par description)"""
+    logging.info(f"Recherche sémantique avec : {query}")
+    result = card_service.semantic_search(query, 3, "cosine")
     if not result:
         raise HTTPException(
             status_code=404, detail="Aucune carte correspondante trouvée"
