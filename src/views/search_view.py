@@ -24,6 +24,11 @@ class SearchView(AbstractView):
             if choice == "1":
                 result = card_service.random()
                 self.show_message(result)
+                if hasattr(result, "is_truncated") and result.is_truncated:
+                    choice = input("\nLe texte a été abrégé. Voir le texte complet ? (o/n) : ")
+                    if choice.lower() == "o":
+                        print("\n=== Texte complet ===")
+                        print(result.text)
                 self.pause()
 
             elif choice == "2":

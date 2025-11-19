@@ -287,6 +287,7 @@ class CardService:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
 
+
     @log
     def random(self):
         """

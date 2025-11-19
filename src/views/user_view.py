@@ -1,11 +1,15 @@
 from views.abstract_view import AbstractView
 from views.search_view import SearchView
+from views.favorite_view import FavoriteView
+
 
 
 class UserView(AbstractView):
     """Vue principale pour un utilisateur connecté (client, admin ou game designer)."""
 
-    def __init__(self, role="user"):
+    def __init__(self, user, user_service, role="user"):
+        self.user = user
+        self.user_service = user_service
         self.role = role
 
     def display(self):
@@ -13,14 +17,13 @@ class UserView(AbstractView):
         print("1. Access favorites")
         print("2. Access history")
         print("3. Search a card")
-        print("4. Explore clusters")
-        print("5. Manage your account")
-        print("6. Logout")
+        print("4. Manage your account")
+        print("5. Logout")
 
         if self.role == "admin":
-            print("7. Account management")
+            print("6. Account management")
         elif self.role == "gamedesigner":
-            print("7. Card management")
+            print("6. Card management")
 
     def menu_choice(self):
         while True:
@@ -28,7 +31,7 @@ class UserView(AbstractView):
             choice = self.get_input()
 
             if choice == "1":
-                pass
+                FavoriteView(self.user).menu_choice()
             elif choice == "2":
                 pass
             elif choice == "3":
@@ -36,11 +39,9 @@ class UserView(AbstractView):
             elif choice == "4":
                 pass
             elif choice == "5":
-                pass
-            elif choice == "6":
                 self.show_message("You have been logged out.")
                 break
-            elif choice == "7" and self.role in ["admin", "gamedesigner"]:
+            elif choice == "6" and self.role in ["admin", "gamedesigner"]:
                 pass
             else:
                 self.show_message("Invalid choice, please try again.")
