@@ -1,62 +1,62 @@
 """
-DAO pour les cartes Magic avec support pgvector
-Remplace src/dao/card_dao.py
+DAO for Magic cards with pgvector support
 """
 
 from dao.db_connection import DBConnection
 from business_object.card import Card
 from utils.log_decorator import log
 
+
 class CardDao:
-    """Classe contenant les méthodes pour accéder aux Cartes de la base de données"""
+    """Class containing methods to access Cards in the database"""
 
     @log
-    def create(self, carte) -> bool:
-        """Création d'une carte dans la base de données
+    def create(self, card: Card) -> bool:
+        """
+        Create a card in the database
 
         Parameters
-        ----------------
-        carte : Card
-            Objet représentant la carte à insérer
+        ----------
+        card : Card
+            Card object to insert
 
         Returns
-        ----------------
+        -------
         bool
-            True si la création est un succès
-            False sinon
+            True if creation is successful, False otherwise
         """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    # On n'insère pas l'id, car il est souvent AUTO_INCREMENT
-                    # embedding_of_text peut être None
+                    # ID is not inserted as it's usually AUTO_INCREMENT
+                    # embedding_of_text can be None
                     cursor.execute(
                         """
                         INSERT INTO project.cards (name, text, embedding_of_text)
                         VALUES (%s, %s, %s)
                         """,
-                        (carte.name, carte.text, carte.embedding_of_text),
+                        (card.name, card.text, card.embedding_of_text),
                     )
                 connection.commit()
             return True
         except Exception as e:
-            print(f"Erreur lors de l'insertion: {e}")
+            print(f"❌ Error during insertion: {e}")
             return False
 
     @log
-    def delete(self, carte) -> bool:
-        """Supression d'une carte dans la base de données
+    def delete(self, card: Card) -> bool:
+        """
+        Delete a card from the database
 
         Parameters
-        ----------------
-        carte : Card
-            Objet représentant la carte à supprimer
+        ----------
+        card : Card
+            Card object to delete
 
         Returns
-        ----------------
+        -------
         bool
-            True si la suppression est un succès
-            False sinon
+            True if deletion is successful, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -66,37 +66,39 @@ class CardDao:
                         DELETE FROM project.cards
                         WHERE id = %s
                         """,
-                        (carte.id,),
+                        (card.id,),
                     )
-                    # Vérifie qu'une ligne a bien été supprimée
+                    # Check that a row was actually deleted
                     if cursor.rowcount == 0:
-                        print(
-                            f"Aucune carte trouvée avec l'id {carte.id} ({carte.name})"
-                        )
+                        print(f"❌ No card found with id {card.id} ({card.name})")
                         return False
+                connection.commit()
             return True
         except Exception as e:
-            print(f"Erreur lors de la suppression: {e}")
+            print(f"❌ Error during deletion: {e}")
             return False
 
     @log
     def modify_card(self, card: Card, updates: dict) -> bool:
         """
-        Met à jour les colonnes spécifiées d'une carte donnée.
+        Update specified columns of a given card
 
         Parameters
-        ----------------
+        ----------
         card : Card
-            Carte à modifier
+            Card to modify
         updates : dict
-            Dictionnaire {colonne: nouvelle_valeur} des champs à modifier
+            Dictionary {column: new_value} of fields to update
 
         Returns
-        ----------------
+        -------
         bool
-            True si la modification est un succès
-            False sinon
+            True if modification is successful, False otherwise
         """
+        if not updates:
+            print("❌ No updates provided")
+            return False
+
         cols = []
         values = []
         for col, val in updates.items():
@@ -117,15 +119,15 @@ class CardDao:
                 with connection.cursor() as cursor:
                     cursor.execute(query, values)
                     if cursor.rowcount == 0:
-                        print("Aucun enregistrement trouvé avec cet ID.")
+                        print(f"❌ No record found with id {card.id}")
                         return False
-                    return True
-
+                connection.commit()
+            return True
         except Exception as e:
-            print(f"Erreur lors de la modification : {e}")
+            print(f"❌ Error during modification: {e}")
             return False
 
-
+    @log
     def get_card_details(self, card_id: int) -> dict:
         """
         Get detailed information about a card for description generation
@@ -137,8 +139,9 @@ class CardDao:
 
         Returns
         -------
-        dict
-            Dictionary with card details (name, type, mana_cost, text, colors, power, toughness, etc.)
+        dict or None
+            Dictionary with card details (name, type, mana_cost, text, colors, 
+            power, toughness, etc.) or None if card not found
         """
         sql_query = """
             SELECT 
@@ -148,16 +151,17 @@ class CardDao:
             FROM project.cards
             WHERE id = %s
         """
-        
+
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(sql_query, (card_id,))
                     row = cursor.fetchone()
-                    
+
                     if not row:
+                        print(f"❌ No card found with id {card_id}")
                         return None
-                    
+
                     return {
                         'id': row['id'],
                         'name': row['name'],
@@ -172,35 +176,46 @@ class CardDao:
                         'subtypes': row['subtypes'],
                         'supertypes': row['supertypes']
                     }
-                    
+
         except Exception as e:
-            print(f"Database error: {e}")
+            print(f"❌ Database error: {e}")
             raise
 
     @log
-    def find_by_id(self, id_card):
-        """Trouver une carte grace à son id
+    def find_by_id(self, card_id: int) -> Card:
+        """
+        Find a card by its ID
 
         Parameters
         ----------
-        id_carte : int
-            numéro id de la carte que l'on souhaite trouver
+        card_id : int
+            ID of the card to find
 
         Returns
         -------
-        carte : Carte
-            renvoie la carte que l'on cherche par id
+        Card
+            Card object corresponding to the ID
+        
+        Raises
+        ------
+        Exception
+            If database error occurs
         """
         sql_query = """
             SELECT id, name, text, embedding_of_text
             FROM project.cards
             WHERE id = %s
         """
+     
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(sql_query, (id_card,))
+                    cursor.execute(sql_query, (card_id,))
                     row = cursor.fetchone()
+
+                    if not row:
+                        print(f"❌ No card found with id {card_id}")
+                        return None
 
                     card = Card(
                         id=row["id"],
@@ -208,27 +223,31 @@ class CardDao:
                         text=row["text"],
                         embedding_of_text=row["embedding_of_text"],
                     )
+                    return card
 
         except Exception as e:
-            print(f"Database error: {e}")
+            print(f"❌ Database error: {e}")
             raise
 
-        return card
-
     @log
-    def search_by_name(self, name):
+    def search_by_name(self, name: str) -> list[Card]:
         """
-        Recherche les cartes dont le nom contient le texte donné (insensible à la casse).
+        Search for cards whose name contains the given text (case insensitive)
 
         Parameters
-        ----------------
+        ----------
         name : str
-            Le nom (ou une partie du nom) de la carte à rechercher.
+            Name (or partial name) of the card to search for
 
         Returns
-        ----------------
-        cards : list[Card]
-            Liste d'objets Card correspondant aux résultats de la recherche.
+        -------
+        list[Card]
+            List of Card objects matching the search criteria
+        
+        Raises
+        ------
+        Exception
+            If database error occurs
         """
         sql_query = """
             SELECT id, name, text, embedding_of_text
@@ -253,37 +272,50 @@ class CardDao:
                         cards.append(card)
 
         except Exception as e:
-            print(f"Database error: {e}")
+            print(f"❌ Database error: {e}")
             raise
 
         return cards
 
     @log
-    def semantic_search(self, query_embedding: list[float], top_k: int = 5, distance: str = "L2"):
+    def semantic_search(
+        self, 
+        query_embedding: list[float], 
+        top_k: int = 5, 
+        distance: str = "L2"
+    ) -> list[tuple[Card, float]]:
         """
-        Recherche sémantique utilisant pgvector (OPTIMISÉ!)
+        Semantic search using pgvector (optimized)
 
         Parameters
         ----------
         query_embedding : list[float]
-            Embedding du texte de recherche
-        top_k : int
-            Nombre de résultats à retourner
+            Embedding of the search text
+        top_k : int, optional
+            Number of results to return (default: 5)
+        distance : str, optional
+            Distance metric to use: "L2" or "cosine" (default: "L2")
 
         Returns
         -------
-        list[dict]
-            Liste de dictionnaires avec id, name, text, similarity
+        list[tuple[Card, float]]
+            List of tuples (Card, similarity_score)
+        
+        Raises
+        ------
+        Exception
+            If database error occurs or invalid distance metric
         """
-        try:
-            # Convertir l'embedding en format pgvector
-            embedding_str = "[" + ",".join(str(f) for f in query_embedding) + "]"
+        # Convert embedding to pgvector format
+        embedding_str = "[" + ",".join(str(f) for f in query_embedding) + "]"
 
+        try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    # Utilisation de l'opérateur <=> de pgvector
-                    # Plus petit = plus similaire (distance cosinus)
+                    # Use pgvector operators
+                    # Smaller distance = more similar
                     if distance == "L2":
+                        # <-> is L2 distance operator
                         cursor.execute(
                             """
                             SELECT
@@ -299,6 +331,7 @@ class CardDao:
                             (embedding_str, embedding_str, top_k),
                         )
                     elif distance == "cosine":
+                        # <=> is cosine distance operator
                         cursor.execute(
                             """
                             SELECT
@@ -314,7 +347,7 @@ class CardDao:
                             (embedding_str, embedding_str, top_k),
                         )
                     else:
-                        print("❌ Error distance selected in semantic search does not exist")
+                        raise ValueError(f"Invalid distance metric: {distance}. Use 'L2' or 'cosine'")
 
                     rows = cursor.fetchall()
 
@@ -331,18 +364,23 @@ class CardDao:
                     ]
 
         except Exception as e:
-            print(f"❌ Erreur lors de la recherche sémantique: {e}")
+            print(f"❌ Error during semantic search: {e}")
             raise
 
     @log
-    def list_all(self):
+    def list_all(self) -> list[Card]:
         """
-        Récupère toutes les cartes de la table project.cards.
+        Retrieve all cards from the project.cards table
 
         Returns
         -------
         list[Card]
-            Liste d'objets Card avec toutes les cartes de la base de données
+            List of Card objects containing all cards from the database
+        
+        Raises
+        ------
+        Exception
+            If database error occurs
         """
         sql_query = "SELECT id, name, text, embedding_of_text FROM project.cards"
         cards = []
@@ -371,12 +409,17 @@ class CardDao:
     @log
     def get_all_ids(self) -> list[int]:
         """
-        Récupère tous les identifiants de la table project.cards.
+        Retrieve all IDs from the project.cards table
 
         Returns
-        ----------------
-        ids : list[int]
-            renvoie une liste d'entiers avec les identifiants de toutes les cartes de la base de données.
+        -------
+        list[int]
+            List of integers containing the IDs of all cards in the database
+        
+        Raises
+        ------
+        Exception
+            If database error occurs
         """
         sql_query = "SELECT id FROM project.cards"
         ids = []

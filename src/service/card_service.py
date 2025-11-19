@@ -1,91 +1,94 @@
+"""
+Service layer for card operations with embedding support
+"""
+
+import random
+import re
 from technical_components.embedding.ollama_embedding import get_embedding
 from dao.card_dao import CardDao
 from business_object.card import Card
-import random
 from utils.log_decorator import log
 
 
 class CardService:
-    """Service pour gérer les opérations sur les cartes"""
+    """Service to manage card operations"""
 
     def __init__(self):
         self.dao = CardDao()
 
     @log
-    def add_card(self, carte: Card) -> bool:
+    def add_card(self, card: Card) -> bool:
         """
-        Ajoute une carte en générant son embedding avant insertion
+        Add a card by generating its embedding before insertion
 
         Parameters
         ----------
-        carte : Card
-            Carte à ajouter
+        card : Card
+            Card to add
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if successful, False otherwise
         """
         try:
-            # Générer l'embedding si un texte existe
-            if carte.text:
-                embedding_response = get_embedding(carte.text)
-                carte.embedding_of_text = embedding_response["embeddings"][0]
+            # Generate embedding if text exists
+            if card.text:
+                embedding_response = get_embedding(card.text)
+                card.embedding_of_text = embedding_response["embeddings"][0]
 
-            # Persister via DAO
-            print(f"Création de la carte : {carte.name}")
-            return self.dao.create(carte)
+            # Persist via DAO
+            print(f"Creating card: {card.name}")
+            return self.dao.create(card)
 
         except Exception as e:
-            print(f"Impossible d’ajouter la carte: {e}")
+            print(f"❌ Unable to add card: {e}")
             return False
 
     @log
     def modify_card(self, card: Card, updates: dict) -> bool:
         """
-        Modifie les champs spécifiés dans un dictionnaire d'une carte existante.
+        Modify specified fields of an existing card
 
         Parameters
-        ----------------
+        ----------
         card : Card
-            Carte à modifier
+            Card to modify
         updates : dict
-            Dictionnaire {colonne: nouvelle_valeur} à mettre à jour
+            Dictionary {column: new_value} to update
 
         Returns
-        ----------------
+        -------
         bool
-            True si la modification est un succès
-            False sinon
+            True if modification is successful, False otherwise
         """
-        print(f"Tentative de modification de la carte ID {card.id}...")
+        print(f"Attempting to modify card ID {card.id}...")
         success = self.dao.modify_card(card, updates)
         if success:
-            print("Carte modifiée avec succès.")
+            print("✅ Card modified successfully")
         else:
-            print("Échec de la modification.")
+            print("❌ Modification failed")
         return success
 
     @log
-    def delete_card(self, carte: Card):
+    def delete_card(self, card: Card) -> bool:
         """
-        Supprime une carte en base de données
+        Delete a card from the database
 
         Parameters
-        ----------------
-        carte : Card
-            Objet représentant la carte à supprimer
+        ----------
+        card : Card
+            Card object to delete
 
         Returns
-        ----------------
-        deleted : bool
-            True si la suppression a réussi
-            False sinon
+        -------
+        bool
+            True if deletion succeeded, False otherwise
         """
-        print(f"Tentative de suppression de la carte : {carte.name} (id={carte.id})")
-        return self.dao.delete(carte)
+        print(f"Attempting to delete card: {card.name} (id={card.id})")
+        return self.dao.delete(card)
 
-
+    @log
     def describe_card(self, card_id: int) -> str:
         """
         Generate a natural language description of a card
@@ -117,31 +120,33 @@ class CardService:
 
             # Card name and types
             name = details['name']
-
-            # Build type with colors if present
             card_type = details['type'] or "Card"
 
-            # Add color adjective before type if single color
+            # Add color adjective before type if present
             if details['colors'] and len(details['colors']) == 1:
                 color = details['colors'][0].lower()
-                # Add color before the main type
+                # Insert color before the main type
                 # Example: "Creature" -> "blue Creature"
                 # But not for "Legendary Creature" -> keep "Legendary blue Creature"
                 type_parts = card_type.split()
-                # Insert color before the main type (Creature, Instant, etc.)
-                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 'Artifact', 'Planeswalker', 'Land']
+                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 
+                             'Artifact', 'Planeswalker', 'Land']
+                
                 for i, part in enumerate(type_parts):
                     if any(mt in part for mt in main_types):
                         type_parts.insert(i, color)
                         break
                 else:
-                    # If no main type found, just add at the beginning
+                    # If no main type found, add at the beginning
                     type_parts.insert(0, color)
                 card_type = ' '.join(type_parts)
+                
             elif details['colors'] and len(details['colors']) > 1:
                 colors = ', '.join([c.lower() for c in details['colors']])
                 type_parts = card_type.split()
-                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 'Artifact', 'Planeswalker', 'Land']
+                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 
+                             'Artifact', 'Planeswalker', 'Land']
+                
                 for i, part in enumerate(type_parts):
                     if any(mt in part for mt in main_types):
                         type_parts.insert(i, f"multicolor ({colors})")
@@ -173,8 +178,6 @@ class CardService:
                 text = details['text']
 
                 # Remove reminder text (in parentheses) for cleaner output
-                import re
-                # Remove content in parentheses (reminder text)
                 text_cleaned = re.sub(r'\([^)]*\)', '', text)
                 # Remove extra spaces
                 text_cleaned = ' '.join(text_cleaned.split())
@@ -197,108 +200,128 @@ class CardService:
             return f"Error: Could not describe card {card_id}"
 
     @log
-    def search_by_name(self, name):
+    def search_by_name(self, name: str) -> list[Card]:
         """
-        Recherche les cartes dont le nom contient 'name'.
+        Search for cards whose name contains the given text
 
         Parameters
-        ----------------
+        ----------
         name : str
-            Nom (ou partie du nom) de la carte à rechercher.
+            Name (or partial name) of the card to search for
 
         Returns
-        ----------------
-        cards : list[Card]
-            Liste d'objets Card correspondant aux résultats de la recherche.
+        -------
+        list[Card]
+            List of Card objects matching the search criteria
+        
+        Raises
+        ------
+        ValueError
+            If name is not a non-empty string
         """
         if not name or not isinstance(name, str):
-            raise ValueError(
-                "Le nom de la carte doit être une chaîne de caractère non vide."
-            )
+            raise ValueError("Card name must be a non-empty string")
 
-        cartes_trouvees = self.dao.search_by_name(name)
+        cards_found = self.dao.search_by_name(name)
 
-        if not cartes_trouvees:
-            print(f"Aucune carte trouvée pour '{name}'.")
+        if not cards_found:
+            print(f"❌ No cards found for '{name}'")
             return []
 
-        return cartes_trouvees
+        return cards_found
 
     @log
-    def find_by_id(self, id):
+    def find_by_id(self, card_id: int) -> Card:
         """
-
+        Find a card by its ID
 
         Parameters
-        ----------------
-        id : int
-            identifiant de la carte à rechercher.
+        ----------
+        card_id : int
+            ID of the card to search for
 
         Returns
-        ----------------
-        card : Card
-            objet Card correspondant au résultat de la recherche.
+        -------
+        Card or None
+            Card object corresponding to the search result, or None if not found
+        
+        Raises
+        ------
+        ValueError
+            If card_id is not an integer
         """
-        if not id or not isinstance(id, int):
-            raise ValueError(
-                "L'identifiant de la carte doit être un entier."
-            )
+        if not isinstance(card_id, int):
+            raise ValueError("Card ID must be an integer")
 
-        carte_trouvee = self.dao.find_by_id(id)
+        card_found = self.dao.find_by_id(card_id)
 
-        if not carte_trouvee:
-            print(f"Aucune carte trouvée pour l'identifiant '{id}'.")
-            return []
+        if not card_found:
+            print(f"❌ No card found for ID '{card_id}'")
+            return None
 
-        return carte_trouvee
+        return card_found
 
     @log
-    def semantic_search(self, text: str, top_k: int = 5, distance: str = "L2"):
+    def semantic_search(
+        self, 
+        text: str, 
+        top_k: int = 5, 
+        distance: str = "L2"
+    ) -> list[tuple[Card, float]]:
         """
-        Recherche sémantique OPTIMISÉE avec pgvector
+        Optimized semantic search using pgvector
 
-        AVANT: Récupérait toutes les cartes, calculait en Python (lent)
-        APRÈS: Tout le calcul se fait en SQL (rapide)
+        BEFORE: Retrieved all cards, calculated in Python (slow)
+        AFTER: All computation done in SQL (fast)
 
         Parameters
         ----------
         text : str
-            Texte de recherche
-        top_k : int
-            Nombre de résultats à retourner
+            Search text
+        top_k : int, optional
+            Number of results to return (default: 5)
+        distance : str, optional
+            Distance metric: "L2" or "cosine" (default: "L2")
 
         Returns
         -------
-        list[dict]
-            Liste de résultats avec id, name, text, similarity
+        list[tuple[Card, float]]
+            List of tuples (Card, similarity_score)
+        
+        Raises
+        ------
+        Exception
+            If embedding generation or database query fails
         """
         try:
-            # 1. Générer l'embedding du texte de recherche
+            # Generate embedding for search text
             embedding_response = get_embedding(text)
             query_embedding = embedding_response["embeddings"][0]
 
-            # 2. Recherche directe en SQL via pgvector (RAPIDE!)
-            # Plus besoin de boucle Python ni de pandas!
+            # Direct SQL search via pgvector (FAST!)
+            # No Python loop or pandas needed!
             results = self.dao.semantic_search(query_embedding, top_k, distance)
 
             return results
 
         except Exception as e:
-            print(f"❌ Erreur lors de la recherche sémantique: {e}")
+            print(f"❌ Error during semantic search: {e}")
             raise
 
-
     @log
-    def random(self):
+    def random(self) -> Card:
         """
-        Récupérer une carte aléatoire
+        Retrieve a random card from the database
 
         Returns
         -------
-        Card ou None
+        Card or None
+            Random Card object, or None if no cards exist
         """
         ids = self.dao.get_all_ids()
         if not ids:
+            print("❌ No cards found in database")
             return None
+        
         random_id = random.choice(ids)
         return self.dao.find_by_id(random_id)
