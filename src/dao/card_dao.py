@@ -319,14 +319,17 @@ class CardDao:
                     rows = cursor.fetchall()
 
                     return [
-                        {
-                            "id": row["id"],
-                            "name": row["name"],
-                            "text": row["text"],
-                            "similarity": float(row["similarity"]),
-                        }
+                        (
+                            Card(
+                                id=row["id"],
+                                name=row["name"],
+                                text=row["text"],
+                            ),
+                            float(row["similarity"])
+                        )
                         for row in rows
                     ]
+
         except Exception as e:
             print(f"❌ Erreur lors de la recherche sémantique: {e}")
             raise
