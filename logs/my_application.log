@@ -446,3 +446,836 @@ Traceback (most recent call last):
     UserView(user=user, user_service=self.user_service, role=user.user_type).menu_choice()
     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 TypeError: UserView.__init__() got an unexpected keyword argument 'user'
+20/11/2025 15:21:28 - INFO     - --------------------------------------------------
+20/11/2025 15:21:28 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:21:28 - INFO     - --------------------------------------------------
+20/11/2025 15:21:53 - INFO     - --------------------------------------------------
+20/11/2025 15:21:53 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:21:53 - INFO     - --------------------------------------------------
+20/11/2025 15:22:25 - INFO     - Arrêt de MagicSearch API
+20/11/2025 15:22:45 - INFO     - --------------------------------------------------
+20/11/2025 15:22:45 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:22:45 - INFO     - --------------------------------------------------
+20/11/2025 15:23:31 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:23:31 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:23:31 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:23:31 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:23:31 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:23:31 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:23:31 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:23:31 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:31 - INFO     -         SessionDao.create('Session 1a3a5f11... (user_id=1)',) - DEBUT
+20/11/2025 15:23:31 - INFO     -         SessionDao.create('Session 1a3a5f11... (user_id=1)',) - FIN
+20/11/2025 15:23:31 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:31 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:23:31 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='1a3a5f11...', user_id=1, active=True))
+20/11/2025 15:23:31 - INFO     - Tentative de création du compte : test_designer@example.com
+20/11/2025 15:23:31 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer') - DEBUT
+20/11/2025 15:23:31 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:23:31 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:23:31 - INFO     -            └─> Sortie : None
+20/11/2025 15:23:31 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:23:32 - INFO     -            └─> Sortie : $2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4 ... (60 caracteres)
+20/11/2025 15:23:32 - INFO     -         UserDao.create('Client - Test Designer (test_designer@example.com)',) - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserDao.create('Client - Test Designer (test_designer@example.com)',) - FIN
+20/11/2025 15:23:32 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:32 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer') - FIN
+20/11/2025 15:23:32 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour test_designer@example.com', User(id=2, email='test_designer@example.com', type='client'))
+20/11/2025 15:23:32 - INFO     - Tentative de connexion pour : test_designer@example.com
+20/11/2025 15:23:32 - INFO     -     UserService.login('test_designer@example.com', '*****') - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:23:32 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:23:32 - INFO     -         UserService.verify_password('*****', '$2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4K21qbdtKB6') - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserService.verify_password('*****', '$2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4K21qbdtKB6') - FIN
+20/11/2025 15:23:32 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:32 - INFO     -         SessionDao.create('Session 94e03b9c... (user_id=2)',) - DEBUT
+20/11/2025 15:23:32 - INFO     -         SessionDao.create('Session 94e03b9c... (user_id=2)',) - FIN
+20/11/2025 15:23:32 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:32 - INFO     -     UserService.login('test_designer@example.com', '*****') - FIN
+20/11/2025 15:23:32 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Designer!', Session(id='94e03b9c...', user_id=2, active=True))
+20/11/2025 15:23:32 - INFO     - Tentative de création du compte : test_client@example.com
+20/11/2025 15:23:32 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client') - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:23:32 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:23:32 - INFO     -            └─> Sortie : None
+20/11/2025 15:23:32 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:23:33 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : $2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA1 ... (60 caracteres)
+20/11/2025 15:23:33 - INFO     -         UserDao.create('Client - Test Client (test_client@example.com)',) - DEBUT
+20/11/2025 15:23:33 - INFO     -         UserDao.create('Client - Test Client (test_client@example.com)',) - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:33 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client') - FIN
+20/11/2025 15:23:33 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour test_client@example.com', User(id=3, email='test_client@example.com', type='client'))
+20/11/2025 15:23:33 - INFO     - Tentative de connexion pour : test_client@example.com
+20/11/2025 15:23:33 - INFO     -     UserService.login('test_client@example.com', '*****') - DEBUT
+20/11/2025 15:23:33 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:23:33 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:23:33 - INFO     -         UserService.verify_password('*****', '$2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA17CrQjHzbdy') - DEBUT
+20/11/2025 15:23:33 - INFO     -         UserService.verify_password('*****', '$2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA17CrQjHzbdy') - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:33 - INFO     -         SessionDao.create('Session bcedede7... (user_id=3)',) - DEBUT
+20/11/2025 15:23:33 - INFO     -         SessionDao.create('Session bcedede7... (user_id=3)',) - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : True
+20/11/2025 15:23:33 - INFO     -     UserService.login('test_client@example.com', '*****') - FIN
+20/11/2025 15:23:33 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Client!', Session(id='bcedede7...', user_id=3, active=True))
+20/11/2025 15:23:33 - INFO     - Recherche d'une carte aléatoire
+20/11/2025 15:23:33 - INFO     -     CardService.random() - DEBUT
+20/11/2025 15:23:33 - INFO     -         CardDao.get_all_ids() - DEBUT
+20/11/2025 15:23:33 - INFO     -         CardDao.get_all_ids() - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32548 elements)
+20/11/2025 15:23:33 - INFO     -         CardDao.find_by_id(32295,) - DEBUT
+20/11/2025 15:23:33 - INFO     -         CardDao.find_by_id(32295,) - FIN
+20/11/2025 15:23:33 - INFO     -            └─> Sortie : Card 32295
+Name: You Are Already Dead
+Text: Destroy target creature that was dealt damage this turn.
+Draw a card.
+20/11/2025 15:23:33 - INFO     -     CardService.random() - FIN
+20/11/2025 15:23:33 - INFO     -        └─> Sortie : Card 32295
+Name: You Are Already Dead
+Text: Destroy target creature that was dealt damage this turn.
+Draw a card.
+20/11/2025 15:27:39 - INFO     - Arrêt de MagicSearch API
+20/11/2025 15:27:55 - INFO     - --------------------------------------------------
+20/11/2025 15:27:55 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:27:55 - INFO     - --------------------------------------------------
+20/11/2025 15:28:18 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:28:18 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:28:18 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:28:18 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:28:18 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:28:18 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : True
+20/11/2025 15:28:19 - INFO     -         SessionDao.create('Session fc2dee02... (user_id=1)',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         SessionDao.create('Session fc2dee02... (user_id=1)',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : True
+20/11/2025 15:28:19 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:28:19 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='fc2dee02...', user_id=1, active=True))
+20/11/2025 15:28:19 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:28:19 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:28:19 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:28:19 - INFO     - Tentative de création du compte : test_designer@example.com
+20/11/2025 15:28:19 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer') - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:28:19 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer') - FIN
+20/11/2025 15:28:19 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:28:19 - INFO     - Tentative de connexion pour : test_designer@example.com
+20/11/2025 15:28:19 - INFO     -     UserService.login('test_designer@example.com', '*****') - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:28:19 - INFO     -         UserService.verify_password('*****', '$2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4K21qbdtKB6') - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserService.verify_password('*****', '$2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4K21qbdtKB6') - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : True
+20/11/2025 15:28:19 - INFO     -         SessionDao.create('Session b87bff56... (user_id=2)',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         SessionDao.create('Session b87bff56... (user_id=2)',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : True
+20/11/2025 15:28:19 - INFO     -     UserService.login('test_designer@example.com', '*****') - FIN
+20/11/2025 15:28:19 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Designer!', Session(id='b87bff56...', user_id=2, active=True))
+20/11/2025 15:28:19 - INFO     -     UserService.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:28:19 - INFO     -     UserService.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:28:19 - INFO     -        └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:28:19 - INFO     - Tentative de création du compte : test_client@example.com
+20/11/2025 15:28:19 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client') - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:28:19 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client') - FIN
+20/11/2025 15:28:19 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:28:19 - INFO     - Tentative de connexion pour : test_client@example.com
+20/11/2025 15:28:19 - INFO     -     UserService.login('test_client@example.com', '*****') - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:28:19 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:28:19 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:28:19 - INFO     -         UserService.verify_password('*****', '$2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA17CrQjHzbdy') - DEBUT
+20/11/2025 15:28:20 - INFO     -         UserService.verify_password('*****', '$2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA17CrQjHzbdy') - FIN
+20/11/2025 15:28:20 - INFO     -            └─> Sortie : True
+20/11/2025 15:28:20 - INFO     -         SessionDao.create('Session 547cb9a6... (user_id=3)',) - DEBUT
+20/11/2025 15:28:20 - INFO     -         SessionDao.create('Session 547cb9a6... (user_id=3)',) - FIN
+20/11/2025 15:28:20 - INFO     -            └─> Sortie : True
+20/11/2025 15:28:20 - INFO     -     UserService.login('test_client@example.com', '*****') - FIN
+20/11/2025 15:28:20 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Client!', Session(id='547cb9a6...', user_id=3, active=True))
+20/11/2025 15:28:20 - INFO     -     UserService.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:28:20 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:28:20 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:28:20 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:28:20 - INFO     -     UserService.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:28:20 - INFO     -        └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:28:20 - INFO     - Recherche d'une carte aléatoire
+20/11/2025 15:28:20 - INFO     -     CardService.random() - DEBUT
+20/11/2025 15:28:20 - INFO     -         CardDao.get_all_ids() - DEBUT
+20/11/2025 15:28:20 - INFO     -         CardDao.get_all_ids() - FIN
+20/11/2025 15:28:20 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32548 elements)
+20/11/2025 15:28:20 - INFO     -         CardDao.find_by_id(21397,) - DEBUT
+20/11/2025 15:28:20 - INFO     -         CardDao.find_by_id(21397,) - FIN
+20/11/2025 15:28:20 - INFO     -            └─> Sortie : Card 21397
+Name: Rabid Elephant
+Text: Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking i...
+20/11/2025 15:28:20 - INFO     -     CardService.random() - FIN
+20/11/2025 15:28:20 - INFO     -        └─> Sortie : Card 21397
+Name: Rabid Elephant
+Text: Whenever this creature becomes blocked, it gets +2/+2 until end of turn for each creature blocking i...
+20/11/2025 15:28:20 - INFO     - Récupération de la liste des utilisateurs par admin@magicsearch.com
+20/11/2025 15:28:20 - INFO     -     UserService.list_all_users() - DEBUT
+20/11/2025 15:28:20 - INFO     -         UserDao.list_all() - DEBUT
+20/11/2025 15:28:20 - INFO     -         UserDao.list_all() - FIN
+20/11/2025 15:28:20 - INFO     -            └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Client - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:28:20 - INFO     -     UserService.list_all_users() - FIN
+20/11/2025 15:28:20 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Client - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:36:38 - INFO     - Arrêt de MagicSearch API
+20/11/2025 15:36:50 - INFO     - --------------------------------------------------
+20/11/2025 15:36:50 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:36:50 - INFO     - --------------------------------------------------
+20/11/2025 15:37:14 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:37:14 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:37:14 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:37:14 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:37:14 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:37:14 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:15 - INFO     -         SessionDao.create('Session ad087874... (user_id=1)',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         SessionDao.create('Session ad087874... (user_id=1)',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:15 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:37:15 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='ad087874...', user_id=1, active=True))
+20/11/2025 15:37:15 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:37:15 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:37:15 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:37:15 - INFO     - Création d'un compte game_designer par admin : admin@magicsearch.com
+20/11/2025 15:37:15 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:37:15 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - FIN
+20/11/2025 15:37:15 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:37:15 - INFO     - Tentative de connexion pour : test_designer@example.com
+20/11/2025 15:37:15 - INFO     -     UserService.login('test_designer@example.com', '*****') - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:37:15 - INFO     -         UserService.verify_password('*****', '$2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4K21qbdtKB6') - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserService.verify_password('*****', '$2b$12$lwRP6sS4w/pf3GfFiBJMHOhSuGLthvG9mfTq57exLB4K21qbdtKB6') - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:15 - INFO     -         SessionDao.create('Session 3e84f4ae... (user_id=2)',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         SessionDao.create('Session 3e84f4ae... (user_id=2)',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:15 - INFO     -     UserService.login('test_designer@example.com', '*****') - FIN
+20/11/2025 15:37:15 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Designer!', Session(id='3e84f4ae...', user_id=2, active=True))
+20/11/2025 15:37:15 - INFO     -     UserService.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:37:15 - INFO     -     UserService.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:37:15 - INFO     -        └─> Sortie : Client - Test Designer (test_designer@example.com)
+20/11/2025 15:37:15 - INFO     - Inscription d'un nouveau client : test_client@example.com
+20/11/2025 15:37:15 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:37:15 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - FIN
+20/11/2025 15:37:15 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:37:15 - INFO     - Tentative de connexion pour : test_client@example.com
+20/11/2025 15:37:15 - INFO     -     UserService.login('test_client@example.com', '*****') - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:37:15 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:37:15 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:37:15 - INFO     -         UserService.verify_password('*****', '$2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA17CrQjHzbdy') - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserService.verify_password('*****', '$2b$12$FlyntEqaoLWc9g6bgk8hYepb7l.mnsTZ5139CuLWcA17CrQjHzbdy') - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:16 - INFO     -         SessionDao.create('Session 96b7e3e2... (user_id=3)',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         SessionDao.create('Session 96b7e3e2... (user_id=3)',) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:16 - INFO     -     UserService.login('test_client@example.com', '*****') - FIN
+20/11/2025 15:37:16 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Client!', Session(id='96b7e3e2...', user_id=3, active=True))
+20/11/2025 15:37:16 - INFO     -     UserService.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:37:16 - INFO     -     UserService.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:37:16 - INFO     -        └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:37:16 - INFO     - Recherche d'une carte aléatoire
+20/11/2025 15:37:16 - INFO     -     CardService.random() - DEBUT
+20/11/2025 15:37:16 - INFO     -         CardDao.get_all_ids() - DEBUT
+20/11/2025 15:37:16 - INFO     -         CardDao.get_all_ids() - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32548 elements)
+20/11/2025 15:37:16 - INFO     -         CardDao.find_by_id(2760,) - DEBUT
+20/11/2025 15:37:16 - INFO     -         CardDao.find_by_id(2760,) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : Card 2760
+Name: Black Hole
+Text: Destroy target creature and up to X other target creatures, where X is the number of Attractions you...
+20/11/2025 15:37:16 - INFO     -     CardService.random() - FIN
+20/11/2025 15:37:16 - INFO     -        └─> Sortie : Card 2760
+Name: Black Hole
+Text: Destroy target creature and up to X other target creatures, where X is the number of Attractions you...
+20/11/2025 15:37:16 - INFO     - Récupération de la liste des utilisateurs par admin@magicsearch.com
+20/11/2025 15:37:16 - INFO     -     UserService.list_all_users() - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.list_all() - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.list_all() - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Client - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:37:16 - INFO     -     UserService.list_all_users() - FIN
+20/11/2025 15:37:16 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Client - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:37:16 - INFO     - Inscription d'un nouveau client : sneaky_user@example.com
+20/11/2025 15:37:16 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : None
+20/11/2025 15:37:16 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : $2b$12$EZhTbVVyBgTQKqp3RGx.1OjWE2YWuH9PZiuScKSxNay ... (60 caracteres)
+20/11/2025 15:37:16 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:16 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - FIN
+20/11/2025 15:37:16 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour sneaky_user@example.com', User(id=4, email='sneaky_user@example.com', type='client'))
+20/11/2025 15:37:16 - INFO     - Tentative de connexion pour : sneaky_user@example.com
+20/11/2025 15:37:16 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:37:16 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:37:16 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:37:16 - INFO     -         UserService.verify_password('*****', '$2b$12$EZhTbVVyBgTQKqp3RGx.1OjWE2YWuH9PZiuScKSxNayxkqJF/9CYG') - DEBUT
+20/11/2025 15:37:17 - INFO     -         UserService.verify_password('*****', '$2b$12$EZhTbVVyBgTQKqp3RGx.1OjWE2YWuH9PZiuScKSxNayxkqJF/9CYG') - FIN
+20/11/2025 15:37:17 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:17 - INFO     -         SessionDao.create('Session 1ae12a7e... (user_id=4)',) - DEBUT
+20/11/2025 15:37:17 - INFO     -         SessionDao.create('Session 1ae12a7e... (user_id=4)',) - FIN
+20/11/2025 15:37:17 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:17 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - FIN
+20/11/2025 15:37:17 - INFO     -        └─> Sortie : (True, 'Bienvenue Sneaky User!', Session(id='1ae12a7e...', user_id=4, active=True))
+20/11/2025 15:37:17 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:37:17 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:37:17 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:37:17 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:37:17 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:37:17 - INFO     -        └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:37:17 - INFO     - Suppression de l'utilisateur ID 4 par admin@magicsearch.com
+20/11/2025 15:37:17 - INFO     -     UserService.delete_account(4,) - DEBUT
+20/11/2025 15:37:17 - INFO     -         UserDao.find_by_id(4,) - DEBUT
+20/11/2025 15:37:17 - INFO     -         UserDao.find_by_id(4,) - FIN
+20/11/2025 15:37:17 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:37:17 - INFO     -         SessionDao.deactivate_all_user_sessions(4,) - DEBUT
+20/11/2025 15:37:17 - INFO     -         SessionDao.deactivate_all_user_sessions(4,) - FIN
+20/11/2025 15:37:17 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:17 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:37:17 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:37:17 - INFO     -            └─> Sortie : True
+20/11/2025 15:37:17 - INFO     -     UserService.delete_account(4,) - FIN
+20/11/2025 15:37:17 - INFO     -        └─> Sortie : (True, 'Compte sneaky_user@example.com supprimé')
+20/11/2025 15:46:59 - INFO     - Arrêt de MagicSearch API
+20/11/2025 15:47:09 - INFO     - --------------------------------------------------
+20/11/2025 15:47:09 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:47:09 - INFO     - --------------------------------------------------
+20/11/2025 15:47:57 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:47:57 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:47:57 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:47:57 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:47:57 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:47:57 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:58 - INFO     -         SessionDao.create('Session 9e6e3921... (user_id=1)',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         SessionDao.create('Session 9e6e3921... (user_id=1)',) - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:58 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:47:58 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='9e6e3921...', user_id=1, active=True))
+20/11/2025 15:47:58 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:47:58 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:47:58 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:47:58 - INFO     - Création d'un compte game_designer par admin : admin@magicsearch.com
+20/11/2025 15:47:58 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : None
+20/11/2025 15:47:58 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : $2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85d ... (60 caracteres)
+20/11/2025 15:47:58 - INFO     -         UserDao.create('Game_designer - Test Designer (test_designer@example.com)',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.create('Game_designer - Test Designer (test_designer@example.com)',) - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:58 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - FIN
+20/11/2025 15:47:58 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour test_designer@example.com', User(id=5, email='test_designer@example.com', type='game_designer'))
+20/11/2025 15:47:58 - INFO     - Tentative de connexion pour : test_designer@example.com
+20/11/2025 15:47:58 - INFO     -     UserService.login('test_designer@example.com', '*****') - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:47:58 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:47:58 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:47:58 - INFO     -         UserService.verify_password('*****', '$2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85dXzfNrVmO0O') - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserService.verify_password('*****', '$2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85dXzfNrVmO0O') - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:59 - INFO     -         SessionDao.create('Session 91b36b00... (user_id=5)',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         SessionDao.create('Session 91b36b00... (user_id=5)',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:59 - INFO     -     UserService.login('test_designer@example.com', '*****') - FIN
+20/11/2025 15:47:59 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Designer!', Session(id='91b36b00...', user_id=5, active=True))
+20/11/2025 15:47:59 - INFO     -     UserService.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:47:59 - INFO     -     UserService.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:47:59 - INFO     -        └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:47:59 - INFO     - Inscription d'un nouveau client : test_client@example.com
+20/11/2025 15:47:59 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : None
+20/11/2025 15:47:59 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : $2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1 ... (60 caracteres)
+20/11/2025 15:47:59 - INFO     -         UserDao.create('Client - Test Client (test_client@example.com)',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.create('Client - Test Client (test_client@example.com)',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:59 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - FIN
+20/11/2025 15:47:59 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour test_client@example.com', User(id=6, email='test_client@example.com', type='client'))
+20/11/2025 15:47:59 - INFO     - Tentative de connexion pour : test_client@example.com
+20/11/2025 15:47:59 - INFO     -     UserService.login('test_client@example.com', '*****') - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:47:59 - INFO     -         UserService.verify_password('*****', '$2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1fw4sEdGwy.') - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserService.verify_password('*****', '$2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1fw4sEdGwy.') - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:59 - INFO     -         SessionDao.create('Session a7cfc86f... (user_id=6)',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         SessionDao.create('Session a7cfc86f... (user_id=6)',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : True
+20/11/2025 15:47:59 - INFO     -     UserService.login('test_client@example.com', '*****') - FIN
+20/11/2025 15:47:59 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Client!', Session(id='a7cfc86f...', user_id=6, active=True))
+20/11/2025 15:47:59 - INFO     -     UserService.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:47:59 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:47:59 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:47:59 - INFO     -     UserService.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:47:59 - INFO     -        └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:47:59 - INFO     - Recherche d'une carte aléatoire
+20/11/2025 15:47:59 - INFO     -     CardService.random() - DEBUT
+20/11/2025 15:47:59 - INFO     -         CardDao.get_all_ids() - DEBUT
+20/11/2025 15:48:00 - INFO     -         CardDao.get_all_ids() - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32548 elements)
+20/11/2025 15:48:00 - INFO     -         CardDao.find_by_id(23714,) - DEBUT
+20/11/2025 15:48:00 - INFO     -         CardDao.find_by_id(23714,) - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : Card 23714
+Name: Scorching Shot
+Text: Scorching Shot deals 5 damage to target creature.
+20/11/2025 15:48:00 - INFO     -     CardService.random() - FIN
+20/11/2025 15:48:00 - INFO     -        └─> Sortie : Card 23714
+Name: Scorching Shot
+Text: Scorching Shot deals 5 damage to target creature.
+20/11/2025 15:48:00 - INFO     - Création d'une carte : Test Card par test_designer@example.com
+20/11/2025 15:48:00 - INFO     -     CardService.add_card('Card (not saved)\nName: Test Card\nText: This is a test card',) - DEBUT
+20/11/2025 15:48:00 - INFO     -         CardDao.create('Card (not saved)\nName: Test Card\nText: This is a test card',) - DEBUT
+20/11/2025 15:48:00 - INFO     -         CardDao.create('Card (not saved)\nName: Test Card\nText: This is a test card',) - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:00 - INFO     -     CardService.add_card('Card (not saved)\nName: Test Card\nText: This is a test card',) - FIN
+20/11/2025 15:48:00 - INFO     -        └─> Sortie : True
+20/11/2025 15:48:00 - INFO     - Récupération de la liste des utilisateurs par admin@magicsearch.com
+20/11/2025 15:48:00 - INFO     -     UserService.list_all_users() - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.list_all() - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.list_all() - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:48:00 - INFO     -     UserService.list_all_users() - FIN
+20/11/2025 15:48:00 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:48:00 - INFO     - Inscription d'un nouveau client : sneaky_user@example.com
+20/11/2025 15:48:00 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : None
+20/11/2025 15:48:00 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : $2b$12$wrX3zYxWUP1GYBdnp3JOWusYFvvSXMHoUrm8FFD8zWt ... (60 caracteres)
+20/11/2025 15:48:00 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:00 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - FIN
+20/11/2025 15:48:00 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour sneaky_user@example.com', User(id=7, email='sneaky_user@example.com', type='client'))
+20/11/2025 15:48:00 - INFO     - Tentative de connexion pour : sneaky_user@example.com
+20/11/2025 15:48:00 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:00 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:00 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:00 - INFO     -         UserService.verify_password('*****', '$2b$12$wrX3zYxWUP1GYBdnp3JOWusYFvvSXMHoUrm8FFD8zWtlv.kjoEuo.') - DEBUT
+20/11/2025 15:48:01 - INFO     -         UserService.verify_password('*****', '$2b$12$wrX3zYxWUP1GYBdnp3JOWusYFvvSXMHoUrm8FFD8zWtlv.kjoEuo.') - FIN
+20/11/2025 15:48:01 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:01 - INFO     -         SessionDao.create('Session aacee952... (user_id=7)',) - DEBUT
+20/11/2025 15:48:01 - INFO     -         SessionDao.create('Session aacee952... (user_id=7)',) - FIN
+20/11/2025 15:48:01 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:01 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - FIN
+20/11/2025 15:48:01 - INFO     -        └─> Sortie : (True, 'Bienvenue Sneaky User!', Session(id='aacee952...', user_id=7, active=True))
+20/11/2025 15:48:01 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:01 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:01 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:01 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:01 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:01 - INFO     -        └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:01 - INFO     - Suppression de l'utilisateur ID 7 par admin@magicsearch.com
+20/11/2025 15:48:01 - INFO     -     UserService.delete_account(7,) - DEBUT
+20/11/2025 15:48:01 - INFO     -         UserDao.find_by_id(7,) - DEBUT
+20/11/2025 15:48:01 - INFO     -         UserDao.find_by_id(7,) - FIN
+20/11/2025 15:48:01 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:01 - INFO     -         SessionDao.deactivate_all_user_sessions(7,) - DEBUT
+20/11/2025 15:48:01 - INFO     -         SessionDao.deactivate_all_user_sessions(7,) - FIN
+20/11/2025 15:48:01 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:01 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:48:01 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:48:01 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:01 - INFO     -     UserService.delete_account(7,) - FIN
+20/11/2025 15:48:01 - INFO     -        └─> Sortie : (True, 'Compte sneaky_user@example.com supprimé')
+20/11/2025 15:48:50 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:48:50 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:48:50 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:50 - INFO     -         SessionDao.create('Session 131eb834... (user_id=1)',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         SessionDao.create('Session 131eb834... (user_id=1)',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:50 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:48:50 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='131eb834...', user_id=1, active=True))
+20/11/2025 15:48:50 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:48:50 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:48:50 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:48:50 - INFO     - Création d'un compte game_designer par admin : admin@magicsearch.com
+20/11/2025 15:48:50 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:48:50 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - FIN
+20/11/2025 15:48:50 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:48:50 - INFO     - Tentative de connexion pour : test_designer@example.com
+20/11/2025 15:48:50 - INFO     -     UserService.login('test_designer@example.com', '*****') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:48:50 - INFO     -         UserService.verify_password('*****', '$2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85dXzfNrVmO0O') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserService.verify_password('*****', '$2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85dXzfNrVmO0O') - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:50 - INFO     -         SessionDao.create('Session eb5ada6b... (user_id=5)',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         SessionDao.create('Session eb5ada6b... (user_id=5)',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:50 - INFO     -     UserService.login('test_designer@example.com', '*****') - FIN
+20/11/2025 15:48:50 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Designer!', Session(id='eb5ada6b...', user_id=5, active=True))
+20/11/2025 15:48:50 - INFO     -     UserService.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:48:50 - INFO     -     UserService.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:48:50 - INFO     -        └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:48:50 - INFO     - Inscription d'un nouveau client : test_client@example.com
+20/11/2025 15:48:50 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:48:50 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - FIN
+20/11/2025 15:48:50 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:48:50 - INFO     - Tentative de connexion pour : test_client@example.com
+20/11/2025 15:48:50 - INFO     -     UserService.login('test_client@example.com', '*****') - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:48:50 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:48:50 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:48:50 - INFO     -         UserService.verify_password('*****', '$2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1fw4sEdGwy.') - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserService.verify_password('*****', '$2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1fw4sEdGwy.') - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:51 - INFO     -         SessionDao.create('Session a3eb80c0... (user_id=6)',) - DEBUT
+20/11/2025 15:48:51 - INFO     -         SessionDao.create('Session a3eb80c0... (user_id=6)',) - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:51 - INFO     -     UserService.login('test_client@example.com', '*****') - FIN
+20/11/2025 15:48:51 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Client!', Session(id='a3eb80c0...', user_id=6, active=True))
+20/11/2025 15:48:51 - INFO     -     UserService.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:48:51 - INFO     -     UserService.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:48:51 - INFO     -        └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:48:51 - INFO     - Recherche d'une carte aléatoire
+20/11/2025 15:48:51 - INFO     -     CardService.random() - DEBUT
+20/11/2025 15:48:51 - INFO     -         CardDao.get_all_ids() - DEBUT
+20/11/2025 15:48:51 - INFO     -         CardDao.get_all_ids() - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32549 elements)
+20/11/2025 15:48:51 - INFO     -         CardDao.find_by_id(18095,) - DEBUT
+20/11/2025 15:48:51 - INFO     -         CardDao.find_by_id(18095,) - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : Card 18095
+Name: Mother Kangaroo
+Text: When this creature enters, roll a six-sided die. Put a number of +1/+1 counters on this creature equ...
+20/11/2025 15:48:51 - INFO     -     CardService.random() - FIN
+20/11/2025 15:48:51 - INFO     -        └─> Sortie : Card 18095
+Name: Mother Kangaroo
+Text: When this creature enters, roll a six-sided die. Put a number of +1/+1 counters on this creature equ...
+20/11/2025 15:48:51 - INFO     - Création d'une carte : Test Card par test_designer@example.com
+20/11/2025 15:48:51 - INFO     -     CardService.add_card('Card (not saved)\nName: Test Card\nText: This is a test card',) - DEBUT
+20/11/2025 15:48:51 - INFO     -         CardDao.create('Card (not saved)\nName: Test Card\nText: This is a test card',) - DEBUT
+20/11/2025 15:48:51 - INFO     -         CardDao.create('Card (not saved)\nName: Test Card\nText: This is a test card',) - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:51 - INFO     -     CardService.add_card('Card (not saved)\nName: Test Card\nText: This is a test card',) - FIN
+20/11/2025 15:48:51 - INFO     -        └─> Sortie : True
+20/11/2025 15:48:51 - INFO     - Récupération de la liste des utilisateurs par admin@magicsearch.com
+20/11/2025 15:48:51 - INFO     -     UserService.list_all_users() - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserDao.list_all() - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserDao.list_all() - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:48:51 - INFO     -     UserService.list_all_users() - FIN
+20/11/2025 15:48:51 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:48:51 - INFO     - Inscription d'un nouveau client : sneaky_user@example.com
+20/11/2025 15:48:51 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:51 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:51 - INFO     -            └─> Sortie : None
+20/11/2025 15:48:51 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : $2b$12$LgQ5tjcOypaADK3TwKtr4O8IHhF0RoJHBvkNmh2WyRq ... (60 caracteres)
+20/11/2025 15:48:52 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:52 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - FIN
+20/11/2025 15:48:52 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour sneaky_user@example.com', User(id=8, email='sneaky_user@example.com', type='client'))
+20/11/2025 15:48:52 - INFO     - Tentative de connexion pour : sneaky_user@example.com
+20/11/2025 15:48:52 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:52 - INFO     -         UserService.verify_password('*****', '$2b$12$LgQ5tjcOypaADK3TwKtr4O8IHhF0RoJHBvkNmh2WyRqNLBMOWmblS') - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserService.verify_password('*****', '$2b$12$LgQ5tjcOypaADK3TwKtr4O8IHhF0RoJHBvkNmh2WyRqNLBMOWmblS') - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:52 - INFO     -         SessionDao.create('Session e3399f98... (user_id=8)',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         SessionDao.create('Session e3399f98... (user_id=8)',) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:52 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - FIN
+20/11/2025 15:48:52 - INFO     -        └─> Sortie : (True, 'Bienvenue Sneaky User!', Session(id='e3399f98...', user_id=8, active=True))
+20/11/2025 15:48:52 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:52 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:48:52 - INFO     -        └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:52 - INFO     - Suppression de l'utilisateur ID 8 par admin@magicsearch.com
+20/11/2025 15:48:52 - INFO     -     UserService.delete_account(8,) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.find_by_id(8,) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.find_by_id(8,) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:48:52 - INFO     -         SessionDao.deactivate_all_user_sessions(8,) - DEBUT
+20/11/2025 15:48:52 - INFO     -         SessionDao.deactivate_all_user_sessions(8,) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:52 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:48:52 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:48:52 - INFO     -            └─> Sortie : True
+20/11/2025 15:48:52 - INFO     -     UserService.delete_account(8,) - FIN
+20/11/2025 15:48:52 - INFO     -        └─> Sortie : (True, 'Compte sneaky_user@example.com supprimé')
+20/11/2025 15:50:25 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:50:25 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:50:25 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:50:25 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:50:25 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:25 - INFO     -         SessionDao.create('Session b68e30b1... (user_id=1)',) - DEBUT
+20/11/2025 15:50:25 - INFO     -         SessionDao.create('Session b68e30b1... (user_id=1)',) - FIN
+20/11/2025 15:50:25 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:25 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:50:25 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='b68e30b1...', user_id=1, active=True))
+20/11/2025 15:50:25 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:50:25 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:50:25 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:50:25 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:50:25 - INFO     - Création d'un compte game_designer par admin : admin@magicsearch.com
+20/11/2025 15:50:25 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:50:25 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:50:25 - INFO     -     UserService.create_account('test_designer@example.com', '*****', 'Test', 'Designer', 'game_designer') - FIN
+20/11/2025 15:50:25 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:50:25 - INFO     - Tentative de connexion pour : test_designer@example.com
+20/11/2025 15:50:25 - INFO     -     UserService.login('test_designer@example.com', '*****') - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:50:25 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:50:25 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:50:25 - INFO     -         UserService.verify_password('*****', '$2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85dXzfNrVmO0O') - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserService.verify_password('*****', '$2b$12$ZqDtS3APJeW9ZVG2kA9uhOEpJHL71CFBKnshH.OT85dXzfNrVmO0O') - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:26 - INFO     -         SessionDao.create('Session 5343f308... (user_id=5)',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         SessionDao.create('Session 5343f308... (user_id=5)',) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:26 - INFO     -     UserService.login('test_designer@example.com', '*****') - FIN
+20/11/2025 15:50:26 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Designer!', Session(id='5343f308...', user_id=5, active=True))
+20/11/2025 15:50:26 - INFO     -     UserService.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:50:26 - INFO     -     UserService.find_by_email('test_designer@example.com',) - FIN
+20/11/2025 15:50:26 - INFO     -        └─> Sortie : Game_designer - Test Designer (test_designer@example.com)
+20/11/2025 15:50:26 - INFO     - Inscription d'un nouveau client : test_client@example.com
+20/11/2025 15:50:26 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:50:26 - INFO     -     UserService.create_account('test_client@example.com', '*****', 'Test', 'Client', 'client') - FIN
+20/11/2025 15:50:26 - INFO     -        └─> Sortie : (False, 'Cet email est déjà utilisé', None)
+20/11/2025 15:50:26 - INFO     - Tentative de connexion pour : test_client@example.com
+20/11/2025 15:50:26 - INFO     -     UserService.login('test_client@example.com', '*****') - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:50:26 - INFO     -         UserService.verify_password('*****', '$2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1fw4sEdGwy.') - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserService.verify_password('*****', '$2b$12$b/JnL4sENr2IZ/UgbljNqOYXrnh5n4GjUqX7Z6pDlF1fw4sEdGwy.') - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:26 - INFO     -         SessionDao.create('Session ed48be1b... (user_id=6)',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         SessionDao.create('Session ed48be1b... (user_id=6)',) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:26 - INFO     -     UserService.login('test_client@example.com', '*****') - FIN
+20/11/2025 15:50:26 - INFO     -        └─> Sortie : (True, 'Bienvenue Test Client!', Session(id='ed48be1b...', user_id=6, active=True))
+20/11/2025 15:50:26 - INFO     -     UserService.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_client@example.com',) - DEBUT
+20/11/2025 15:50:26 - INFO     -         UserDao.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:50:26 - INFO     -     UserService.find_by_email('test_client@example.com',) - FIN
+20/11/2025 15:50:26 - INFO     -        └─> Sortie : Client - Test Client (test_client@example.com)
+20/11/2025 15:50:26 - INFO     - Recherche d'une carte aléatoire
+20/11/2025 15:50:26 - INFO     -     CardService.random() - DEBUT
+20/11/2025 15:50:26 - INFO     -         CardDao.get_all_ids() - DEBUT
+20/11/2025 15:50:26 - INFO     -         CardDao.get_all_ids() - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32550 elements)
+20/11/2025 15:50:26 - INFO     -         CardDao.find_by_id(3944,) - DEBUT
+20/11/2025 15:50:26 - INFO     -         CardDao.find_by_id(3944,) - FIN
+20/11/2025 15:50:26 - INFO     -            └─> Sortie : Card 3944
+Name: Cacophony Scamp
+Text: Whenever this creature deals combat damage to a player, you may sacrifice it. If you do, proliferate...
+20/11/2025 15:50:26 - INFO     -     CardService.random() - FIN
+20/11/2025 15:50:26 - INFO     -        └─> Sortie : Card 3944
+Name: Cacophony Scamp
+Text: Whenever this creature deals combat damage to a player, you may sacrifice it. If you do, proliferate...
+20/11/2025 15:50:26 - INFO     - Création d'une carte : Test Card par test_designer@example.com
+20/11/2025 15:50:26 - INFO     -     CardService.add_card('Card (not saved)\nName: Test Card\nText: This is a test card',) - DEBUT
+20/11/2025 15:50:27 - INFO     -         CardDao.create('Card (not saved)\nName: Test Card\nText: This is a test card',) - DEBUT
+20/11/2025 15:50:27 - INFO     -         CardDao.create('Card (not saved)\nName: Test Card\nText: This is a test card',) - FIN
+20/11/2025 15:50:27 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:27 - INFO     -     CardService.add_card('Card (not saved)\nName: Test Card\nText: This is a test card',) - FIN
+20/11/2025 15:50:27 - INFO     -        └─> Sortie : True
+20/11/2025 15:50:27 - INFO     - Récupération de la liste des utilisateurs par admin@magicsearch.com
+20/11/2025 15:50:27 - INFO     -     UserService.list_all_users() - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.list_all() - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.list_all() - FIN
+20/11/2025 15:50:27 - INFO     -            └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:50:27 - INFO     -     UserService.list_all_users() - FIN
+20/11/2025 15:50:27 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 15:50:27 - INFO     - Inscription d'un nouveau client : sneaky_user@example.com
+20/11/2025 15:50:27 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:50:27 - INFO     -            └─> Sortie : None
+20/11/2025 15:50:27 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 15:50:27 - INFO     -            └─> Sortie : $2b$12$aDs.pxG.QL4o5L023RWkP.Xu82tF3qET6SihyHXlWZ5 ... (60 caracteres)
+20/11/2025 15:50:27 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.create('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:50:27 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:27 - INFO     -     UserService.create_account('sneaky_user@example.com', '*****', 'Sneaky', 'User', 'client') - FIN
+20/11/2025 15:50:27 - INFO     -        └─> Sortie : (True, 'Compte créé avec succès pour sneaky_user@example.com', User(id=9, email='sneaky_user@example.com', type='client'))
+20/11/2025 15:50:27 - INFO     - Tentative de connexion pour : sneaky_user@example.com
+20/11/2025 15:50:27 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:50:27 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:50:27 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:50:27 - INFO     -         UserService.verify_password('*****', '$2b$12$aDs.pxG.QL4o5L023RWkP.Xu82tF3qET6SihyHXlWZ5I4dG2Y4Dt.') - DEBUT
+20/11/2025 15:50:28 - INFO     -         UserService.verify_password('*****', '$2b$12$aDs.pxG.QL4o5L023RWkP.Xu82tF3qET6SihyHXlWZ5I4dG2Y4Dt.') - FIN
+20/11/2025 15:50:28 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:28 - INFO     -         SessionDao.create('Session 6edcdaba... (user_id=9)',) - DEBUT
+20/11/2025 15:50:28 - INFO     -         SessionDao.create('Session 6edcdaba... (user_id=9)',) - FIN
+20/11/2025 15:50:28 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:28 - INFO     -     UserService.login('sneaky_user@example.com', '*****') - FIN
+20/11/2025 15:50:28 - INFO     -        └─> Sortie : (True, 'Bienvenue Sneaky User!', Session(id='6edcdaba...', user_id=9, active=True))
+20/11/2025 15:50:28 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:50:28 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - DEBUT
+20/11/2025 15:50:28 - INFO     -         UserDao.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:50:28 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:50:28 - INFO     -     UserService.find_by_email('sneaky_user@example.com',) - FIN
+20/11/2025 15:50:28 - INFO     -        └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:50:28 - INFO     - Suppression de l'utilisateur ID 9 par admin@magicsearch.com
+20/11/2025 15:50:28 - INFO     -     UserService.delete_account(9,) - DEBUT
+20/11/2025 15:50:28 - INFO     -         UserDao.find_by_id(9,) - DEBUT
+20/11/2025 15:50:28 - INFO     -         UserDao.find_by_id(9,) - FIN
+20/11/2025 15:50:28 - INFO     -            └─> Sortie : Client - Sneaky User (sneaky_user@example.com)
+20/11/2025 15:50:28 - INFO     -         SessionDao.deactivate_all_user_sessions(9,) - DEBUT
+20/11/2025 15:50:28 - INFO     -         SessionDao.deactivate_all_user_sessions(9,) - FIN
+20/11/2025 15:50:28 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:28 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - DEBUT
+20/11/2025 15:50:28 - INFO     -         UserDao.delete('Client - Sneaky User (sneaky_user@example.com)',) - FIN
+20/11/2025 15:50:28 - INFO     -            └─> Sortie : True
+20/11/2025 15:50:28 - INFO     -     UserService.delete_account(9,) - FIN
+20/11/2025 15:50:28 - INFO     -        └─> Sortie : (True, 'Compte sneaky_user@example.com supprimé')
+20/11/2025 15:53:35 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:53:35 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:53:35 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:53:35 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:53:35 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:53:35 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:53:35 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:53:35 - INFO     -            └─> Sortie : True
+20/11/2025 15:53:35 - INFO     -         SessionDao.create('Session a239a335... (user_id=1)',) - DEBUT
+20/11/2025 15:53:35 - INFO     -         SessionDao.create('Session a239a335... (user_id=1)',) - FIN
+20/11/2025 15:53:35 - INFO     -            └─> Sortie : True
+20/11/2025 15:53:35 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:53:35 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='a239a335...', user_id=1, active=True))
+20/11/2025 15:53:35 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:53:35 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:53:35 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:53:35 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:53:35 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:53:35 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:58:09 - INFO     - Arrêt de MagicSearch API
+20/11/2025 15:58:12 - INFO     - --------------------------------------------------
+20/11/2025 15:58:12 - INFO     - Lancement MagicSearch API                           
+20/11/2025 15:58:12 - INFO     - --------------------------------------------------
+20/11/2025 15:59:28 - INFO     - Tentative de connexion pour : admin@magicsearch.com
+20/11/2025 15:59:28 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 15:59:28 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:59:28 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:59:28 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:59:28 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 15:59:29 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 15:59:29 - INFO     -            └─> Sortie : True
+20/11/2025 15:59:29 - INFO     -         SessionDao.create('Session f3073486... (user_id=1)',) - DEBUT
+20/11/2025 15:59:29 - INFO     -         SessionDao.create('Session f3073486... (user_id=1)',) - FIN
+20/11/2025 15:59:29 - INFO     -            └─> Sortie : True
+20/11/2025 15:59:29 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 15:59:29 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='f3073486...', user_id=1, active=True))
+20/11/2025 15:59:29 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:59:29 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 15:59:29 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:59:29 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:59:29 - INFO     -     UserService.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 15:59:29 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:59:57 - INFO     - Récupération du profil pour admin@magicsearch.com
+20/11/2025 15:59:57 - INFO     -     UserService.find_by_id(1,) - DEBUT
+20/11/2025 15:59:57 - INFO     -         UserDao.find_by_id(1,) - DEBUT
+20/11/2025 15:59:57 - INFO     -         UserDao.find_by_id(1,) - FIN
+20/11/2025 15:59:57 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 15:59:57 - INFO     -     UserService.find_by_id(1,) - FIN
+20/11/2025 15:59:57 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 16:00:12 - INFO     - Récupération de la liste des utilisateurs par admin@magicsearch.com
+20/11/2025 16:00:12 - INFO     -     UserService.list_all_users() - DEBUT
+20/11/2025 16:00:12 - INFO     -         UserDao.list_all() - DEBUT
+20/11/2025 16:00:12 - INFO     -         UserDao.list_all() - FIN
+20/11/2025 16:00:12 - INFO     -            └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 16:00:12 - INFO     -     UserService.list_all_users() - FIN
+20/11/2025 16:00:12 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
+20/11/2025 16:00:51 - INFO     - Arrêt de MagicSearch API

@@ -223,3 +223,8 @@ class UserService:
     def find_by_id(self, user_id: int) -> Optional[User]:
         """Trouve un utilisateur par ID"""
         return self.user_dao.find_by_id(user_id)
+
+    @log
+    def find_by_email(self, email: str) -> Optional[User]:
+        """Trouve un utilisateur par email"""
+        return self.user_dao.find_by_email(email)

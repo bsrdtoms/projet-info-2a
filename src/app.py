@@ -1,7 +1,7 @@
 import logging
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, EmailStr
 from typing import Optional
@@ -13,6 +13,15 @@ from service.favorite_service import FavoriteService
 from business_object.card import Card
 from utils.log_init import initialiser_logs
 from technical_components.embedding.ollama_embedding import get_embedding
+from utils.auth import (
+    create_access_token,
+    Token,
+    TokenData,
+    get_current_user,
+    require_admin,
+    require_game_designer,
+    require_authenticated
+)
 
 
 # Initialisation de l'application
@@ -133,33 +142,33 @@ async def semantic_search_cosine(query: str, limit: int = 3):
 
 
 @app.post("/card/{name}/{text}", tags=["Cards"])
-async def create_card(name: str, text: str):
-    """Créer une nouvelle carte"""
-    logging.info(f"Création d'une carte : {name}")
+async def create_card(name: str, text: str, current_user: TokenData = Depends(require_game_designer)):
+    """Créer une nouvelle carte (nécessite le rôle game_designer)"""
+    logging.info(f"Création d'une carte : {name} par {current_user.email}")
     carte_objet = Card(None, name, text)
     success = card_service.add_card(carte_objet)
     if not success:
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail="Erreur lors de la création de la carte"
         )
     return {"message": f"Carte '{carte_objet.name}' créée avec succès"}
 
 
 @app.put("/card/{card_id}", tags=["Cards"])
-async def update_card(card_id: int, updates: dict):
-    """Modifier un ou plusieurs champs d'une carte"""
-    logging.info(f"Modification de la carte ID {card_id}")
+async def update_card(card_id: int, updates: dict, current_user: TokenData = Depends(require_game_designer)):
+    """Modifier un ou plusieurs champs d'une carte (nécessite le rôle game_designer)"""
+    logging.info(f"Modification de la carte ID {card_id} par {current_user.email}")
     carte_objet = card_service.find_by_id(card_id)
     if not carte_objet:
         raise HTTPException(
-            status_code=404, 
+            status_code=404,
             detail=f"Carte avec l'ID {card_id} introuvable"
         )
     success = card_service.modify_card(carte_objet, updates)
     if not success:
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail="Une ou plusieurs modifications ont échoué"
         )
     return {
@@ -169,20 +178,20 @@ async def update_card(card_id: int, updates: dict):
 
 
 @app.delete("/card/{card_id}", tags=["Cards"])
-async def delete_card(card_id: int):
-    """Supprimer une carte"""
-    logging.info(f"Suppression de la carte ID {card_id}")
+async def delete_card(card_id: int, current_user: TokenData = Depends(require_game_designer)):
+    """Supprimer une carte (nécessite le rôle game_designer)"""
+    logging.info(f"Suppression de la carte ID {card_id} par {current_user.email}")
     carte_objet = card_service.find_by_id(card_id)
     if not carte_objet:
         raise HTTPException(
-            status_code=404, 
+            status_code=404,
             detail=f"Carte avec l'ID {card_id} introuvable"
         )
     name = carte_objet.name
     success = card_service.delete_card(carte_objet)
     if not success:
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail="Erreur lors de la suppression"
         )
     return {"message": f"Carte '{name}' (ID={card_id}) supprimée avec succès"}
@@ -190,29 +199,89 @@ async def delete_card(card_id: int):
 
 # ==================== ROUTES UTILISATEURS ====================
 
-@app.post("/user/", tags=["Users"])
-async def create_user(user: UserModel):
-    """Créer un nouveau compte utilisateur"""
-    logging.info(f"Tentative de création du compte : {user.email}")
+@app.post("/user/register", tags=["Users"])
+async def register_client(user: UserModel):
+    """Inscription publique - crée uniquement des comptes client"""
+    logging.info(f"Inscription d'un nouveau client : {user.email}")
+
+    # Forcer le type à 'client' pour l'inscription publique
     success, message, created_user = user_service.create_account(
         email=user.email,
         password=user.password,
         first_name=user.first_name,
         last_name=user.last_name,
+        user_type="client"  # Toujours client pour l'inscription publique
     )
     if not success:
         raise HTTPException(status_code=400, detail=message)
-    return {"message": message, "user": created_user.email}
+    return {
+        "message": message,
+        "user": {
+            "email": created_user.email,
+            "user_type": created_user.user_type
+        }
+    }
 
 
-@app.post("/user/login", tags=["Users"])
+@app.post("/admin/user/", tags=["Admin"])
+async def create_user_as_admin(user: UserModel, current_user: TokenData = Depends(require_admin)):
+    """Créer un compte utilisateur avec n'importe quel rôle (admin uniquement)"""
+    logging.info(f"Création d'un compte {user.user_type} par admin : {current_user.email}")
+
+    # Valider le user_type
+    valid_types = ["client", "game_designer", "admin"]
+    if user.user_type not in valid_types:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Type d'utilisateur invalide. Doit être l'un de: {', '.join(valid_types)}"
+        )
+
+    success, message, created_user = user_service.create_account(
+        email=user.email,
+        password=user.password,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        user_type=user.user_type
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {
+        "message": message,
+        "user": {
+            "email": created_user.email,
+            "user_type": created_user.user_type,
+            "id": created_user.id
+        }
+    }
+
+
+@app.post("/user/login", tags=["Users"], response_model=Token)
 async def login(email: str, password: str):
-    """Connecter un utilisateur"""
+    """Connecter un utilisateur et obtenir un token JWT"""
     logging.info(f"Tentative de connexion pour : {email}")
     success, message, session = user_service.login(email, password)
     if not success:
         raise HTTPException(status_code=401, detail=message)
-    return {"message": message, "session_id": session.session_id}
+
+    # Récupérer les informations de l'utilisateur
+    user = user_service.find_by_email(email)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    # Créer le token JWT
+    access_token = create_access_token(
+        user_id=user.id,
+        email=user.email,
+        user_type=user.user_type
+    )
+
+    return Token(
+        access_token=access_token,
+        token_type="bearer",
+        user_id=user.id,
+        email=user.email,
+        user_type=user.user_type
+    )
 
 
 @app.post("/user/logout", tags=["Users"])
@@ -225,21 +294,48 @@ async def logout():
     return {"message": message}
 
 
+@app.get("/user/me", tags=["Users"])
+async def get_my_profile(current_user: TokenData = Depends(require_authenticated)):
+    """Récupérer son propre profil (nécessite authentification)"""
+    logging.info(f"Récupération du profil pour {current_user.email}")
+
+    user = user_service.find_by_id(current_user.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "user_type": user.user_type,
+        "is_active": user.is_active
+    }
+
+
 @app.get("/user/", tags=["Users"])
-async def list_all_users():
-    """Lister tous les utilisateurs (admin uniquement)"""
-    logging.info("Récupération de la liste des utilisateurs")
+async def list_all_users(current_user: TokenData = Depends(require_admin)):
+    """Lister tous les utilisateurs (nécessite le rôle admin)"""
+    logging.info(f"Récupération de la liste des utilisateurs par {current_user.email}")
     return user_service.list_all_users()
 
 
 @app.get("/user/{user_id}", tags=["Users"])
-async def find_user(user_id: int):
-    """Récupérer un utilisateur par ID"""
-    logging.info(f"Recherche de l'utilisateur ID {user_id}")
+async def find_user(user_id: int, current_user: TokenData = Depends(require_authenticated)):
+    """Récupérer un utilisateur par ID (nécessite authentification)"""
+    logging.info(f"Recherche de l'utilisateur ID {user_id} par {current_user.email}")
+
+    # Vérifier que l'utilisateur demande son propre profil (sauf admin)
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Vous ne pouvez consulter que votre propre profil"
+        )
+
     user = user_service.find_by_id(user_id)
     if not user:
         raise HTTPException(
-            status_code=404, 
+            status_code=404,
             detail=f"Utilisateur avec l'ID {user_id} introuvable"
         )
     return {
@@ -253,9 +349,9 @@ async def find_user(user_id: int):
 
 
 @app.delete("/user/{user_id}", tags=["Users"])
-async def delete_user(user_id: int):
-    """Supprimer un utilisateur"""
-    logging.info(f"Suppression de l'utilisateur ID {user_id}")
+async def delete_user(user_id: int, current_user: TokenData = Depends(require_admin)):
+    """Supprimer un utilisateur (nécessite le rôle admin)"""
+    logging.info(f"Suppression de l'utilisateur ID {user_id} par {current_user.email}")
     success, message = user_service.delete_account(user_id)
     if not success:
         raise HTTPException(status_code=400, detail=message)
@@ -265,9 +361,15 @@ async def delete_user(user_id: int):
 # ==================== ROUTES FAVORIS ====================
 
 @app.post("/favorites/{card_id}/{user_id}", tags=["Favorites"])
-async def add_favorite(card_id: int, user_id: int):
-    """Ajouter une carte aux favoris d'un utilisateur"""
-    logging.info(f"Ajout d'un favori : user_id={user_id}, card_id={card_id}")
+async def add_favorite(card_id: int, user_id: int, current_user: TokenData = Depends(require_authenticated)):
+    """Ajouter une carte aux favoris d'un utilisateur (nécessite authentification)"""
+    # Vérifier que l'utilisateur ne peut modifier que ses propres favoris (sauf admin)
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Vous ne pouvez gérer que vos propres favoris"
+        )
+    logging.info(f"Ajout d'un favori : user_id={user_id}, card_id={card_id} par {current_user.email}")
     success, message = favorite_service.add_favorite(user_id, card_id)
     if not success and "Erreur interne" in message:
         raise HTTPException(status_code=500, detail=message)
@@ -277,9 +379,15 @@ async def add_favorite(card_id: int, user_id: int):
 
 
 @app.delete("/favorites/{card_id}/{user_id}", tags=["Favorites"])
-async def remove_favorite(card_id: int, user_id: int):
-    """Supprimer une carte des favoris d'un utilisateur"""
-    logging.info(f"Suppression d'un favori : user_id={user_id}, card_id={card_id}")
+async def remove_favorite(card_id: int, user_id: int, current_user: TokenData = Depends(require_authenticated)):
+    """Supprimer une carte des favoris d'un utilisateur (nécessite authentification)"""
+    # Vérifier que l'utilisateur ne peut modifier que ses propres favoris (sauf admin)
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Vous ne pouvez gérer que vos propres favoris"
+        )
+    logging.info(f"Suppression d'un favori : user_id={user_id}, card_id={card_id} par {current_user.email}")
     success, message = favorite_service.remove_favorite(user_id, card_id)
     if not success and "Erreur interne" in message:
         raise HTTPException(status_code=500, detail=message)
@@ -289,9 +397,15 @@ async def remove_favorite(card_id: int, user_id: int):
 
 
 @app.get("/favorites/{user_id}", tags=["Favorites"])
-async def list_favorites(user_id: int):
-    """Lister les cartes favorites d'un utilisateur"""
-    logging.info(f"Récupération des favoris pour user_id={user_id}")
+async def list_favorites(user_id: int, current_user: TokenData = Depends(require_authenticated)):
+    """Lister les cartes favorites d'un utilisateur (nécessite authentification)"""
+    # Vérifier que l'utilisateur ne peut voir que ses propres favoris (sauf admin)
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Vous ne pouvez voir que vos propres favoris"
+        )
+    logging.info(f"Récupération des favoris pour user_id={user_id} par {current_user.email}")
     favorites = favorite_service.list_favorites(user_id)
     if not favorites:
         return {"message": "Aucune carte en favori"}

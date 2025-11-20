@@ -9,3 +9,5 @@ tabulate
 uvicorn
 typer
 bcrypt
+python-jose[cryptography]
+python-multipart
