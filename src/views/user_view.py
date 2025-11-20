@@ -13,7 +13,9 @@ from business_object.card import Card
 class UserView(AbstractView):
     """Vue principale pour un utilisateur connecté (client, admin ou game designer)."""
 
-    def __init__(self, role="user"):
+    def __init__(self, user, user_service, role="user"):
+        self.user = user
+        self.user_service = user_service
         self.role = role
 
     def display(self):

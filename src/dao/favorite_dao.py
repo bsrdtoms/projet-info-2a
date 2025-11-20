@@ -73,12 +73,3 @@ class FavoriteDAO:
             raise
 
         return cards
-
-    @log
-    def is_favorite(self, user_id: int, card_id: int) -> bool:
-        """Vérifie si une carte est déjà en favoris"""
-        query = "SELECT 1 FROM project.favorites WHERE user_id = %s AND card_id = %s;"
-        with DBConnection().connection as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(query, (user_id, card_id))
-                return cursor.fetchone() is not None
