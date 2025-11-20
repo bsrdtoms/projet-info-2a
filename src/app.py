@@ -35,13 +35,10 @@ class CardModel(BaseModel):
 
 class UserModel(BaseModel):
     """Modèle Pydantic pour les utilisateurs"""
-    id: Optional[int] = None
     email: EmailStr
     password: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    user_type: str = "client"
-    is_active: bool = True
 
 
 # ==================== REDIRECTION ====================
@@ -202,7 +199,7 @@ async def create_user(user: UserModel):
     )
     if not success:
         raise HTTPException(status_code=400, detail=message)
-    return {"message": message, "user": created_user.email}
+    return {"message": message, "user": created_user.email, "id": created_user.id}
 
 
 @app.post("/user/login", tags=["Users"])
@@ -242,14 +239,7 @@ async def find_user(user_id: int):
             status_code=404, 
             detail=f"Utilisateur avec l'ID {user_id} introuvable"
         )
-    return {
-        "id": user.id,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "user_type": user.user_type,
-        "is_active": user.is_active
-    }
+    return user_service.find_by_id(user_id)
 
 
 @app.delete("/user/{user_id}", tags=["Users"])

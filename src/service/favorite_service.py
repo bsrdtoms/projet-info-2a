@@ -7,13 +7,11 @@ class FavoriteService:
 
     @log
     def add_favorite(self, user_id: int, card_id: int):
-        if self.dao.is_favorite(user_id, card_id):
-            return False, "La carte est déjà en favoris"
         added = self.dao.add_favorite(user_id, card_id)
-        if added :
+        if added:
             return True, "Carte ajoutée aux favoris"
-        else :
-            return False, "Échec de l’ajout"
+        else:
+            return False, "La carte est déjà en favoris (ou échec d'ajout)"
 
     @log
     def remove_favorite(self, user_id: int, card_id: int):
