@@ -1,29 +1,60 @@
 import logging
+import os
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+import uvicorn
 
 from service.card_service import CardService
+from service.user_service import UserService
+from service.favorite_service import FavoriteService
 from business_object.card import Card
 from utils.log_init import initialiser_logs
+from technical_components.embedding.ollama_embedding import get_embedding
 
+
+# Initialisation de l'application
 app = FastAPI(title="Magic Cards API")
-
 initialiser_logs("MagicSearch API")
 
+# Initialisation des services
 card_service = CardService()
+user_service = UserService()
+favorite_service = FavoriteService()
 
 
-# ---------- REDIRECTION ----------
+# ==================== MODÈLES PYDANTIC ====================
+class CardModel(BaseModel):
+    """Modèle Pydantic pour les cartes Magic"""
+    id: Optional[int] = None
+    name: str
+    text: Optional[str] = None
+
+
+class UserModel(BaseModel):
+    """Modèle Pydantic pour les utilisateurs"""
+    id: Optional[int] = None
+    email: EmailStr
+    password: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    user_type: str = "client"
+    is_active: bool = True
+
+
+# ==================== REDIRECTION ====================
+
 @app.get("/", include_in_schema=False)
 async def redirect_to_docs():
     """Redirect to the API documentation"""
     return RedirectResponse(url="/docs")
 
 
-# ---------- ROUTES PRINCIPALES ----------
-@app.get("/card/random", tags=["Cards"])
+# ==================== ROUTES CARTES ====================
+
+@app.get("/card/random", response_model=CardModel, tags=["Cards"])
 async def random_card():
     """Récupérer une carte aléatoire"""
     logging.info("Recherche d'une carte aléatoire")
@@ -33,136 +64,268 @@ async def random_card():
     return result
 
 
-@app.get("/card/name/{name}", tags=["Cards"])
+@app.get("/card/name/{name}", response_model=list[CardModel], tags=["Cards"])
 async def search_by_name(name: str):
-    """Rechercher une carte par son nom"""
-    logging.info(f"Recherche d'une carte par nom : {name}")
+    """Rechercher des cartes par nom"""
+    logging.info(f"Recherche de cartes par nom : {name}")
     result = card_service.search_by_name(name)
     if not result:
         raise HTTPException(
-            status_code=404, detail=f"Aucune carte trouvée pour le nom : {name}"
+            status_code=404, 
+            detail=f"Aucune carte trouvée pour le nom : {name}"
         )
     return result
 
 
 @app.get("/card/describe/{id}", tags=["Cards"])
 async def describe_by_id(id: int):
-    """Rechercher une carte par son id"""
-    logging.info(f"Recherche d'une carte par nom : {id}")
+    """Récupérer la description détaillée d'une carte par ID"""
+    logging.info(f"Recherche d'une carte par ID : {id}")
     result = card_service.describe_card(id)
     if not result:
         raise HTTPException(
-            status_code=404, detail=f"Aucune carte trouvée pour l'id' : {id}"
+            status_code=404, 
+            detail=f"Aucune carte trouvée pour l'ID : {id}"
         )
     return result
 
 
 @app.post("/card/semantic_search_with_L2_distance/", tags=["Cards"])
-async def semantic_search(query: str):
-    """Recherche sémantique de carte (par description)"""
-    logging.info(f"Recherche sémantique avec : {query}")
-    result = card_service.semantic_search(query, 1)
+async def semantic_search_l2(query: str, limit: int = 3):
+    """Recherche sémantique de cartes avec distance L2"""
+    logging.info(f"Recherche sémantique L2 avec : {query} (limit={limit})")
+    result = card_service.semantic_search(query, limit)
     if not result:
         raise HTTPException(
-            status_code=404, detail="Aucune carte correspondante trouvée"
+            status_code=404, 
+            detail="Aucune carte correspondante trouvée"
         )
-    return result
+    return [
+        {
+            "id": card.id,
+            "name": card.name,
+            "text": card.text,
+            "similarity": similarity,
+        }
+        for card, similarity in result
+    ]
 
 
 @app.post("/card/semantic_search_with_cosine_distance/", tags=["Cards"])
-async def semantic_search_cos(query: str):
-    """Recherche sémantique de carte (par description)"""
-    logging.info(f"Recherche sémantique avec : {query}")
-    result = card_service.semantic_search(query, 1, "cosine")
+async def semantic_search_cosine(query: str, limit: int = 3):
+    """Recherche sémantique de cartes avec distance cosinus"""
+    logging.info(f"Recherche sémantique cosinus avec : {query} (limit={limit})")
+    result = card_service.semantic_search(query, limit, "cosine")
     if not result:
         raise HTTPException(
-            status_code=404, detail="Aucune carte correspondante trouvée"
+            status_code=404, 
+            detail="Aucune carte correspondante trouvée"
         )
-    return result
+    return [
+        {
+            "id": card.id,
+            "name": card.name,
+            "text": card.text,
+            "similarity": similarity,
+        }
+        for card, similarity in result
+    ]
 
 
-# ---------- MODELE Pydantic ----------
-class CardModel(BaseModel):
-    """Modèle Pydantic pour les cartes Magic"""
-
-    id: int | None = None
-    name: str
-    text: str | None = None
-
-
-# ---------- CRUD ----------
-@app.post("/card/", tags=["Cards"])
-async def create_card(card: CardModel):
+@app.post("/card/{name}/{text}", tags=["Cards"])
+async def create_card(name: str, text: str):
     """Créer une nouvelle carte"""
-    logging.info("Création d'une carte")
-    carte_objet = Card(None, card.name, card.text)
-
+    logging.info(f"Création d'une carte : {name}")
+    carte_objet = Card(None, name, text)
     success = card_service.add_card(carte_objet)
     if not success:
         raise HTTPException(
-            status_code=500, detail="Erreur lors de la création de la carte"
+            status_code=500, 
+            detail="Erreur lors de la création de la carte"
         )
-
-    return {"message": f"Carte '{card.name}' créée avec succès"}
+    return {"message": f"Carte '{carte_objet.name}' créée avec succès"}
 
 
 @app.put("/card/{card_id}", tags=["Cards"])
-async def update_card(card_id: int, name: str, updates: dict):
+async def update_card(card_id: int, updates: dict):
     """Modifier un ou plusieurs champs d'une carte"""
-    logging.info(f"Modification de la carte {card_id}")
+    logging.info(f"Modification de la carte ID {card_id}")
     carte_objet = card_service.find_by_id(card_id)
+    if not carte_objet:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Carte avec l'ID {card_id} introuvable"
+        )
     success = card_service.modify_card(carte_objet, updates)
     if not success:
         raise HTTPException(
-            status_code=400, detail="Une ou plusieurs modifications ont échoué"
+            status_code=400, 
+            detail="Une ou plusieurs modifications ont échoué"
         )
-    return {"message": f"Carte {name} (id={card_id}) mise à jour", "updates": updates}
+    return {
+        "message": f"Carte '{carte_objet.name}' (ID={card_id}) mise à jour",
+        "updates": updates
+    }
 
 
 @app.delete("/card/{card_id}", tags=["Cards"])
-async def delete_card(card_id: int, name: str):
+async def delete_card(card_id: int):
     """Supprimer une carte"""
-    logging.info(f"Suppression de la carte {card_id}")
-    carte_objet = Card(card_id, name, None)
+    logging.info(f"Suppression de la carte ID {card_id}")
+    carte_objet = card_service.find_by_id(card_id)
+    if not carte_objet:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Carte avec l'ID {card_id} introuvable"
+        )
+    name = carte_objet.name
     success = card_service.delete_card(carte_objet)
     if not success:
-        raise HTTPException(status_code=404, detail="Carte non trouvée")
-    return {"message": f"Carte {name} (id={card_id}) supprimée avec succès"}
+        raise HTTPException(
+            status_code=500, 
+            detail="Erreur lors de la suppression"
+        )
+    return {"message": f"Carte '{name}' (ID={card_id}) supprimée avec succès"}
 
 
-# ---------- HELLO ----------
-@app.get("/hello/{name}", tags=["Test"])
-async def hello_name(name: str):
-    """Test de l'API"""
-    logging.info(f"Hello demandé pour {name}")
-    return {"message": f"Hello {name}"}
+# ==================== ROUTES UTILISATEURS ====================
+
+@app.post("/user/", tags=["Users"])
+async def create_user(user: UserModel):
+    """Créer un nouveau compte utilisateur"""
+    logging.info(f"Tentative de création du compte : {user.email}")
+    success, message, created_user = user_service.create_account(
+        email=user.email,
+        password=user.password,
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message, "user": created_user.email}
 
 
-# ---------- RUN THE FASTAPI APPLICATION ----------
+@app.post("/user/login", tags=["Users"])
+async def login(email: str, password: str):
+    """Connecter un utilisateur"""
+    logging.info(f"Tentative de connexion pour : {email}")
+    success, message, session = user_service.login(email, password)
+    if not success:
+        raise HTTPException(status_code=401, detail=message)
+    return {"message": message, "session_id": session.session_id}
+
+
+@app.post("/user/logout", tags=["Users"])
+async def logout():
+    """Déconnecter l'utilisateur courant"""
+    logging.info("Tentative de déconnexion")
+    success, message = user_service.logout()
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+
+@app.get("/user/", tags=["Users"])
+async def list_all_users():
+    """Lister tous les utilisateurs (admin uniquement)"""
+    logging.info("Récupération de la liste des utilisateurs")
+    return user_service.list_all_users()
+
+
+@app.get("/user/{user_id}", tags=["Users"])
+async def find_user(user_id: int):
+    """Récupérer un utilisateur par ID"""
+    logging.info(f"Recherche de l'utilisateur ID {user_id}")
+    user = user_service.find_by_id(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Utilisateur avec l'ID {user_id} introuvable"
+        )
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "user_type": user.user_type,
+        "is_active": user.is_active
+    }
+
+
+@app.delete("/user/{user_id}", tags=["Users"])
+async def delete_user(user_id: int):
+    """Supprimer un utilisateur"""
+    logging.info(f"Suppression de l'utilisateur ID {user_id}")
+    success, message = user_service.delete_account(user_id)
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+
+# ==================== ROUTES FAVORIS ====================
+
+@app.post("/favorites/{card_id}/{user_id}", tags=["Favorites"])
+async def add_favorite(card_id: int, user_id: int):
+    """Ajouter une carte aux favoris d'un utilisateur"""
+    logging.info(f"Ajout d'un favori : user_id={user_id}, card_id={card_id}")
+    success, message = favorite_service.add_favorite(user_id, card_id)
+    if not success and "Erreur interne" in message:
+        raise HTTPException(status_code=500, detail=message)
+    elif not success:
+        raise HTTPException(status_code=400, detail=message)
+    return {"message": message}
+
+
+@app.delete("/favorites/{card_id}/{user_id}", tags=["Favorites"])
+async def remove_favorite(card_id: int, user_id: int):
+    """Supprimer une carte des favoris d'un utilisateur"""
+    logging.info(f"Suppression d'un favori : user_id={user_id}, card_id={card_id}")
+    success, message = favorite_service.remove_favorite(user_id, card_id)
+    if not success and "Erreur interne" in message:
+        raise HTTPException(status_code=500, detail=message)
+    elif not success:
+        raise HTTPException(status_code=404, detail=message)
+    return {"message": message}
+
+
+@app.get("/favorites/{user_id}", tags=["Favorites"])
+async def list_favorites(user_id: int):
+    """Lister les cartes favorites d'un utilisateur"""
+    logging.info(f"Récupération des favoris pour user_id={user_id}")
+    favorites = favorite_service.list_favorites(user_id)
+    if not favorites:
+        return {"message": "Aucune carte en favori"}
+    return favorites
+
+
+# ==================== DÉMARRAGE DE L'APPLICATION ====================
+
 if __name__ == "__main__":
-    import uvicorn
-    import os
-    from technical_components.embedding.ollama_embedding import get_embedding
-
-    # A few tests to verify that the user set up well it's environement variable
-    required_vars = ['API_TOKEN', 'POSTGRES_HOST', 'POSTGRES_PORT', 'POSTGRES_DATABASE',
-                     'POSTGRES_USER', 'POSTGRES_PASSWORD', 'POSTGRES_SCHEMA']
+    # Vérification des variables d'environnement requises
+    required_vars = [
+        'API_TOKEN', 
+        'POSTGRES_HOST', 
+        'POSTGRES_PORT', 
+        'POSTGRES_DATABASE',
+        'POSTGRES_USER', 
+        'POSTGRES_PASSWORD', 
+        'POSTGRES_SCHEMA'
+    ]
     missing = [var for var in required_vars if not os.getenv(var)]
     if missing:
-        print(f"❌ Missing: {', '.join(missing)}")
+        print(f"❌ Variables d'environnement manquantes : {', '.join(missing)}")
         exit(1)
 
+    # Vérification de la connexion à l'API d'embeddings
     try:
         response = get_embedding("test")
-
         if "embeddings" not in response:
-            print("❌ Invalid API_TOKEN")
+            print("❌ API_TOKEN invalide")
             exit(1)
-
     except Exception as e:
-        print(f"❌ API Error: {e}")
+        print(f"❌ Erreur API : {e}")
         exit(1)
 
+    # Démarrage du serveur
     uvicorn.run(app, host="0.0.0.0", port=9876)
-
-    logging.info("Arret de MagicSearch API")
+    logging.info("Arrêt de MagicSearch API")

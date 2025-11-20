@@ -1,43 +1,72 @@
+"""
+Business object representing a Magic card
+"""
+
+
 class Card:
+    """Represents a Magic: The Gathering card"""
 
     def __init__(
-        self, id: int | None, name: str, text: str | None, embedding_of_text=None
+        self,
+        id: int | None,
+        name: str,
+        text: str | None,
+        embedding_of_text: list[float] | None = None
     ):
         """
-        Représente une carte Magic.
+        Initialize a Magic card
 
         Parameters
-        ----------------
-        id : int | None
-            Identifiant unique dans la base (None avant insertion)
+        ----------
+        id : int or None
+            Unique identifier in the database (None before insertion)
         name : str
-            Nom de la carte
-        text : str
-            Description de la carte
-        embedding_of_text : any
-            Représentation vectorielle (optionnelle)
+            Card name
+        text : str or None
+            Card description/rules text
+        embedding_of_text : list[float] or None, optional
+            Vector representation for semantic search (default: None)
         """
         self.id = id
         self.name = name
         self.text = text
         self.embedding_of_text = embedding_of_text
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
-        Représentation lisible (affichée quand on fait print(card)).
+        Human-readable representation (displayed when using print(card))
+
+        Returns
+        -------
+        str
+            Formatted string representation of the card
         """
-        texte = self.text or ""  # si self.text est None, on met une chaîne vide
-        text_preview = texte if len(texte) < 100 else texte[:100] + "..."
+        text_content = self.text or ""  # Use empty string if text is None
+        self.is_truncated = len(text_content) >= 100
+        text_preview = (
+            text_content if len(text_content) < 100 else text_content[:100] + "..."
+        )
+        
+        id_display = self.id if self.id is not None else "(not saved)"
+        
         return (
-            f"Carte {self.id if self.id is not None else '(non enregistrée)'}\n"
-            f"Nom : {self.name}\n"
-            f"Texte : {text_preview}"
+            f"Card {id_display}\n"
+            f"Name: {self.name}\n"
+            f"Text: {text_preview}"
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
-        Représentation technique d'une carte.
+        Technical representation of a card
+
+        Returns
+        -------
+        str
+            String representation for debugging
         """
-        texte = self.text or ""  # si self.text est None, on met une chaîne vide
-        text_preview = texte if len(texte) < 100 else texte[:100] + "..."
-        return f"Card(id={self.id}, name='{self.name}', text='{text_preview}'"
+        text_content = self.text or ""  # Use empty string if text is None
+        text_preview = (
+            text_content if len(text_content) < 100 else text_content[:100] + "..."
+        )
+        
+        return f"Card(id={self.id}, name='{self.name}', text='{text_preview}')"

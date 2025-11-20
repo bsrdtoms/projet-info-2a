@@ -24,6 +24,11 @@ class SearchView(AbstractView):
             if choice == "1":
                 result = card_service.random()
                 self.show_message(result)
+                if hasattr(result, "is_truncated") and result.is_truncated:
+                    choice = input("\nLe texte a été abrégé. Voir le texte complet ? (o/n) : ")
+                    if choice.lower() == "o":
+                        print("\n=== Texte complet ===")
+                        print(result.text)
                 self.pause()
 
             elif choice == "2":
@@ -35,8 +40,16 @@ class SearchView(AbstractView):
 
             elif choice == "3":
                 query = self.get_input("Describe the card you're looking for: ")
-                result = card_service.semantic_search(query)
-                self.show_message(result)
+                limit_input = self.get_input("How many results do you want? (default = 3): ")
+                # Si l’utilisateur appuie juste sur Entrée, on met 3
+                try:
+                    limit = int(limit_input) if limit_input.strip() else 3
+                except ValueError:
+                    limit = 3  # en cas de valeur incorrecte
+                result = card_service.semantic_search(query, limit)
+                for card, similarity in result:
+                    self.show_message(card)
+                    print(f"Similarity: {similarity:.4f}\n")
                 self.pause()
 
             elif choice == "4":
