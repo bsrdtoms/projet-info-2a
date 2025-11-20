@@ -79,12 +79,12 @@ CREATE TRIGGER update_users_updated_at
     EXECUTE FUNCTION update_updated_at_column();
 
 --------------------------------------------------------------
--- Insertion d'un admin par défaut (mot de passe: admin123)
+-- Insertion d'un admin par défaut (mot de passe: our very secure password)
 --------------------------------------------------------------
 INSERT INTO project.users (email, password_hash, first_name, last_name, user_type)
 VALUES (
     'admin@magicsearch.com',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO',  -- hash de "admin123"
+    '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6',  -- hash de "our very secure password"
     'Admin',
     'System',
     'admin'

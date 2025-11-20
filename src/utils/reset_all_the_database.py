@@ -14,6 +14,7 @@ from utils.singleton import Singleton
 from utils.sql_helpers import sql_value_string
 from dao.db_connection import DBConnection
 from utils.setup_pgvector import PgVectorSetup
+import utils.init_users_tables
 
 
 class ResetDatabase(metaclass=Singleton):
@@ -211,10 +212,7 @@ class ResetDatabase(metaclass=Singleton):
         except Exception as e:
             print(f"❌ Could not insert all cards: {e}")
             return False
-        
-        # Maintenant on appel automatiquement setup_pgvector.py
-        pgvector_setup = PgVectorSetup()
-        pgvector_setup.setup()
+
 
 def main():
     """Main function with argument parsing"""
@@ -244,7 +242,13 @@ URLs used:
     # With --no-embeddings: download WITHOUT embeddings
     use_embeddings = not args.no_embeddings
 
+    # Maintenant on appel automatiquement setup_pgvector.py
+    pgvector_setup = PgVectorSetup()
+    pgvector_setup.setup()
+
     ResetDatabase().launch(use_embeddings=use_embeddings)
+    # Maintenant on appel automatiquement init_user_tables.py
+    utils.init_users_tables.main()
 
 
 if __name__ == "__main__":

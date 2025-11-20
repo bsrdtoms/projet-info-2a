@@ -6,7 +6,7 @@ from service.user_service import UserService
 import logging
 
 from service.card_service import CardService
-from business_object.card import Card  
+from business_object.card import Card
 # attention, l'API doit communiquer avec le service uniquement
 
 
