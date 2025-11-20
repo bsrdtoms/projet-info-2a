@@ -332,3 +332,117 @@ Texte : Creatures you control get +3/+3 until end of turn. Each creature your op
 Nom : Predatory Rampage
 Texte : Creatures you control get +3/+3 until end of turn. Each creature your opponents control blocks this ...
 19/11/2025 22:55:04 - INFO     - Fin de l'application
+20/11/2025 11:49:05 - INFO     - --------------------------------------------------
+20/11/2025 11:49:05 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 11:49:05 - INFO     - --------------------------------------------------
+20/11/2025 11:49:33 - INFO     - --------------------------------------------------
+20/11/2025 11:49:33 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 11:49:33 - INFO     - --------------------------------------------------
+20/11/2025 11:50:26 - INFO     - --------------------------------------------------
+20/11/2025 11:50:26 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 11:50:26 - INFO     - --------------------------------------------------
+20/11/2025 11:53:21 - INFO     -     UserService.login('admin@magiccc.fr', '*****') - DEBUT
+20/11/2025 11:53:21 - INFO     -         UserDao.find_by_email('admin@magiccc.fr',) - DEBUT
+20/11/2025 11:53:21 - INFO     -         UserDao.find_by_email('admin@magiccc.fr',) - FIN
+20/11/2025 11:53:21 - INFO     -            └─> Sortie : None
+20/11/2025 11:53:21 - INFO     -     UserService.login('admin@magiccc.fr', '*****') - FIN
+20/11/2025 11:53:21 - INFO     -        └─> Sortie : (False, 'Email ou mot de passe incorrect', None)
+20/11/2025 11:53:31 - INFO     - Fin de l'application
+20/11/2025 11:53:34 - INFO     - --------------------------------------------------
+20/11/2025 11:53:34 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 11:53:34 - INFO     - --------------------------------------------------
+20/11/2025 11:54:14 - INFO     -     UserService.create_account('thzeqr', '*****', None, None) - DEBUT
+20/11/2025 11:54:14 - INFO     -     UserService.create_account('thzeqr', '*****', None, None) - FIN
+20/11/2025 11:54:14 - INFO     -        └─> Sortie : (False, 'Email invalide', None)
+20/11/2025 11:54:38 - INFO     -     UserService.create_account('toto@toto.ef', '*****', None, None) - DEBUT
+20/11/2025 11:54:38 - INFO     -     UserService.create_account('toto@toto.ef', '*****', None, None) - FIN
+20/11/2025 11:54:38 - INFO     -        └─> Sortie : (False, 'Le mot de passe doit contenir au moins 6 caractères', None)
+20/11/2025 11:55:20 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - DEBUT
+20/11/2025 11:55:20 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - DEBUT
+20/11/2025 11:55:20 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - FIN
+20/11/2025 11:55:20 - INFO     -            └─> Sortie : None
+20/11/2025 11:55:20 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 11:55:20 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 11:55:20 - INFO     -            └─> Sortie : $2b$12$410Mq9qcjStBgCNaU6LuAuzIKSRdZeQLbzwI8YoCV5M ... (60 caracteres)
+20/11/2025 11:55:20 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - DEBUT
+20/11/2025 11:55:20 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - FIN
+20/11/2025 11:55:20 - INFO     -            └─> Sortie : False
+20/11/2025 11:55:20 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - FIN
+20/11/2025 11:55:20 - INFO     -        └─> Sortie : (False, 'Erreur lors de la création du compte', None)
+20/11/2025 12:00:15 - INFO     - --------------------------------------------------
+20/11/2025 12:00:15 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 12:00:15 - INFO     - --------------------------------------------------
+20/11/2025 12:00:42 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - DEBUT
+20/11/2025 12:00:42 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - DEBUT
+20/11/2025 12:00:42 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - FIN
+20/11/2025 12:00:42 - INFO     -            └─> Sortie : None
+20/11/2025 12:00:42 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 12:00:42 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 12:00:42 - INFO     -            └─> Sortie : $2b$12$IcYAGVBb2t4cHsLN4S2jmuUFHPtnTRBxqjax0Btxg1X ... (60 caracteres)
+20/11/2025 12:00:42 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - DEBUT
+20/11/2025 12:00:42 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - FIN
+20/11/2025 12:00:42 - INFO     -            └─> Sortie : False
+20/11/2025 12:00:42 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - FIN
+20/11/2025 12:00:42 - INFO     -        └─> Sortie : (False, 'Erreur lors de la création du compte', None)
+20/11/2025 12:02:45 - INFO     - --------------------------------------------------
+20/11/2025 12:02:45 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 12:02:45 - INFO     - --------------------------------------------------
+20/11/2025 12:03:02 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - DEBUT
+20/11/2025 12:03:02 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - DEBUT
+20/11/2025 12:03:02 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - FIN
+20/11/2025 12:03:02 - INFO     -            └─> Sortie : None
+20/11/2025 12:03:02 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 12:03:02 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 12:03:02 - INFO     -            └─> Sortie : $2b$12$NHJ9j1IvbKbBRfiKlj3zsO2yD.Y.decAz1GcrixOt1j ... (60 caracteres)
+20/11/2025 12:03:02 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - DEBUT
+20/11/2025 12:03:02 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - FIN
+20/11/2025 12:03:02 - INFO     -            └─> Sortie : False
+20/11/2025 12:03:02 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - FIN
+20/11/2025 12:03:02 - INFO     -        └─> Sortie : (False, 'Erreur lors de la création du compte', None)
+20/11/2025 12:07:34 - INFO     - --------------------------------------------------
+20/11/2025 12:07:34 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 12:07:34 - INFO     - --------------------------------------------------
+20/11/2025 12:07:51 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - DEBUT
+20/11/2025 12:07:51 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - DEBUT
+20/11/2025 12:07:51 - INFO     -         UserDao.find_by_email('toto@toto.fr',) - FIN
+20/11/2025 12:07:51 - INFO     -            └─> Sortie : None
+20/11/2025 12:07:51 - INFO     -         UserService.hash_password('*****',) - DEBUT
+20/11/2025 12:07:51 - INFO     -         UserService.hash_password('*****',) - FIN
+20/11/2025 12:07:51 - INFO     -            └─> Sortie : $2b$12$mKEyz3hrtp4p0lETPCay9e2Y8CYG7AMSiA8FkX0f0ap ... (60 caracteres)
+20/11/2025 12:07:51 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - DEBUT
+20/11/2025 12:07:51 - INFO     -         UserDao.create('Client - toto@toto.fr (toto@toto.fr)',) - FIN
+20/11/2025 12:07:51 - INFO     -            └─> Sortie : False
+20/11/2025 12:07:51 - INFO     -     UserService.create_account('toto@toto.fr', '*****', None, None) - FIN
+20/11/2025 12:07:51 - INFO     -        └─> Sortie : (False, 'Erreur lors de la création du compte', None)
+20/11/2025 14:42:17 - INFO     - --------------------------------------------------
+20/11/2025 14:42:17 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 14:42:17 - INFO     - --------------------------------------------------
+20/11/2025 14:42:44 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 14:42:44 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 14:42:44 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 14:42:44 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 14:42:44 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 14:42:44 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 14:42:44 - INFO     -            └─> Sortie : True
+20/11/2025 14:42:44 - INFO     -         SessionDao.create('Session 5ee17fe9... (user_id=1)',) - DEBUT
+20/11/2025 14:42:44 - INFO     -         SessionDao.create('Session 5ee17fe9... (user_id=1)',) - FIN
+20/11/2025 14:42:44 - INFO     -            └─> Sortie : True
+20/11/2025 14:42:44 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 14:42:44 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='5ee17fe9...', user_id=1, active=True))
+20/11/2025 14:42:56 - INFO     -     UserService.get_current_user() - DEBUT
+20/11/2025 14:42:56 - INFO     -         UserDao.find_by_id(1,) - DEBUT
+20/11/2025 14:42:56 - INFO     -         UserDao.find_by_id(1,) - FIN
+20/11/2025 14:42:56 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 14:42:56 - INFO     -     UserService.get_current_user() - FIN
+20/11/2025 14:42:56 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 14:42:56 - ERROR    - TypeError : UserView.__init__() got an unexpected keyword argument 'user'
+Traceback (most recent call last):
+  File "/home/onyxia/work/projet-info-2a/src/main.py", line 24, in <module>
+    vue_courante = vue_courante.menu_choice()
+  File "/home/onyxia/work/projet-info-2a/src/views/welcome_view.py", line 79, in menu_choice
+    self.login_flow()
+    ~~~~~~~~~~~~~~~^^
+  File "/home/onyxia/work/projet-info-2a/src/views/welcome_view.py", line 65, in login_flow
+    UserView(user=user, user_service=self.user_service, role=user.user_type).menu_choice()
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: UserView.__init__() got an unexpected keyword argument 'user'

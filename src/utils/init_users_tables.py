@@ -45,8 +45,7 @@ def main():
         print("=" * 60)
         print("\nCompte admin par défaut:")
         print("  Email: admin@magicsearch.com")
-        print("  Mot de passe: admin123")
-        print("\n⚠️  N'oubliez pas de changer ce mot de passe en production!")
+        print("  Mot de passe: our very secure password")
     else:
         print("\n❌ Échec de l'initialisation")
 
