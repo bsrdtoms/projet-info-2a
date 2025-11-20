@@ -23,7 +23,6 @@ from utils.auth import (
     require_authenticated
 )
 
-
 # Initialisation de l'application
 app = FastAPI(title="Magic Cards API")
 initialiser_logs("MagicSearch API")
@@ -411,6 +410,88 @@ async def list_favorites(user_id: int, current_user: TokenData = Depends(require
         return {"message": "Aucune carte en favori"}
     return favorites
 
+# ==================== ROUTES HISTORIQUE ====================
+
+@app.get("/history/{user_id}", tags=["History"])
+async def get_search_history(
+    user_id: int,
+    limit: int = 50,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """
+    Récupère l'historique de recherche d'un utilisateur
+    (nécessite authentification)
+    """
+    # Vérifier que l'utilisateur ne peut voir que son historique
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Vous ne pouvez voir que votre propre historique"
+        )
+
+    history_service = HistoricalSearchService()
+    history = history_service.get_history(user_id, limit)
+
+    if not history:
+        return {"message": "Aucune recherche dans l'historique"}
+
+    return [
+        {
+            "id": search.id,
+            "query": search.query_text,
+            "result_count": search.result_count,
+            "created_at": search.created_at.isoformat()
+        }
+        for search in history
+    ]
+
+
+@app.delete("/history/{search_id}", tags=["History"])
+async def delete_search_history(
+    search_id: int,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """Supprime une entrée d'historique spécifique"""
+    history_service = HistoricalSearchService()
+    success = history_service.delete_search(search_id)
+
+    if not success:
+        raise HTTPException(status_code=404, detail="Entrée non trouvée")
+
+    return {"message": "Entrée d'historique supprimée"}
+
+
+@app.delete("/history/user/{user_id}", tags=["History"])
+async def clear_all_history(
+    user_id: int,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """Supprime tout l'historique d'un utilisateur"""
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(status_code=403, detail="Permission refusée")
+
+    history_service = HistoricalSearchService()
+    history_service.clear_history(user_id)
+
+    return {"message": "Historique complètement supprimé"}
+
+
+@app.get("/history/stats/{user_id}", tags=["History"])
+async def get_search_stats(
+    user_id: int,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """Récupère les statistiques de recherche d'un utilisateur"""
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(status_code=403, detail="Permission refusée")
+
+    history_service = HistoricalSearchService()
+    stats = history_service.get_stats(user_id)
+
+    if not stats:
+        return {"message": "Aucune statistique disponible"}
+
+    return stats
 
 # ==================== DÉMARRAGE DE L'APPLICATION ====================
 

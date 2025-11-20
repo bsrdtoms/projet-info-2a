@@ -88,4 +88,4 @@ VALUES (
     'Admin',
     'System',
     'admin'
-) ON CONFLICT (email) DO NOTHING;
+) ON CONFLICT (email) DO NOTHING; 

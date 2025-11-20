@@ -1279,3 +1279,125 @@ Text: Whenever this creature deals combat damage to a player, you may sacrifice 
 20/11/2025 16:00:12 - INFO     -     UserService.list_all_users() - FIN
 20/11/2025 16:00:12 - INFO     -        └─> Sortie : ['Client - Test Client (test_client@example.com)', 'Game_designer - Test Designer (test_designer@example.com)', 'Admin - Admin System (admin@magicsearch.com)'] ... (3 elements)
 20/11/2025 16:00:51 - INFO     - Arrêt de MagicSearch API
+20/11/2025 19:39:07 - INFO     - --------------------------------------------------
+20/11/2025 19:39:07 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 19:39:07 - INFO     - --------------------------------------------------
+20/11/2025 19:40:35 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 19:40:35 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 19:40:35 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 19:40:35 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 19:40:35 - INFO     -         UserService.verify_password('*****', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO') - DEBUT
+20/11/2025 19:40:36 - INFO     -         UserService.verify_password('*****', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO') - FIN
+20/11/2025 19:40:36 - INFO     -            └─> Sortie : False
+20/11/2025 19:40:36 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 19:40:36 - INFO     -        └─> Sortie : (False, 'Email ou mot de passe incorrect', None)
+20/11/2025 19:41:12 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 19:41:12 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 19:41:12 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 19:41:12 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 19:41:12 - INFO     -         UserService.verify_password('*****', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO') - DEBUT
+20/11/2025 19:41:13 - INFO     -         UserService.verify_password('*****', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO') - FIN
+20/11/2025 19:41:13 - INFO     -            └─> Sortie : False
+20/11/2025 19:41:13 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 19:41:13 - INFO     -        └─> Sortie : (False, 'Email ou mot de passe incorrect', None)
+20/11/2025 19:41:52 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 19:41:52 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 19:41:52 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 19:41:52 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 19:41:52 - INFO     -         UserService.verify_password('*****', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO') - DEBUT
+20/11/2025 19:41:53 - INFO     -         UserService.verify_password('*****', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5NU7667iSVZLO') - FIN
+20/11/2025 19:41:53 - INFO     -            └─> Sortie : False
+20/11/2025 19:41:53 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 19:41:53 - INFO     -        └─> Sortie : (False, 'Email ou mot de passe incorrect', None)
+20/11/2025 22:54:06 - INFO     - --------------------------------------------------
+20/11/2025 22:54:06 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 22:54:06 - INFO     - --------------------------------------------------
+20/11/2025 22:56:05 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 22:56:05 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 22:56:05 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 22:56:05 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 22:56:05 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 22:56:06 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 22:56:06 - INFO     -            └─> Sortie : True
+20/11/2025 22:56:06 - INFO     -         SessionDao.create('Session 324f9843... (user_id=1)',) - DEBUT
+20/11/2025 22:56:06 - INFO     -         SessionDao.create('Session 324f9843... (user_id=1)',) - FIN
+20/11/2025 22:56:06 - INFO     -            └─> Sortie : True
+20/11/2025 22:56:06 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 22:56:06 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='324f9843...', user_id=1, active=True))
+20/11/2025 22:56:09 - INFO     -     UserService.get_current_user() - DEBUT
+20/11/2025 22:56:09 - INFO     -         UserDao.find_by_id(1,) - DEBUT
+20/11/2025 22:56:09 - INFO     -         UserDao.find_by_id(1,) - FIN
+20/11/2025 22:56:09 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 22:56:09 - INFO     -     UserService.get_current_user() - FIN
+20/11/2025 22:56:09 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 22:56:29 - ERROR    - NameError : name 'HistoricalSearchDAO' is not defined
+Traceback (most recent call last):
+  File "/home/onyxia/work/projet-info-2a/src/main.py", line 24, in <module>
+    vue_courante = vue_courante.menu_choice()
+  File "/home/onyxia/work/projet-info-2a/src/views/welcome_view.py", line 79, in menu_choice
+    self.login_flow()
+    ~~~~~~~~~~~~~~~^^
+  File "/home/onyxia/work/projet-info-2a/src/views/welcome_view.py", line 65, in login_flow
+    UserView(user=user, user_service=self.user_service, role=user.user_type).menu_choice()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/onyxia/work/projet-info-2a/src/views/user_view.py", line 43, in menu_choice
+    HistoryView(self.user).menu_choice()
+    ~~~~~~~~~~~^^^^^^^^^^^
+  File "/home/onyxia/work/projet-info-2a/src/views/history_view.py", line 23, in __init__
+    self.history_service = HistoricalSearchService()
+                           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/onyxia/work/projet-info-2a/src/service/historical_service.py", line 10, in __init__
+    self.dao = HistoricalSearchDAO()
+               ^^^^^^^^^^^^^^^^^^^
+NameError: name 'HistoricalSearchDAO' is not defined. Did you mean: 'HistoricalSearch'?
+20/11/2025 22:59:29 - INFO     -     UserService.login('/opt/python/bin/python /home/onyxia/work/projet-info-2a/src/main.py', '*****') - DEBUT
+20/11/2025 22:59:29 - INFO     -         UserDao.find_by_email('/opt/python/bin/python /home/onyxia/work/projet-info-2a/src/main.py',) - DEBUT
+20/11/2025 22:59:29 - INFO     -         UserDao.find_by_email('/opt/python/bin/python /home/onyxia/work/projet-info-2a/src/main.py',) - FIN
+20/11/2025 22:59:29 - INFO     -            └─> Sortie : None
+20/11/2025 22:59:29 - INFO     -     UserService.login('/opt/python/bin/python /home/onyxia/work/projet-info-2a/src/main.py', '*****') - FIN
+20/11/2025 22:59:29 - INFO     -        └─> Sortie : (False, 'Email ou mot de passe incorrect', None)
+20/11/2025 23:01:42 - INFO     - --------------------------------------------------
+20/11/2025 23:01:42 - INFO     - Lancement MagicSearch Application                           
+20/11/2025 23:01:42 - INFO     - --------------------------------------------------
+20/11/2025 23:02:15 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - DEBUT
+20/11/2025 23:02:15 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - DEBUT
+20/11/2025 23:02:15 - INFO     -         UserDao.find_by_email('admin@magicsearch.com',) - FIN
+20/11/2025 23:02:15 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 23:02:15 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - DEBUT
+20/11/2025 23:02:16 - INFO     -         UserService.verify_password('*****', '$2b$12$Cq2F8EtAYXfd7JZZofVK4uyDgoVVQxebPADow2puQyFwV5wQBk2Z6') - FIN
+20/11/2025 23:02:16 - INFO     -            └─> Sortie : True
+20/11/2025 23:02:16 - INFO     -         SessionDao.create('Session a770f97b... (user_id=1)',) - DEBUT
+20/11/2025 23:02:16 - INFO     -         SessionDao.create('Session a770f97b... (user_id=1)',) - FIN
+20/11/2025 23:02:16 - INFO     -            └─> Sortie : True
+20/11/2025 23:02:16 - INFO     -     UserService.login('admin@magicsearch.com', '*****') - FIN
+20/11/2025 23:02:16 - INFO     -        └─> Sortie : (True, 'Bienvenue Admin System!', Session(id='a770f97b...', user_id=1, active=True))
+20/11/2025 23:02:21 - INFO     -     UserService.get_current_user() - DEBUT
+20/11/2025 23:02:21 - INFO     -         UserDao.find_by_id(1,) - DEBUT
+20/11/2025 23:02:21 - INFO     -         UserDao.find_by_id(1,) - FIN
+20/11/2025 23:02:21 - INFO     -            └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 23:02:21 - INFO     -     UserService.get_current_user() - FIN
+20/11/2025 23:02:21 - INFO     -        └─> Sortie : Admin - Admin System (admin@magicsearch.com)
+20/11/2025 23:02:55 - INFO     -     HistoricalSearchService.get_history(1, 100) - DEBUT
+20/11/2025 23:02:55 - INFO     -         HistoricalSearchDAO.read_history(1, 100) - DEBUT
+20/11/2025 23:02:55 - INFO     -         HistoricalSearchDAO.read_history(1, 100) - FIN
+20/11/2025 23:02:55 - INFO     -            └─> Sortie : [] ... (0 elements)
+20/11/2025 23:02:55 - INFO     -     HistoricalSearchService.get_history(1, 100) - FIN
+20/11/2025 23:02:55 - INFO     -        └─> Sortie : [] ... (0 elements)
+20/11/2025 23:03:02 - INFO     -     HistoricalSearchService.get_stats(1,) - DEBUT
+20/11/2025 23:03:02 - INFO     -         HistoricalSearchDAO.get_user_search_stats(1,) - DEBUT
+20/11/2025 23:03:02 - INFO     -         HistoricalSearchDAO.get_user_search_stats(1,) - FIN
+20/11/2025 23:03:02 - INFO     -            └─> Sortie : [('total_searches', '0'), ('avg_results', '0'), ('most_recent', 'None'), ' ', '.', '.', '.', ' ', '(', '5', ' ', 'e', 'l', 'e', 'm', 'e', 'n', 't', 's', ')']
+20/11/2025 23:03:02 - INFO     -     HistoricalSearchService.get_stats(1,) - FIN
+20/11/2025 23:03:02 - INFO     -        └─> Sortie : [('total_searches', '0'), ('avg_results', '0'), ('most_recent', 'None'), ' ', '.', '.', '.', ' ', '(', '5', ' ', 'e', 'l', 'e', 'm', 'e', 'n', 't', 's', ')']
+20/11/2025 23:03:07 - INFO     -     HistoricalSearchService.get_history(1, 20) - DEBUT
+20/11/2025 23:03:07 - INFO     -         HistoricalSearchDAO.read_history(1, 20) - DEBUT
+20/11/2025 23:03:07 - INFO     -         HistoricalSearchDAO.read_history(1, 20) - FIN
+20/11/2025 23:03:07 - INFO     -            └─> Sortie : [] ... (0 elements)
+20/11/2025 23:03:07 - INFO     -     HistoricalSearchService.get_history(1, 20) - FIN
+20/11/2025 23:03:07 - INFO     -        └─> Sortie : [] ... (0 elements)
+20/11/2025 23:03:28 - INFO     -     HistoricalSearchService.get_history(1, 20) - DEBUT
+20/11/2025 23:03:28 - INFO     -         HistoricalSearchDAO.read_history(1, 20) - DEBUT
+20/11/2025 23:03:28 - INFO     -         HistoricalSearchDAO.read_history(1, 20) - FIN
+20/11/2025 23:03:28 - INFO     -            └─> Sortie : [] ... (0 elements)
+20/11/2025 23:03:28 - INFO     -     HistoricalSearchService.get_history(1, 20) - FIN
+20/11/2025 23:03:28 - INFO     -        └─> Sortie : [] ... (0 elements)

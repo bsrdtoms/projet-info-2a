@@ -325,3 +325,51 @@ class CardService:
         
         random_id = random.choice(ids)
         return self.dao.find_by_id(random_id)
+
+    @log
+    def semantic_search_with_history(
+        self,
+        text: str,
+        top_k: int = 5,
+        distance: str = "L2",
+        user_id: int = None
+    ) -> list[tuple]:
+        """
+        Recherche sémantique avec enregistrement automatique dans l'historique
+
+        Parameters
+        ----------
+        text : str
+            Texte de recherche
+        top_k : int
+            Nombre de résultats
+        distance : str
+            Métrique de distance
+        user_id : int, optional
+            ID de l'utilisateur (si None, pas d'enregistrement)
+
+        Returns
+        -------
+        list[tuple]
+            Liste de tuples (Card, similarity_score)
+        """
+        try:
+            # Effectuer la recherche sémantique
+            results = self.semantic_search(text, top_k, distance)
+
+            # Enregistrer dans l'historique si user_id fourni
+            if user_id is not None:
+                from service.historical_service import HistoricalSearchService
+                history_service = HistoricalSearchService()
+                history_service.add_search(
+                    user_id=user_id,
+                    query_text=text,
+                    result_count=len(results),
+                    save_embedding=True
+                )
+
+            return results
+
+        except Exception as e:
+            print(f"❌ Erreur lors de la recherche: {e}")
+            raise
