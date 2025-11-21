@@ -1,41 +1,19 @@
-# ============================================================
-# BUSINESS OBJECT: HistoricalSearch
-# ============================================================
-
 from datetime import datetime
 from typing import Optional
 
 
 class HistoricalSearch:
-    """Représente une recherche historique d'un utilisateur"""
+    """Represents a search in a user's history"""
 
     def __init__(
         self,
-        id: Optional[int] = None,
-        user_id: int = None,
-        query_text: str = None,
-        query_embedding: list[float] = None,
-        result_count: int = 0,
+        id: Optional[int],
+        user_id: int,
+        query_text: str,
+        query_embedding: Optional[list] = None,
+        result_count: Optional[int] = None,
         created_at: Optional[datetime] = None
     ):
-        """
-        Initialise une recherche historique
-
-        Parameters
-        ----------
-        id : int, optional
-            ID unique de l'enregistrement historique
-        user_id : int
-            ID de l'utilisateur qui a effectué la recherche
-        query_text : str
-            Texte de la requête de recherche
-        query_embedding : list[float], optional
-            Embedding de la requête
-        result_count : int
-            Nombre de résultats trouvés
-        created_at : datetime, optional
-            Date/heure de la recherche
-        """
         self.id = id
         self.user_id = user_id
         self.query_text = query_text
@@ -44,7 +22,11 @@ class HistoricalSearch:
         self.created_at = created_at or datetime.now()
 
     def __str__(self):
-        return f"Search #{self.id}: '{self.query_text}' - {self.result_count} results ({self.created_at.strftime('%d/%m/%Y %H:%M')})"
+        date_str = self.created_at.strftime("%Y-%m-%d %H:%M")
+        return f"[{date_str}] '{self.query_text}' ({self.result_count} results)"
 
     def __repr__(self):
-        return f"HistoricalSearch(id={self.id}, user_id={self.user_id}, query='{self.query_text[:30]}...', results={self.result_count})"
+        return (
+            f"HistoricalSearch(id={self.id}, user_id={self.user_id}, "
+            f"query='{self.query_text[:30]}...', results={self.result_count})"
+        )

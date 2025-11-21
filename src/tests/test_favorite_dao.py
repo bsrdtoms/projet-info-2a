@@ -6,26 +6,26 @@ from business_object.card import Card
 
 
 class TestFavoriteDAO:
-    """Tests unitaires pour la classe FavoriteDAO"""
+    """Unit tests for the FavoriteDAO class"""
     @pytest.fixture(autouse=True)
     def setup_mocks(self):
-        """Setup des mocks pour isoler les tests de la base de données"""
+        """Setup mocks to isolate tests from the database"""
         with patch('dao.favorite_dao.DBConnection') as mock_db_connection:
             self.mock_connection = MagicMock()
             self.mock_cursor = MagicMock()
-            
-            # Configuration du mock de connexion
+
+            # Configure the connection mock
             self.mock_connection.__enter__ = Mock(return_value=self.mock_connection)
             self.mock_connection.__exit__ = Mock(return_value=None)
             self.mock_connection.cursor.return_value.__enter__ = Mock(return_value=self.mock_cursor)
             self.mock_connection.cursor.return_value.__exit__ = Mock(return_value=None)
-            
+
             mock_db_connection.return_value.connection = self.mock_connection
             yield
 
 
     def test_add_favorite_success(self):
-        """Test ajout favori réussi (nouvelle entrée)"""
+        """Test successful favorite addition (new entry)"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -44,7 +44,7 @@ class TestFavoriteDAO:
         self.mock_connection.commit.assert_called_once()
 
     def test_add_favorite_already_exists(self):
-        """Test ajout favori qui existe déjà"""
+        """Test adding favorite that already exists"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -60,7 +60,7 @@ class TestFavoriteDAO:
         self.mock_connection.commit.assert_called_once()
 
     def test_add_favorite_database_error(self):
-        """Test ajout favori avec erreur base de données"""
+        """Test adding favorite with database error"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -76,7 +76,7 @@ class TestFavoriteDAO:
 
 
     def test_remove_favorite_success(self):
-        """Test suppression favori réussie"""
+        """Test successful favorite removal"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -95,7 +95,7 @@ class TestFavoriteDAO:
         self.mock_connection.commit.assert_called_once()
 
     def test_remove_favorite_not_found(self):
-        """Test suppression favori non trouvé"""
+        """Test removing favorite not found"""
         # GIVEN
         user_id = 1
         card_id = 999
@@ -111,7 +111,7 @@ class TestFavoriteDAO:
         self.mock_connection.commit.assert_called_once()
 
     def test_remove_favorite_database_error(self):
-        """Test suppression favori avec erreur base de données"""
+        """Test removing favorite with database error"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -125,25 +125,25 @@ class TestFavoriteDAO:
         assert result is False
         self.mock_connection.commit.assert_not_called()
 
-    # Tests pour la méthode list_favorites()
+    # Tests for the list_favorites() method
 
     def test_list_favorites_success(self):
-        """Test récupération liste favoris réussie"""
+        """Test successful favorites list retrieval"""
         # GIVEN
         user_id = 1
         mock_rows = [
             {
                 "card_id": 123,
                 "id": 123,
-                "name": "Carte Test 1",
-                "text": "Texte de la carte 1",
+                "name": "Test Card 1",
+                "text": "Card 1 text",
                 "embedding_of_text": [0.1, 0.2, 0.3]
             },
             {
                 "card_id": 124,
                 "id": 124,
-                "name": "Carte Test 2",
-                "text": "Texte de la carte 2",
+                "name": "Test Card 2",
+                "text": "Card 2 text",
                 "embedding_of_text": [0.4, 0.5, 0.6]
             }
         ]
@@ -157,16 +157,16 @@ class TestFavoriteDAO:
         assert len(result) == 2
         assert isinstance(result[0], Card)
         assert result[0].id == 123
-        assert result[0].name == "Carte Test 1"
+        assert result[0].name == "Test Card 1"
         assert result[1].id == 124
-        assert result[1].name == "Carte Test 2"
-        
+        assert result[1].name == "Test Card 2"
+
         self.mock_cursor.execute.assert_called_once()
         call_args = self.mock_cursor.execute.call_args[0]
         assert call_args[1] == (1,)
 
     def test_list_favorites_empty(self):
-        """Test récupération liste favoris vide"""
+        """Test retrieving empty favorites list"""
         # GIVEN
         user_id = 999
         self.mock_cursor.fetchall.return_value = []
@@ -180,7 +180,7 @@ class TestFavoriteDAO:
         self.mock_cursor.execute.assert_called_once()
 
     def test_list_favorites_database_error(self):
-        """Test récupération liste favoris avec erreur base de données"""
+        """Test retrieving favorites list with database error"""
         # GIVEN
         user_id = 1
         self.mock_cursor.execute.side_effect = Exception("DB error")
@@ -190,10 +190,10 @@ class TestFavoriteDAO:
         with pytest.raises(Exception, match="DB error"):
             dao.list_favorites(user_id)
 
-    # Tests pour la méthode is_favorite() - CORRIGÉS
+    # Tests for the is_favorite() method - CORRECTED
 
     def test_is_favorite_true(self):
-        """Test vérification favori - carte est en favoris"""
+        """Test favorite verification - card is in favorites"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -210,7 +210,7 @@ class TestFavoriteDAO:
         assert call_args[1] == (1, 123)
 
     def test_is_favorite_false(self):
-        """Test vérification favori - carte n'est pas en favoris"""
+        """Test favorite verification - card is not in favorites"""
         # GIVEN
         user_id = 1
         card_id = 999
@@ -225,7 +225,7 @@ class TestFavoriteDAO:
         self.mock_cursor.execute.assert_called_once()
 
     def test_is_favorite_database_error(self):
-        """Test vérification favori avec erreur base de données"""
+        """Test favorite verification with database error"""
         # GIVEN
         user_id = 1
         card_id = 123
@@ -236,10 +236,10 @@ class TestFavoriteDAO:
         with pytest.raises(Exception, match="DB error"):
             dao.is_favorite(user_id, card_id)
 
-    # Tests simples pour les cas limites
+    # Simple tests for edge cases
 
     def test_add_favorite_min_ids(self):
-        """Test ajout favori avec IDs minimaux"""
+        """Test adding favorite with minimal IDs"""
         # GIVEN
         user_id = 1
         card_id = 1
@@ -255,7 +255,7 @@ class TestFavoriteDAO:
         assert call_args[1] == (1, 1)
 
     def test_add_favorite_max_ids(self):
-        """Test ajout favori avec IDs élevés"""
+        """Test adding favorite with high IDs"""
         # GIVEN
         user_id = 999999
         card_id = 999999
@@ -271,7 +271,7 @@ class TestFavoriteDAO:
         assert call_args[1] == (999999, 999999)
 
     def test_remove_favorite_min_ids(self):
-        """Test suppression favori avec IDs minimaux"""
+        """Test removing favorite with minimal IDs"""
         # GIVEN
         user_id = 1
         card_id = 1
@@ -287,7 +287,7 @@ class TestFavoriteDAO:
         assert call_args[1] == (1, 1)
 
     def test_remove_favorite_max_ids(self):
-        """Test suppression favori avec IDs élevés"""
+        """Test removing favorite with high IDs"""
         # GIVEN
         user_id = 999999
         card_id = 999999

@@ -3,7 +3,7 @@ from service.favorite_service import FavoriteService
 
 
 class FavoriteView(AbstractView):
-    """Vue pour gérer les cartes favorites de l'utilisateur."""
+    """View to manage the user's favorite cards."""
 
     def __init__(self, user):
         self.user = user

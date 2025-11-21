@@ -6,22 +6,22 @@ from utils.log_decorator import log
 
 
 class SessionDao:
-    """Classe pour gérer les sessions en base de données"""
+    """Class to manage sessions in the database"""
 
     @log
     def create(self, session: Session) -> bool:
         """
-        Crée une nouvelle session
+        Creates a new session
 
         Parameters
         ----------
         session : Session
-            Session à créer
+            Session to create
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -43,23 +43,23 @@ class SessionDao:
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur création session: {e}")
+            print(f"❌ Error creating session: {e}")
             return False
 
     @log
     def find_by_id(self, session_id: str) -> Optional[Session]:
         """
-        Trouve une session par son ID
+        Finds a session by its ID
 
         Parameters
         ----------
         session_id : str
-            ID de la session
+            Session ID
 
         Returns
         -------
         Session | None
-            Session trouvée ou None
+            Session found or None
         """
         try:
             with DBConnection().connection as connection:
@@ -83,23 +83,23 @@ class SessionDao:
                         )
             return None
         except Exception as e:
-            print(f"❌ Erreur recherche session: {e}")
+            print(f"❌ Error searching for session: {e}")
             return None
 
     @log
     def find_active_by_user_id(self, user_id: int) -> Optional[Session]:
         """
-        Trouve la session active d'un utilisateur
+        Finds the active session of a user
 
         Parameters
         ----------
         user_id : int
-            ID de l'utilisateur
+            User ID
 
         Returns
         -------
         Session | None
-            Session active ou None
+            Active session or None
         """
         try:
             with DBConnection().connection as connection:
@@ -125,23 +125,23 @@ class SessionDao:
                         )
             return None
         except Exception as e:
-            print(f"❌ Erreur recherche session active: {e}")
+            print(f"❌ Error searching for active session: {e}")
             return None
 
     @log
     def update_activity(self, session_id: str) -> bool:
         """
-        Met à jour la dernière activité d'une session
+        Updates the last activity of a session
 
         Parameters
         ----------
         session_id : str
-            ID de la session
+            Session ID
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -157,23 +157,23 @@ class SessionDao:
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur mise à jour session: {e}")
+            print(f"❌ Error updating session: {e}")
             return False
 
     @log
     def deactivate(self, session_id: str) -> bool:
         """
-        Désactive une session (logout)
+        Deactivates a session (logout)
 
         Parameters
         ----------
         session_id : str
-            ID de la session
+            Session ID
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -189,23 +189,23 @@ class SessionDao:
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur désactivation session: {e}")
+            print(f"❌ Error deactivating session: {e}")
             return False
 
     @log
     def deactivate_all_user_sessions(self, user_id: int) -> bool:
         """
-        Désactive toutes les sessions d'un utilisateur
+        Deactivates all sessions of a user
 
         Parameters
         ----------
         user_id : int
-            ID de l'utilisateur
+            User ID
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -221,5 +221,5 @@ class SessionDao:
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur désactivation sessions utilisateur: {e}")
+            print(f"❌ Error deactivating user sessions: {e}")
             return False

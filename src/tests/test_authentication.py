@@ -1,5 +1,5 @@
 """
-Script de test pour le système d'authentification JWT
+Test script for the JWT authentication system
 """
 import requests
 import json
@@ -22,7 +22,7 @@ class TestAuthenticationSystem:
         print(f"{'='*60}\n")
 
     def test_login_admin(self):
-        """Test 1: Login avec le compte admin par défaut"""
+        """Test 1: Login with default admin account"""
         self.print_section("Test 1: Login Admin")
 
         response = requests.post(
@@ -37,25 +37,25 @@ class TestAuthenticationSystem:
         if response.status_code == 200:
             data = response.json()
             self.admin_token = data["access_token"]
-            print(f"✓ Login réussi!")
+            print(f"✓ Login succeeded!")
             print(f"  User ID: {data['user_id']}")
             print(f"  Email: {data['email']}")
             print(f"  Role: {data['user_type']}")
-            print(f"  Token (premiers 50 car): {data['access_token'][:50]}...")
+            print(f"  Token (first 50 chars): {data['access_token'][:50]}...")
             return True
         else:
-            print(f"✗ Échec du login: {response.text}")
+            print(f"✗ Login failed: {response.text}")
             return False
 
     def test_create_game_designer(self):
-        """Test 2: Créer un compte game_designer (en tant qu'admin)"""
-        self.print_section("Test 2: Créer un compte Game Designer (via admin)")
+        """Test 2: Create a game_designer account (as admin)"""
+        self.print_section("Test 2: Create a Game Designer account (via admin)")
 
         if not self.admin_token:
-            print("✗ Échec: Token admin requis (le test 1 doit réussir d'abord)")
+            print("✗ Failed: Admin token required (test 1 must succeed first)")
             return False
 
-        # Créer un compte game_designer via l'endpoint admin
+        # Create a game_designer account via the admin endpoint
         headers = {"Authorization": f"Bearer {self.admin_token}"}
         response = requests.post(
             f"{self.base_url}/admin/user/",
@@ -72,11 +72,11 @@ class TestAuthenticationSystem:
         print(f"Status: {response.status_code}")
         if response.status_code in [200, 400]:
             if response.status_code == 200:
-                print(f"✓ Compte game_designer créé")
+                print(f"✓ Game_designer account created")
             else:
-                print(f"✓ Compte existe déjà")
+                print(f"✓ Account already exists")
 
-            # Login avec le compte
+            # Login with the account
             response = requests.post(
                 f"{self.base_url}/user/login",
                 params={
@@ -88,25 +88,25 @@ class TestAuthenticationSystem:
             if response.status_code == 200:
                 data = response.json()
                 self.designer_token = data["access_token"]
-                print(f"✓ Login game_designer réussi")
+                print(f"✓ Game_designer login succeeded")
                 print(f"  User ID: {data['user_id']}")
                 print(f"  Role: {data['user_type']}")
 
-                # Vérifier que le rôle est correct
+                # Verify the role is correct
                 if data['user_type'] != 'game_designer':
-                    print(f"✗ ERREUR: Rôle attendu 'game_designer', obtenu '{data['user_type']}'")
+                    print(f"✗ ERROR: Expected role 'game_designer', got '{data['user_type']}'")
                     return False
 
                 return True
 
-        print(f"✗ Échec: {response.text}")
+        print(f"✗ Failed: {response.text}")
         return False
 
     def test_create_client(self):
-        """Test 3: Créer un compte client (inscription publique)"""
-        self.print_section("Test 3: Créer un compte Client (inscription publique)")
+        """Test 3: Create a client account (public registration)"""
+        self.print_section("Test 3: Create a Client account (public registration)")
 
-        # Inscription publique - pas besoin de token
+        # Public registration - no token needed
         response = requests.post(
             f"{self.base_url}/user/register",
             json={
@@ -120,11 +120,11 @@ class TestAuthenticationSystem:
         print(f"Status: {response.status_code}")
         if response.status_code in [200, 400]:
             if response.status_code == 200:
-                print(f"✓ Compte client créé via inscription publique")
+                print(f"✓ Client account created via public registration")
             else:
-                print(f"✓ Compte existe déjà")
+                print(f"✓ Account already exists")
 
-            # Login avec le compte
+            # Login with the account
             response = requests.post(
                 f"{self.base_url}/user/login",
                 params={
@@ -136,37 +136,37 @@ class TestAuthenticationSystem:
             if response.status_code == 200:
                 data = response.json()
                 self.client_token = data["access_token"]
-                print(f"✓ Login client réussi")
+                print(f"✓ Client login succeeded")
                 print(f"  User ID: {data['user_id']}")
                 print(f"  Role: {data['user_type']}")
 
-                # Vérifier que le rôle est client
+                # Verify the role is client
                 if data['user_type'] != 'client':
-                    print(f"✗ ERREUR: Rôle attendu 'client', obtenu '{data['user_type']}'")
+                    print(f"✗ ERROR: Expected role 'client', got '{data['user_type']}'")
                     return False
 
                 return True
 
-        print(f"✗ Échec: {response.text}")
+        print(f"✗ Failed: {response.text}")
         return False
 
     def test_public_endpoint(self):
-        """Test 4: Accès à un endpoint public (pas de token requis)"""
-        self.print_section("Test 4: Endpoint Public (GET /card/random)")
+        """Test 4: Access to a public endpoint (no token required)"""
+        self.print_section("Test 4: Public Endpoint (GET /card/random)")
 
         response = requests.get(f"{self.base_url}/card/random")
 
         print(f"Status: {response.status_code}")
         if response.status_code == 200:
-            print(f"✓ Accès public réussi (pas de token nécessaire)")
+            print(f"✓ Public access succeeded (no token needed)")
             return True
         else:
-            print(f"✗ Échec: {response.text}")
+            print(f"✗ Failed: {response.text}")
             return False
 
     def test_create_card_as_designer(self):
-        """Test 5: Créer une carte en tant que game_designer"""
-        self.print_section("Test 5: Créer une carte (Game Designer)")
+        """Test 5: Create a card as game_designer"""
+        self.print_section("Test 5: Create a card (Game Designer)")
 
         headers = {"Authorization": f"Bearer {self.designer_token}"}
 
@@ -177,16 +177,16 @@ class TestAuthenticationSystem:
 
         print(f"Status: {response.status_code}")
         if response.status_code == 200:
-            print(f"✓ Carte créée avec succès par game_designer")
+            print(f"✓ Card successfully created by game_designer")
             print(f"  Response: {response.json()}")
             return True
         else:
-            print(f"✗ Échec: {response.text}")
+            print(f"✗ Failed: {response.text}")
             return False
 
     def test_create_card_as_client(self):
-        """Test 6: Tentative de créer une carte en tant que client (devrait échouer)"""
-        self.print_section("Test 6: Créer une carte (Client - devrait échouer)")
+        """Test 6: Attempt to create a card as client (should fail)"""
+        self.print_section("Test 6: Create a card (Client - should fail)")
 
         headers = {"Authorization": f"Bearer {self.client_token}"}
 
@@ -197,16 +197,16 @@ class TestAuthenticationSystem:
 
         print(f"Status: {response.status_code}")
         if response.status_code == 403:
-            print(f"✓ Accès refusé comme attendu (403 Forbidden)")
+            print(f"✓ Access denied as expected (403 Forbidden)")
             print(f"  Message: {response.json()['detail']}")
             return True
         else:
-            print(f"✗ Erreur: devrait retourner 403, a retourné {response.status_code}")
+            print(f"✗ Error: should return 403, returned {response.status_code}")
             return False
 
     def test_create_card_without_token(self):
-        """Test 7: Tentative de créer une carte sans token (devrait échouer)"""
-        self.print_section("Test 7: Créer une carte sans token (devrait échouer)")
+        """Test 7: Attempt to create a card without token (should fail)"""
+        self.print_section("Test 7: Create a card without token (should fail)")
 
         response = requests.post(
             f"{self.base_url}/card/Unauthenticated Card/This should fail"
@@ -214,15 +214,15 @@ class TestAuthenticationSystem:
 
         print(f"Status: {response.status_code}")
         if response.status_code == 403:
-            print(f"✓ Non authentifié refusé comme attendu (403)")
+            print(f"✓ Unauthenticated access denied as expected (403)")
             return True
         else:
-            print(f"✗ Erreur: devrait retourner 403, a retourné {response.status_code}")
+            print(f"✗ Error: should return 403, returned {response.status_code}")
             return False
 
     def test_list_users_as_admin(self):
-        """Test 8: Lister les utilisateurs en tant qu'admin"""
-        self.print_section("Test 8: Lister utilisateurs (Admin)")
+        """Test 8: List users as admin"""
+        self.print_section("Test 8: List users (Admin)")
 
         headers = {"Authorization": f"Bearer {self.admin_token}"}
 
@@ -234,16 +234,16 @@ class TestAuthenticationSystem:
         print(f"Status: {response.status_code}")
         if response.status_code == 200:
             users = response.json()
-            print(f"✓ Liste récupérée avec succès")
-            print(f"  Nombre d'utilisateurs: {len(users)}")
+            print(f"✓ List retrieved successfully")
+            print(f"  Number of users: {len(users)}")
             return True
         else:
-            print(f"✗ Échec: {response.text}")
+            print(f"✗ Failed: {response.text}")
             return False
 
     def test_list_users_as_designer(self):
-        """Test 9: Tentative de lister les utilisateurs en tant que designer (devrait échouer)"""
-        self.print_section("Test 9: Lister utilisateurs (Designer - devrait échouer)")
+        """Test 9: Attempt to list users as designer (should fail)"""
+        self.print_section("Test 9: List users (Designer - should fail)")
 
         headers = {"Authorization": f"Bearer {self.designer_token}"}
 
@@ -254,16 +254,16 @@ class TestAuthenticationSystem:
 
         print(f"Status: {response.status_code}")
         if response.status_code == 403:
-            print(f"✓ Accès refusé comme attendu (403)")
+            print(f"✓ Access denied as expected (403)")
             print(f"  Message: {response.json()['detail']}")
             return True
         else:
-            print(f"✗ Erreur: devrait retourner 403, a retourné {response.status_code}")
+            print(f"✗ Error: should return 403, returned {response.status_code}")
             return False
 
     def test_invalid_token(self):
-        """Test 10: Utiliser un token invalide (devrait échouer)"""
-        self.print_section("Test 10: Token invalide (devrait échouer)")
+        """Test 10: Use an invalid token (should fail)"""
+        self.print_section("Test 10: Invalid token (should fail)")
 
         headers = {"Authorization": "Bearer invalid_token_123"}
 
@@ -274,18 +274,18 @@ class TestAuthenticationSystem:
 
         print(f"Status: {response.status_code}")
         if response.status_code == 401:
-            print(f"✓ Token invalide rejeté comme attendu (401)")
+            print(f"✓ Invalid token rejected as expected (401)")
             print(f"  Message: {response.json()['detail']}")
             return True
         else:
-            print(f"✗ Erreur: devrait retourner 401, a retourné {response.status_code}")
+            print(f"✗ Error: should return 401, returned {response.status_code}")
             return False
 
     def test_public_register_forces_client_role(self):
-        """Test 11: Inscription publique force le rôle client même si autre rôle demandé"""
-        self.print_section("Test 11: Inscription publique force rôle 'client'")
+        """Test 11: Public registration forces client role even if another role is requested"""
+        self.print_section("Test 11: Public registration forces 'client' role")
 
-        # Essayer de s'inscrire avec un rôle game_designer via l'endpoint public
+        # Try to register with a game_designer role via the public endpoint
         response = requests.post(
             f"{self.base_url}/user/register",
             json={
@@ -293,13 +293,13 @@ class TestAuthenticationSystem:
                 "password": "password123",
                 "first_name": "Sneaky",
                 "last_name": "User",
-                "user_type": "game_designer"  # Tenter d'obtenir un rôle privilégié
+                "user_type": "game_designer"  # Attempt to get a privileged role
             }
         )
 
         print(f"Status: {response.status_code}")
         if response.status_code in [200, 400]:
-            # Login pour vérifier le rôle réel
+            # Login to verify the actual role
             login_response = requests.post(
                 f"{self.base_url}/user/login",
                 params={
@@ -311,10 +311,10 @@ class TestAuthenticationSystem:
             if login_response.status_code == 200:
                 user_data = login_response.json()
                 if user_data['user_type'] == 'client':
-                    print(f"✓ Rôle correctement forcé à 'client' (sécurité OK)")
+                    print(f"✓ Role correctly forced to 'client' (security OK)")
                     print(f"  User type: {user_data['user_type']}")
 
-                    # Nettoyer: supprimer ce compte de test
+                    # Clean up: delete this test account
                     if self.admin_token:
                         requests.delete(
                             f"{self.base_url}/user/{user_data['user_id']}",
@@ -323,21 +323,21 @@ class TestAuthenticationSystem:
 
                     return True
                 else:
-                    print(f"✗ SÉCURITÉ: Rôle non forcé! User type: {user_data['user_type']}")
+                    print(f"✗ SECURITY: Role not forced! User type: {user_data['user_type']}")
                     return False
 
-        print(f"✗ Échec du test")
+        print(f"✗ Test failed")
         return False
 
     def test_non_admin_cannot_create_privileged_accounts(self):
-        """Test 12: Un non-admin ne peut pas créer de comptes privilégiés"""
-        self.print_section("Test 12: Non-admin ne peut pas créer comptes privilégiés")
+        """Test 12: A non-admin cannot create privileged accounts"""
+        self.print_section("Test 12: Non-admin cannot create privileged accounts")
 
         if not self.client_token:
-            print("✗ Token client requis")
+            print("✗ Client token required")
             return False
 
-        # Essayer de créer un compte game_designer en tant que client
+        # Try to create a game_designer account as a client
         headers = {"Authorization": f"Bearer {self.client_token}"}
         response = requests.post(
             f"{self.base_url}/admin/user/",
@@ -353,41 +353,41 @@ class TestAuthenticationSystem:
 
         print(f"Status: {response.status_code}")
         if response.status_code == 403:
-            print(f"✓ Accès refusé comme attendu (403)")
+            print(f"✓ Access denied as expected (403)")
             print(f"  Message: {response.json()['detail']}")
             return True
         else:
-            print(f"✗ Erreur: devrait retourner 403, a retourné {response.status_code}")
+            print(f"✗ Error: should return 403, returned {response.status_code}")
             return False
 
     def run_all_tests(self):
-        """Exécuter tous les tests"""
+        """Execute all tests"""
         print("\n" + "="*60)
-        print("  TEST DU SYSTÈME D'AUTHENTIFICATION JWT")
+        print("  JWT AUTHENTICATION SYSTEM TEST")
         print("="*60)
         print(f"\nBase URL: {self.base_url}")
-        print(f"Assurez-vous que l'API est lancée avant d'exécuter les tests!")
+        print(f"Make sure the API is running before executing the tests!")
 
-        input("\nAppuyez sur Entrée pour continuer...")
+        input("\nPress Enter to continue...")
 
         results = []
 
         # Tests
         results.append(("Login Admin", self.test_login_admin()))
-        results.append(("Créer Game Designer (admin)", self.test_create_game_designer()))
-        results.append(("Créer Client (public)", self.test_create_client()))
-        results.append(("Endpoint Public", self.test_public_endpoint()))
-        results.append(("Créer carte (Designer)", self.test_create_card_as_designer()))
-        results.append(("Créer carte (Client - refus)", self.test_create_card_as_client()))
-        results.append(("Créer carte (Sans token - refus)", self.test_create_card_without_token()))
-        results.append(("Lister users (Admin)", self.test_list_users_as_admin()))
-        results.append(("Lister users (Designer - refus)", self.test_list_users_as_designer()))
-        results.append(("Token invalide (refus)", self.test_invalid_token()))
-        results.append(("Register force rôle client", self.test_public_register_forces_client_role()))
-        results.append(("Non-admin crée compte - refus", self.test_non_admin_cannot_create_privileged_accounts()))
+        results.append(("Create Game Designer (admin)", self.test_create_game_designer()))
+        results.append(("Create Client (public)", self.test_create_client()))
+        results.append(("Public Endpoint", self.test_public_endpoint()))
+        results.append(("Create card (Designer)", self.test_create_card_as_designer()))
+        results.append(("Create card (Client - denied)", self.test_create_card_as_client()))
+        results.append(("Create card (No token - denied)", self.test_create_card_without_token()))
+        results.append(("List users (Admin)", self.test_list_users_as_admin()))
+        results.append(("List users (Designer - denied)", self.test_list_users_as_designer()))
+        results.append(("Invalid token (denied)", self.test_invalid_token()))
+        results.append(("Register forces client role", self.test_public_register_forces_client_role()))
+        results.append(("Non-admin creates account - denied", self.test_non_admin_cannot_create_privileged_accounts()))
 
-        # Résumé
-        self.print_section("RÉSUMÉ DES TESTS")
+        # Summary
+        self.print_section("TEST SUMMARY")
 
         passed = sum(1 for _, result in results if result)
         total = len(results)
@@ -397,13 +397,13 @@ class TestAuthenticationSystem:
             print(f"{status:10} | {test_name}")
 
         print(f"\n{'='*60}")
-        print(f"Résultat: {passed}/{total} tests réussis ({(passed/total)*100:.1f}%)")
+        print(f"Result: {passed}/{total} tests succeeded ({(passed/total)*100:.1f}%)")
         print(f"{'='*60}\n")
 
         if passed == total:
-            print("🎉 Tous les tests sont passés! Le système d'authentification fonctionne correctement.")
+            print("All tests passed! The authentication system works correctly.")
         else:
-            print("⚠️  Certains tests ont échoué. Vérifiez les erreurs ci-dessus.")
+            print("Some tests failed. Check the errors above.")
 
 
 if __name__ == "__main__":
@@ -412,12 +412,12 @@ if __name__ == "__main__":
     try:
         tester.run_all_tests()
     except requests.exceptions.ConnectionError:
-        print("\n❌ ERREUR: Impossible de se connecter à l'API")
-        print(f"   Assurez-vous que l'API tourne sur {BASE_URL}")
-        print("   Lancez l'API avec: python src/app.py")
+        print("\nERROR: Unable to connect to the API")
+        print(f"   Make sure the API is running on {BASE_URL}")
+        print("   Launch the API with: python src/app.py")
     except KeyboardInterrupt:
-        print("\n\n⚠️  Tests interrompus par l'utilisateur")
+        print("\n\nTests interrupted by user")
     except Exception as e:
-        print(f"\n❌ ERREUR: {e}")
+        print(f"\nERROR: {e}")
         import traceback
         traceback.print_exc()

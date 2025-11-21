@@ -242,12 +242,12 @@ URLs used:
     # With --no-embeddings: download WITHOUT embeddings
     use_embeddings = not args.no_embeddings
 
-    # Maintenant on appel automatiquement setup_pgvector.py
+    # Now we automatically call setup_pgvector.py
     pgvector_setup = PgVectorSetup()
     pgvector_setup.setup()
 
     ResetDatabase().launch(use_embeddings=use_embeddings)
-    # Maintenant on appel automatiquement init_user_tables.py
+    # Now we automatically call init_user_tables.py
     utils.init_users_tables.main()
 
 

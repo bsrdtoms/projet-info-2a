@@ -18,7 +18,7 @@ def launch():
         print("⚠️ No cards found in database.")
         return
 
-    # Filtrer uniquement les cartes avec un texte
+    # Filter only cards with text
     cards_with_text = [card for card in cards if card.text is not None]
 
     if not cards_with_text:
@@ -27,18 +27,18 @@ def launch():
 
     list_of_texts = [card.text for card in cards_with_text]
 
-    # pour que l'API get_embeddings n'ait pas à traiter trop de textes d'un coup,
-    # on découpe par lots de 10000.
+    # So that the get_embeddings API doesn't have to process too many texts at once,
+    # we split into batches of 10000.
     size_of_slice = 10000
     list_of_embeddings = []
     for i in range(0, len(list_of_texts), size_of_slice):
-        print("carte", i)
+        print("card", i)
         # Get embeddings from the API
         response = get_embedding(list_of_texts[i : i + size_of_slice])
         list_of_embeddings.extend(response["embeddings"])
     print("✅ End of embeddings generation.")
 
-    # mise à jour
+    # update
     for card, emb in zip(cards_with_text, list_of_embeddings):
         pg_array = float_list_to_pg_array(emb)
         success = CardDao().modify(card.id, "embedding_of_text", pg_array)

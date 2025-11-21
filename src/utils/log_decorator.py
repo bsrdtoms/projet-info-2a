@@ -5,31 +5,31 @@ from functools import wraps
 
 
 class LogIndetation:
-    """Pour indenter les logs lorsque l'on rentre dans une nouvelle méthode"""
+    """To indent logs when entering a new method"""
 
     current_indentation = 0
 
     @classmethod
     def increase_indentation(cls):
-        """Ajouter une indentation"""
+        """Add an indentation"""
         cls.current_indentation += 1
 
     @classmethod
     def decrease_indentation(cls):
-        """Retirer une indentation"""
+        """Remove an indentation"""
         cls.current_indentation -= 1
 
     @classmethod
     def get_indentation(cls):
-        """Obtenir l'indentation"""
+        """Get the indentation"""
         return "    " * cls.current_indentation
 
 
 def log(func):
-    """Création d'un décorateur nommé log
-    Lorsque ce décorateur est appliqué à une méthode, cela affichera dans les logs :
-    - l'appel de cette méthode avec les valeurs de paramètres
-    - la sortie retournée par cette méthode
+    """Creation of a decorator named log
+    When this decorator is applied to a method, it will display in the logs:
+    - the call to this method with parameter values
+    - the output returned by this method
     """
 
     @wraps(func)
@@ -39,7 +39,7 @@ def log(func):
         LogIndetation.increase_indentation()
         indentation = LogIndetation.get_indentation()
 
-        # Recuperation des parametres de la methode
+        # Get method parameters
         class_name = args[0].__class__.__name__ if args else ""
         method_name = func.__name__
         args_list = list(
@@ -50,21 +50,21 @@ def log(func):
             + list(kwargs.values())
         )
 
-        # pour cacher les mots de passe
+        # to hide passwords
         param_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
         for i, v in enumerate(param_names):
             if v in ["password", "passwd", "pwd", "pass", "mot_de_passe", "mdp"]:
                 args_list[i] = "*****"
 
-        # Transforme en tuple pour avoir un affichage avec des parentheses
+        # Convert to tuple to display with parentheses
         args_list = tuple(args_list)
 
-        # Affichage dans le fichier de log
-        logger.info(f"{indentation}{class_name}.{method_name}{args_list} - DEBUT")
+        # Display in log file
+        logger.info(f"{indentation}{class_name}.{method_name}{args_list} - START")
         result = func(*args, **kwargs)
-        logger.info(f"{indentation}{class_name}.{method_name}{args_list} - FIN")
+        logger.info(f"{indentation}{class_name}.{method_name}{args_list} - END")
 
-        # Reduction de l affichage de la sortie si trop longue
+        # Reduce output display if too long
         if isinstance(result, list):
             result_str = str([str(item) for item in result[:3]])
             result_str += " ... (" + str(len(result)) + " elements)"
@@ -73,11 +73,11 @@ def log(func):
             result_str += " ... (" + str(len(result)) + " elements)"
         elif isinstance(result, str) and len(result) > 50:
             result_str = result[:50]
-            result_str += " ... (" + str(len(result)) + " caracteres)"
+            result_str += " ... (" + str(len(result)) + " characters)"
         else:
             result_str = str(result)
 
-        logger.info(f"{indentation}   └─> Sortie : {result_str}")
+        logger.info(f"{indentation}   └─> Output: {result_str}")
 
         LogIndetation.decrease_indentation()
 

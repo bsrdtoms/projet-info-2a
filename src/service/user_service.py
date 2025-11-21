@@ -8,7 +8,7 @@ from utils.log_decorator import log
 
 
 class UserService:
-    """Service pour gérer les utilisateurs et l'authentification"""
+    """Service to manage users and authentication"""
 
     def __init__(self):
         self.user_dao = UserDao()
@@ -18,17 +18,17 @@ class UserService:
     @log
     def hash_password(self, password: str) -> str:
         """
-        Hash un mot de passe avec bcrypt
+        Hashes a password with bcrypt
 
         Parameters
         ----------
         password : str
-            Mot de passe en clair
+            Plain text password
 
         Returns
         -------
         str
-            Hash du mot de passe
+            Password hash
         """
         salt = bcrypt.gensalt()
         return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
@@ -36,19 +36,19 @@ class UserService:
     @log
     def verify_password(self, password: str, password_hash: str) -> bool:
         """
-        Vérifie qu'un mot de passe correspond au hash
+        Verifies that a password matches the hash
 
         Parameters
         ----------
         password : str
-            Mot de passe en clair
+            Plain text password
         password_hash : str
-            Hash à vérifier
+            Hash to verify
 
         Returns
         -------
         bool
-            True si le mot de passe est correct
+            True if the password is correct
         """
         return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
 
@@ -61,40 +61,40 @@ class UserService:
         last_name: Optional[str] = None,
         user_type: str = "client") -> Tuple[bool, str, Optional[User]]:
         """
-        Crée un nouveau compte utilisateur
+        Creates a new user account
 
         Parameters
         ----------
         email : str
-            Email (doit être unique)
+            Email (must be unique)
         password : str
-            Mot de passe en clair (sera hashé)
+            Plain text password (will be hashed)
         first_name : str, optional
-            Prénom
+            First name
         last_name : str, optional
-            Nom
+            Last name
         user_type : str
-            Type d'utilisateur ('client' par défaut)
+            User type ('client' by default)
 
         Returns
         -------
         tuple[bool, str, User | None]
-            (succès, message, utilisateur créé)
+            (success, message, created user)
         """
-        # Validation email
+        # Email validation
         if not email or '@' not in email:
-            return False, "Email invalide", None
+            return False, "Invalid email", None
 
-        # Validation mot de passe
+        # Password validation
         if not password or len(password) < 6:
-            return False, "Le mot de passe doit contenir au moins 6 caractères", None
+            return False, "Password must contain at least 6 characters", None
 
-        # Vérifier si l'email existe déjà
+        # Check if email already exists
         existing_user = self.user_dao.find_by_email(email)
         if existing_user:
-            return False, "Cet email est déjà utilisé", None
+            return False, "This email is already in use", None
 
-        # Créer l'utilisateur
+        # Create the user
         password_hash = self.hash_password(password)
         user = create_user_from_type(
             user_type=user_type,
@@ -106,76 +106,76 @@ class UserService:
         )
 
         if self.user_dao.create(user):
-            return True, f"Compte créé avec succès pour {email}", user
+            return True, f"Account successfully created for {email}", user
         else:
-            return False, "Erreur lors de la création du compte", None
+            return False, "Error creating account", None
 
     @log
     def login(self, email: str, password: str) -> Tuple[bool, str, Optional[Session]]:
         """
-        Connecte un utilisateur
+        Logs in a user
 
         Parameters
         ----------
         email : str
             Email
         password : str
-            Mot de passe en clair
+            Plain text password
 
         Returns
         -------
         tuple[bool, str, Session | None]
-            (succès, message, session créée)
+            (success, message, created session)
         """
-        # Trouver l'utilisateur
+        # Find the user
         user = self.user_dao.find_by_email(email)
         if not user:
-            return False, "Email ou mot de passe incorrect", None
+            return False, "Incorrect email or password", None
 
-        # Vérifier le mot de passe
+        # Verify the password
         if not self.verify_password(password, user.password_hash):
-            return False, "Email ou mot de passe incorrect", None
+            return False, "Incorrect email or password", None
 
-        # Vérifier que le compte est actif
+        # Check that the account is active
         if not user.is_active:
-            return False, "Ce compte a été désactivé", None
+            return False, "This account has been deactivated", None
 
-        # Créer une session
+        # Create a session
         session = Session(user_id=user.id)
         if self.session_dao.create(session):
             self.current_session = session
-            return True, f"Bienvenue {user.full_name}!", session
+            return True, f"Welcome {user.full_name}!", session
         else:
-            return False, "Erreur lors de la connexion", None
+            return False, "Error during login", None
 
     @log
     def logout(self) -> Tuple[bool, str]:
         """
-        Déconnecte l'utilisateur courant
+        Logs out the current user
 
         Returns
         -------
         tuple[bool, str]
-            (succès, message)
+            (success, message)
         """
         if not self.current_session:
-            return False, "Aucune session active"
+            return False, "No active session"
 
         if self.session_dao.deactivate(self.current_session.session_id):
             self.current_session = None
-            return True, "Déconnexion réussie"
+            return True, "Successfully logged out"
         else:
-            return False, "Erreur lors de la déconnexion"
+            return False, "Error during logout"
 
     @log
     def get_current_user(self) -> Optional[User]:
         """
-        Récupère l'utilisateur actuellement connecté
+        Retrieves the currently logged in user
 
         Returns
         -------
         User | None
-            Utilisateur connecté ou None
+            Logged in user or None
         """
         if not self.current_session:
             return None
@@ -183,48 +183,48 @@ class UserService:
 
     @log
     def is_logged_in(self) -> bool:
-        """Vérifie si un utilisateur est connecté"""
+        """Checks if a user is logged in"""
         return self.current_session is not None and self.current_session.is_active
 
     @log
     def delete_account(self, user_id: int) -> Tuple[bool, str]:
         """
-        Supprime un compte utilisateur (admin uniquement)
+        Deletes a user account (admin only)
 
         Parameters
         ----------
         user_id : int
-            ID de l'utilisateur à supprimer
+            ID of the user to delete
 
         Returns
         -------
         tuple[bool, str]
-            (succès, message)
+            (success, message)
         """
         user = self.user_dao.find_by_id(user_id)
         if not user:
-            return False, "Utilisateur introuvable"
+            return False, "User not found"
 
-        # Désactiver toutes les sessions
+        # Deactivate all sessions
         self.session_dao.deactivate_all_user_sessions(user_id)
 
-        # Supprimer l'utilisateur
+        # Delete the user
         if self.user_dao.delete(user):
-            return True, f"Compte {user.email} supprimé"
+            return True, f"Account {user.email} deleted"
         else:
-            return False, "Erreur lors de la suppression"
+            return False, "Error during deletion"
 
     @log
     def list_all_users(self):
-        """Liste tous les utilisateurs (admin uniquement)"""
+        """Lists all users (admin only)"""
         return self.user_dao.list_all()
 
     @log
     def find_by_id(self, user_id: int) -> Optional[User]:
-        """Trouve un utilisateur par ID"""
+        """Finds a user by ID"""
         return self.user_dao.find_by_id(user_id)
 
     @log
     def find_by_email(self, email: str) -> Optional[User]:
-        """Trouve un utilisateur par email"""
+        """Finds a user by email"""
         return self.user_dao.find_by_email(email)

@@ -5,22 +5,22 @@ from utils.log_decorator import log
 
 
 class UserDao:
-    """Classe pour accéder aux utilisateurs dans la base de données"""
+    """Class to access users in the database"""
 
     @log
     def create(self, user: User) -> bool:
         """
-        Crée un nouvel utilisateur dans la base
+        Creates a new user in the database
 
         Parameters
         ----------
         user : User
-            Utilisateur à créer
+            User to create
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -45,23 +45,23 @@ class UserDao:
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur création utilisateur: {e}")
+            print(f"❌ Error creating user: {e}")
             return False
 
     @log
     def find_by_id(self, user_id: int) -> Optional[User]:
         """
-        Trouve un utilisateur par son ID
+        Finds a user by their ID
 
         Parameters
         ----------
         user_id : int
-            ID de l'utilisateur
+            User ID
 
         Returns
         -------
         User | None
-            Utilisateur trouvé ou None
+            User found or None
         """
         try:
             with DBConnection().connection as connection:
@@ -90,23 +90,23 @@ class UserDao:
                         )
             return None
         except Exception as e:
-            print(f"❌ Erreur recherche utilisateur: {e}")
+            print(f"❌ Error searching for user: {e}")
             return None
 
     @log
     def find_by_email(self, email: str) -> Optional[User]:
         """
-        Trouve un utilisateur par son email
+        Finds a user by their email
 
         Parameters
         ----------
         email : str
-            Email de l'utilisateur
+            User email
 
         Returns
         -------
         User | None
-            Utilisateur trouvé ou None
+            User found or None
         """
         try:
             with DBConnection().connection as connection:
@@ -135,18 +135,18 @@ class UserDao:
                         )
             return None
         except Exception as e:
-            print(f"❌ Erreur recherche utilisateur par email: {e}")
+            print(f"❌ Error searching for user by email: {e}")
             return None
 
     @log
     def list_all(self) -> List[User]:
         """
-        Liste tous les utilisateurs
+        Lists all users
 
         Returns
         -------
         list[User]
-            Liste de tous les utilisateurs
+            List of all users
         """
         users = []
         try:
@@ -174,23 +174,23 @@ class UserDao:
                         )
                         users.append(user)
         except Exception as e:
-            print(f"❌ Erreur liste utilisateurs: {e}")
+            print(f"❌ Error listing users: {e}")
         return users
 
     @log
     def delete(self, user: User) -> bool:
         """
-        Supprime un utilisateur
+        Deletes a user
 
         Parameters
         ----------
         user : User
-            Utilisateur à supprimer
+            User to delete
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -203,23 +203,23 @@ class UserDao:
                 connection.commit()
             return deleted
         except Exception as e:
-            print(f"❌ Erreur suppression utilisateur: {e}")
+            print(f"❌ Error deleting user: {e}")
             return False
 
     @log
     def update(self, user: User) -> bool:
         """
-        Met à jour un utilisateur
+        Updates a user
 
         Parameters
         ----------
         user : User
-            Utilisateur avec les nouvelles données
+            User with new data
 
         Returns
         -------
         bool
-            True si succès, False sinon
+            True if success, False otherwise
         """
         try:
             with DBConnection().connection as connection:
@@ -236,5 +236,5 @@ class UserDao:
                 connection.commit()
             return True
         except Exception as e:
-            print(f"❌ Erreur mise à jour utilisateur: {e}")
+            print(f"❌ Error updating user: {e}")
             return False

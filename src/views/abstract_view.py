@@ -4,38 +4,38 @@ from abc import ABC, abstractmethod
 
 class AbstractView(ABC):
     """
-    Classe de base pour toutes les vues CLI.
-    Fournit les méthodes génériques d'affichage et de saisie utilisateur.
+    Base class for all CLI views.
+    Provides generic methods for display and user input.
     """
 
     def __init__(self, message=""):
         self.message = message
-        logging.info(f"Vue créée : {type(self).__name__}")
+        logging.info(f"View created: {type(self).__name__}")
 
     @abstractmethod
     def display(self):
         """
-        Méthode abstraite : chaque vue doit définir son affichage propre.
+        Abstract method: each view must define its own display.
         """
         pass
 
     @abstractmethod
     def menu_choice(self):
         """
-        Méthode abstraite : chaque vue doit gérer la logique selon le choix utilisateur (exemple : appeler la vue suivante ou un service).
+        Abstract method: each view must handle logic based on user choice (example: call the next view or a service).
         """
         pass
 
     def get_input(self, message="Enter your choice: "):
-        """Demande une saisie utilisateur avec un message."""
+        """Requests user input with a message."""
         return input(message)
 
     def show_message(self, message):
-        """Affiche un message formaté."""
+        """Displays a formatted message."""
         print(f"\n{message}")
 
     def show_title(self, title):
-        """Affiche un titre."""
+        """Displays a title."""
         print("\n" + "=" * (len(title) + 8))
         print(f"=== {title} ===")
         print("=" * (len(title) + 8))

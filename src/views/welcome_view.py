@@ -7,7 +7,7 @@ from getpass import getpass
 
 
 class WelcomeView(AbstractView):
-    """Vue d'accueil de l'application"""
+    """Welcome view for the application"""
 
     def __init__(self):
         self.user_service = UserService()
@@ -20,11 +20,11 @@ class WelcomeView(AbstractView):
         print("4. Leave the application")
 
     def create_account_flow(self):
-        """Flux de création de compte"""
+        """Account creation flow"""
         self.show_title("Create an account")
-        
+
         email = self.get_input("Email: ")
-        password = getpass("Password (min 6 characters): ") #grace à getpass() le mdp ne s’affiche pas quand l’utilisateur le tape
+        password = getpass("Password (min 6 characters): ") # Thanks to getpass() the password is not displayed when the user types it
         password_confirm = getpass("Confirm password: ")
         
         if password != password_confirm:
@@ -49,18 +49,18 @@ class WelcomeView(AbstractView):
             self.show_message("You can now log in with your credentials")
 
     def login_flow(self):
-        """Flux de connexion"""
+        """Login flow"""
         self.show_title("Log in")
-        
+
         email = self.get_input("Email: ")
         password = getpass("Password: ")
-        
+
         success, message, session = self.user_service.login(email, password)
         self.show_message(message)
-        
+
         if success:
             input("\nPress Enter to continue...")
-            # Rediriger vers l'interface utilisateur
+            # Redirect to user interface
             user = self.user_service.get_current_user()
             UserView(user=user, user_service=self.user_service, role=user.user_type).menu_choice()
         else:

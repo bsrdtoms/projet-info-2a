@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class Session:
-    """Représente une session utilisateur active"""
+    """Represents an active user session"""
 
     def __init__(
         self,
@@ -15,20 +15,20 @@ class Session:
         is_active: bool = True
     ):
         """
-        Initialise une session
+        Initialize a session
 
         Parameters
         ----------
         session_id : str, optional
-            Identifiant unique de session (généré automatiquement si None)
+            Unique session identifier (automatically generated if None)
         user_id : int, optional
-            ID de l'utilisateur
+            User ID
         created_at : datetime, optional
-            Date de création
+            Creation date
         last_activity : datetime, optional
-            Dernière activité
+            Last activity
         is_active : bool
-            Session active ou non
+            Whether session is active or not
         """
         self.session_id = session_id or str(uuid.uuid4())
         self.user_id = user_id
@@ -37,7 +37,7 @@ class Session:
         self.is_active = is_active
 
     def update_activity(self):
-        """Met à jour le timestamp de dernière activité"""
+        """Update the last activity timestamp"""
         self.last_activity = datetime.now()
 
     def __str__(self):

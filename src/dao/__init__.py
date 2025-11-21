@@ -5,19 +5,19 @@ from dao.db_connection import DBConnection
 from dotenv import load_dotenv
 
 
-# Charge les variables depuis .env
+# Loads variables from .env
 load_dotenv()
 
 
 def get_cards_from_url(url: str) -> pd.DataFrame:
     """
-    Récupère les cartes depuis un fichier JSON en ligne et retourne un DataFrame.
+    Retrieves cards from an online JSON file and returns a DataFrame.
     """
     response = requests.get(url)
     response.raise_for_status()
     data = response.json()
 
-    # Flatten la structure : { "data": { "NomCarte": [ {...}, {...} ] } }
+    # Flatten the structure: { "data": { "CardName": [ {...}, {...} ] } }
     cards = []
     for name, versions in data["data"].items():
         for card in versions:
@@ -29,7 +29,7 @@ def get_cards_from_url(url: str) -> pd.DataFrame:
 
 def insert_all_cards(url: str):
     """
-    Récupère toutes les cartes depuis un JSON en ligne et les insère dans la base de données.
+    Retrieves all cards from an online JSON and inserts them into the database.
     """
     df = get_cards_from_url(url)
 
@@ -37,7 +37,7 @@ def insert_all_cards(url: str):
         with connection.cursor() as cursor:
             for _, row in df.iterrows():
                 try:
-                    # Convertir les listes/dicts en JSON string
+                    # Convert lists/dicts to JSON string
                     colors = json.dumps(row.get("colors", []))
                     color_identity = json.dumps(row.get("colorIdentity", []))
                     identifiers = json.dumps(row.get("identifiers", {}))
@@ -87,13 +87,13 @@ def insert_all_cards(url: str):
                         ),
                     )
                 except Exception as e:
-                    print(f"Erreur insertion {row.get('name')}: {e}")
+                    print(f"Error inserting {row.get('name')}: {e}")
 
         connection.commit()
-    print("Toutes les cartes ont été insérées avec succès !")
+    print("All cards have been successfully inserted!")
 
 
-# Exemple d’utilisation
+# Example usage
 if __name__ == "__main__":
     url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
     print(get_cards_from_url(url))

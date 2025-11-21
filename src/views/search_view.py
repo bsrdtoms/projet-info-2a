@@ -3,7 +3,7 @@ from service.card_service import CardService
 
 
 class SearchView(AbstractView):
-    """Vue pour la recherche de cartes (aléatoire, par nom, ou sémantique)."""
+    """View for card search (random, by name, or semantic)."""
 
     def display(self):
         self.show_title("Search a card")
@@ -13,7 +13,7 @@ class SearchView(AbstractView):
         print("4. Return to main menu")
 
     def pause(self):
-        input("\nAppuie sur Entrée pour revenir au menu...")
+        input("\nPress Enter to return to menu...")
 
     def menu_choice(self):
         card_service = CardService()
@@ -25,9 +25,9 @@ class SearchView(AbstractView):
                 result = card_service.random()
                 self.show_message(result)
                 if hasattr(result, "is_truncated") and result.is_truncated:
-                    choice = input("\nLe texte a été abrégé. Voir le texte complet ? (o/n) : ")
-                    if choice.lower() == "o":
-                        print("\n=== Texte complet ===")
+                    choice = input("\nThe text has been abbreviated. See full text? (y/n): ")
+                    if choice.lower() == "y":
+                        print("\n=== Full text ===")
                         print(result.text)
                 self.pause()
 
@@ -41,11 +41,11 @@ class SearchView(AbstractView):
             elif choice == "3":
                 query = self.get_input("Describe the card you're looking for: ")
                 limit_input = self.get_input("How many results do you want? (default = 3): ")
-                # Si l’utilisateur appuie juste sur Entrée, on met 3
+                # If the user just presses Enter, we use 3
                 try:
                     limit = int(limit_input) if limit_input.strip() else 3
                 except ValueError:
-                    limit = 3  # en cas de valeur incorrecte
+                    limit = 3  # in case of invalid value
                 result = card_service.semantic_search(query, limit)
                 for card, similarity in result:
                     self.show_message(card)
