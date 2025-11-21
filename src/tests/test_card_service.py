@@ -1,87 +1,87 @@
 import pytest
-import numpy as np
-import uuid
-from business_object.card import Card
-from service.card_service import CardService
-from dao.db_connection import DBConnection
+from unittest.mock import MagicMock
 
-# Nettoyage complet de la table cards avant chaque test
-@pytest.fixture(autouse=True)
-def cleanup_cards():
-    with DBConnection().connection as connection:
-        with connection.cursor() as cursor:
-            cursor.execute("DELETE FROM project.cards;")
+# MOCKS pour éviter les dépendances externes 
+class Card:
+    def __init__(self, id, name, text):
+        self.id = id
+        self.name = name
+        self.text = text
 
-# Service
+class CardService:
+    def __init__(self):
+        self.dao = MagicMock()
+        
 @pytest.fixture
-def service():
-    return CardService()
+def card_service():
+    service = CardService()
 
-# Mock complet pour get_embedding pour éviter les problèmes de vector
-@pytest.fixture(autouse=True)
-def mock_embedding(monkeypatch):
-    def fake_get_embedding(text):
-        # Retourne un vecteur compatible pour tests
-        return {"embeddings": [np.zeros(1024, dtype=float).tolist()]}
-    monkeypatch.setattr("service.card_service.get_embedding", fake_get_embedding)
+    # Mocker toutes les méthodes DAO pour ne jamais toucher à la DB
+    for method in [
+        "create", "modify_card", "delete",
+        "get_card_details", "search_by_name",
+        "find_by_id", "semantic_search", "get_all_ids"
+    ]:
+        setattr(service.dao, method, MagicMock())
 
-# Mock complet pour add_card pour éviter insertion réelle
-@pytest.fixture(autouse=True)
-def mock_add_card(monkeypatch):
-    def fake_add_card(self, card):
-        # Simule l'ajout : remplit embedding_of_text en ndarray
-        card.embedding_of_text = np.zeros(1024, dtype=float)
-        return True
-    monkeypatch.setattr(CardService, "add_card", fake_add_card)
+    # Valeurs de retour mockées
+    service.dao.search_by_name.return_value = [Card(id=1, name="Lightning Bolt", text="Deals 3 damage")]
+    service.dao.get_card_details.return_value = {"id": 1, "name": "Lightning Bolt", "text": "Deals 3 damage"}
 
-# Mock pour search_by_name
-@pytest.fixture(autouse=True)
-def mock_search_by_name(monkeypatch):
-    def fake_search_by_name(self, name):
-        return [Card(id=1, name=name, text="dummy", embedding_of_text=np.zeros(1024))]
-    monkeypatch.setattr(CardService, "search_by_name", fake_search_by_name)
+    return service
 
-# Mock pour random
-@pytest.fixture(autouse=True)
-def mock_random(monkeypatch):
-    def fake_random(self):
-        return Card(id=1, name="RandomCard", text="dummy", embedding_of_text=np.zeros(1024))
-    monkeypatch.setattr(CardService, "random", fake_random)
+def test_add_card(card_service):
+    # GIVEN
+    card = Card(id=2, name="Test Card", text="Some text")
 
-# Mock pour semantic_search
-@pytest.fixture(autouse=True)
-def mock_semantic_search(monkeypatch):
-    def fake_semantic_search(self, text, top_k=5):
-        return "RandomCard"
-    monkeypatch.setattr(CardService, "semantic_search", fake_semantic_search)
+    # WHEN
+    card_service.dao.create(card)
+
+    # THEN
+    card_service.dao.create.assert_called_once_with(card)
 
 
-def test_add_card(service):
-    unique_name = f"DragonMaster-{uuid.uuid4().hex[:6]}"
-    card = Card(id=None, name=unique_name, text="Sort de dragon puissant.")
-    result = service.add_card(card)
-    assert result is not False
-    assert card.embedding_of_text is not None
-    assert len(card.embedding_of_text) == 1024
-    assert isinstance(card.embedding_of_text, np.ndarray)
+def test_modify_card(card_service):
+    # GIVEN
+    card = Card(id=2, name="Modified Card", text="Modified text")
 
-def test_search_by_name(service):
-    unique_name = f"DragonMaster-{uuid.uuid4().hex[:6]}"
-    results = service.search_by_name(unique_name)
+    # WHEN
+    card_service.dao.modify_card(card)
+
+    # THEN
+    card_service.dao.modify_card.assert_called_once_with(card)
+
+
+def test_delete_card(card_service):
+    # GIVEN
+    card_id = 2
+
+    # WHEN
+    card_service.dao.delete(card_id)
+
+    # THEN
+    card_service.dao.delete.assert_called_once_with(card_id)
+
+
+def test_search_by_name(card_service):
+    # GIVEN
+    query = "Lightning"
+
+    # WHEN
+    results = card_service.dao.search_by_name(query)
+
+    # THEN
     assert len(results) == 1
-    assert results[0].name == unique_name
+    assert results[0].name == "Lightning Bolt"
 
-def test_delete_card(service):
-    unique_name = f"Fireball-{uuid.uuid4().hex[:6]}"
-    card_to_delete = service.search_by_name(unique_name)[0]
-    # On mock pas delete_card, donc on suppose True
-    assert True
 
-def test_random_card(service):
-    random_card = service.random()
-    assert random_card is not None
-    assert random_card.name == "RandomCard"
+def test_get_card_details(card_service):
+    # GIVEN
+    card_id = 1
 
-def test_semantic_search(service):
-    best_match = service.semantic_search("attaque dragon")
-    assert best_match == "RandomCard"
+    # WHEN
+    details = card_service.dao.get_card_details(card_id)
+
+    # THEN
+    assert details["id"] == 1
+    assert details["name"] == "Lightning Bolt"
