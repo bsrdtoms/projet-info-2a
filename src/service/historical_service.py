@@ -34,6 +34,10 @@ class HistoricalService:
         """Counts the number of searches"""
         return self.dao.count_by_user_id(user_id)
 
+    def delete_search(self, search_id: int) -> bool:
+        """Deletes a specific search by its ID"""
+        return self.dao.delete_by_id(search_id)
+
     def clear_user_history(self, user_id: int) -> bool:
         """Clears all of a user's history"""
         return self.dao.delete_all_by_user_id(user_id)
@@ -51,4 +55,33 @@ class HistoricalService:
             "page": page,
             "per_page": per_page,
             "total_pages": total_pages,
+        }
+
+    def get_stats(self, user_id: int) -> dict:
+        """Retrieves search statistics for a user"""
+        searches = self.dao.find_by_user_id(user_id, limit=1000)  # Get all searches
+        
+        if not searches:
+            return {
+                'total_searches': 0,
+                'total_results': 0,
+                'avg_results': 0,
+                'most_recent': None,
+                'oldest': None
+            }
+        
+        total_searches = len(searches)
+        total_results = sum(s.result_count for s in searches if s.result_count)
+        avg_results = total_results / total_searches if total_searches > 0 else 0
+        
+        # Searches are already ordered by created_at DESC
+        most_recent = searches[0].created_at
+        oldest = searches[-1].created_at
+        
+        return {
+            'total_searches': total_searches,
+            'total_results': total_results,
+            'avg_results': avg_results,
+            'most_recent': most_recent,
+            'oldest': oldest
         }

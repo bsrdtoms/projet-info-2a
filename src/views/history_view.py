@@ -72,7 +72,7 @@ class HistoryView(AbstractView):
 
         # Récupérer l'historique
         try:
-            history = self.history_service.get_history(self.user.id, limit=100)
+            history = self.history_service.get_user_history(self.user.id, limit=100)
 
             if not history:
                 self.show_message("📭 You haven't searched anything yet!")
@@ -153,7 +153,7 @@ class HistoryView(AbstractView):
 
         try:
             # Afficher l'historique d'abord
-            history = self.history_service.get_history(self.user.id, limit=20)
+            history = self.history_service.get_user_history(self.user.id, limit=20)
 
             if not history:
                 self.show_message("No searches to delete")
@@ -203,7 +203,7 @@ class HistoryView(AbstractView):
 
         if confirm == "yes":
             try:
-                if self.history_service.clear_history(self.user.id):
+                if self.history_service.clear_user_history(self.user.id):
                     self.show_message("✅ All history cleared successfully!")
                 else:
                     self.show_message("❌ Failed to clear history")
@@ -221,7 +221,7 @@ class HistoryView(AbstractView):
 
         try:
             # Afficher l'historique
-            history = self.history_service.get_history(self.user.id, limit=20)
+            history = self.history_service.get_user_history(self.user.id, limit=20)
 
             if not history:
                 self.show_message("No searches to repeat")
@@ -255,7 +255,8 @@ class HistoryView(AbstractView):
                 
                 results = self.card_service.semantic_search(
                     search_to_repeat.query_text,
-                    top_k=5
+                    top_k=5,
+                    user_id=self.user.id
                 )
 
                 # Afficher les résultats

@@ -88,6 +88,22 @@ class HistoricalDao:
             print(f"❌ Error counting history: {e}")
             return 0
 
+    def delete_by_id(self, search_id: int) -> bool:
+        """Deletes a specific search by its ID"""
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "DELETE FROM project.search_history WHERE id = %s",
+                        (search_id,),
+                    )
+                    deleted = cursor.rowcount > 0
+                connection.commit()
+            return deleted
+        except Exception as e:
+            print(f"❌ Error deleting search: {e}")
+            return False
+
     def delete_all_by_user_id(self, user_id: int) -> bool:
         """Deletes all history for a user"""
         try:

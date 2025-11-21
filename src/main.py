@@ -1,6 +1,5 @@
 import logging
 import dotenv
-
 from utils.log_init import initialize_logs
 from views.welcome_view import WelcomeView
 
