@@ -52,8 +52,7 @@ def main():
         print("  ✓ project.search_history")
         print("\nDefault admin account:")
         print("  Email: admin@magicsearch.com")
-        print("  Password: admin123")
-        print("\n⚠️  Don't forget to change this password in production!")
+        print("  Password: our very secure password")
     else:
         print("\n❌ Initialization failed")
 

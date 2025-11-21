@@ -1,6 +1,7 @@
 from views.abstract_view import AbstractView
 from views.search_view import SearchView
 from views.favorite_view import FavoriteView
+from views.history_view import HistoryView
 from service.user_service import UserService
 
 import logging
@@ -38,7 +39,7 @@ class UserView(AbstractView):
             if choice == "1":
                 FavoriteView(self.user).menu_choice()
             elif choice == "2":
-                pass
+                HistoryView(self.user).menu_choice()
             elif choice == "3":
                 SearchView(user=self.user).menu_choice()
             elif choice == "4":
