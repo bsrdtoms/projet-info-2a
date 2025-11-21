@@ -1,38 +1,38 @@
 import logging
 import dotenv
 
-from utils.log_init import initialiser_logs
+from utils.log_init import initialize_logs
 from views.welcome_view import WelcomeView
 
 if __name__ == "__main__":
-    # Charger les variables d'environnement
+    # Load environment variables
     dotenv.load_dotenv(override=True)
 
-    # Initialiser les logs
-    initialiser_logs("MagicSearch Application")
+    # Initialize logs
+    initialize_logs("MagicSearch Application")
 
-    # Vue de départ
-    vue_courante = WelcomeView()
-    nb_erreurs = 0
+    # Starting view
+    current_view = WelcomeView()
+    error_count = 0
 
-    while vue_courante:
-        if nb_erreurs > 100:
-            print("Le programme recense trop d'erreurs et va s'arrêter")
+    while current_view:
+        if error_count > 100:
+            print("The program has encountered too many errors and will stop")
             break
         try:
-            # Affichage du menu
-            vue_courante = vue_courante.menu_choice()
+            # Display menu
+            current_view = current_view.menu_choice()
 
         except Exception as e:
             logging.error(f"{type(e).__name__} : {e}", exc_info=True)
-            nb_erreurs += 1
+            error_count += 1
             print(
-                "Une erreur est survenue, retour au menu principal.\n"
-                "Consultez les logs pour plus d'informations."
+                "An error occurred, returning to main menu.\n"
+                "Check the logs for more information."
             )
-            vue_courante = WelcomeView()
+            current_view = WelcomeView()
 
-    # Fin de l'application
+    # End of application
     print("----------------------------------")
     print("Goodbye!")
-    logging.info("Fin de l'application")
+    logging.info("End of application")
