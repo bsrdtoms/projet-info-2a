@@ -3,10 +3,8 @@ from unittest.mock import MagicMock
 import sys
 import os
 
-# Ajout du src dans le path pour que pytest trouve les modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Mocks des modules importés dans FavoriteService
 mock_log = MagicMock()
 mock_log.side_effect = lambda func: func  
 
