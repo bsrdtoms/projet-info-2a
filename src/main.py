@@ -1,7 +1,7 @@
 import logging
 import dotenv
 
-from utils.log_init import initialize_logs
+from utils.log_init import initialiser_logs
 from views.welcome_view import WelcomeView
 
 if __name__ == "__main__":
@@ -9,7 +9,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv(override=True)
 
     # Initialiser les logs
-    initialize_logs("MagicSearch Application")
+    initialiser_logs("MagicSearch Application")
 
     # Vue de départ
     vue_courante = WelcomeView()

@@ -43,10 +43,15 @@ class CardModel(BaseModel):
     name: str
     text: Optional[str] = None
 
-
 class UserModel(BaseModel):
     """Pydantic model for users"""
-    id: Optional[int] = None
+    email: EmailStr
+    password: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+class CompleteUserModel(BaseModel):
+    """Pydantic model for users"""
     email: EmailStr
     password: str
     first_name: Optional[str] = None
@@ -98,7 +103,7 @@ async def describe_by_id(id: int):
             status_code=404,
             detail=f"No card found for ID: {id}"
         )
-    return result
+    return {"id": id, "description": result}
 
 
 @app.post("/card/semantic_search_with_L2_distance/", tags=["Cards"])
@@ -224,11 +229,59 @@ async def register_client(user: UserModel):
         }
     }
 
+@app.post("/user/login", tags=["Users"], response_model=Token)
+async def login(email: str, password: str):
+    """Log in a user and get a JWT token"""
+    logging.info(f"Login attempt for: {email}")
+    success, message, session = user_service.login(email, password)
+    if not success:
+        raise HTTPException(status_code=401, detail=message)
+
+    # Get user information
+    user = user_service.find_by_email(email)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    # Create JWT token
+    access_token = create_access_token(
+        user_id=user.id,
+        email=user.email,
+        user_type=user.user_type
+    )
+
+    return Token(
+        access_token=access_token,
+        token_type="bearer",
+        user_id=user.id,
+        email=user.email,
+        user_type=user.user_type
+    )
+
+
+@app.get("/user/me", tags=["Users"])
+async def get_my_profile(current_user: TokenData = Depends(require_authenticated)):
+    """Get your own profile (requires authentication)"""
+    logging.info(f"Fetching profile for {current_user.email}")
+
+    user = user_service.find_by_id(current_user.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "user_type": user.user_type,
+        "is_active": user.is_active
+    }
+
+
 
 # ==================== ADMIN ROUTES ====================
 
 @app.post("/admin/user/", tags=["Admin"])
-async def create_user_as_admin(user: UserModel, current_user: TokenData = Depends(require_admin)):
+async def create_user_as_admin(user: CompleteUserModel, current_user: TokenData = Depends(require_admin)):
     """Create a user account with any role (admin only)"""
     logging.info(f"Creating {user.user_type} account by admin: {current_user.email}")
 
@@ -399,64 +452,6 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
     }
 
 
-@app.post("/user/login", tags=["Users"], response_model=Token)
-async def login(email: str, password: str):
-    """Log in a user and get a JWT token"""
-    logging.info(f"Login attempt for: {email}")
-    success, message, session = user_service.login(email, password)
-    if not success:
-        raise HTTPException(status_code=401, detail=message)
-
-    # Get user information
-    user = user_service.find_by_email(email)
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-
-    # Create JWT token
-    access_token = create_access_token(
-        user_id=user.id,
-        email=user.email,
-        user_type=user.user_type
-    )
-
-    return Token(
-        access_token=access_token,
-        token_type="bearer",
-        user_id=user.id,
-        email=user.email,
-        user_type=user.user_type
-    )
-
-
-@app.post("/user/logout", tags=["Users"])
-async def logout():
-    """Log out the current user"""
-    logging.info("Logout attempt")
-    success, message = user_service.logout()
-    if not success:
-        raise HTTPException(status_code=400, detail=message)
-    return {"message": message}
-
-
-@app.get("/user/me", tags=["Users"])
-async def get_my_profile(current_user: TokenData = Depends(require_authenticated)):
-    """Get your own profile (requires authentication)"""
-    logging.info(f"Fetching profile for {current_user.email}")
-
-    user = user_service.find_by_id(current_user.user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return {
-        "id": user.id,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "user_type": user.user_type,
-        "is_active": user.is_active
-    }
-
-
 @app.get("/user/", tags=["Users"])
 async def list_all_users(current_user: TokenData = Depends(require_admin)):
     """List all users (requires admin role)"""
@@ -532,12 +527,16 @@ async def remove_favorite(card_id: int, current_user: TokenData = Depends(requir
     return {"message": message}
 
 
-@app.get("/favorites", tags=["Favorites"])
-async def list_favorites(current_user: TokenData = Depends(require_authenticated)):
-    """List your favorite cards (requires authentication)"""
-    # Use the user_id from the JWT token
-    user_id = current_user.user_id
-    logging.info(f"Fetching favorites for user_id={user_id} by {current_user.email}")
+@app.get("/favorites/{user_id}", response_model=list[CardModel], tags=["Favorites"])
+async def list_favorites(user_id: int, current_user: TokenData = Depends(require_authenticated)):
+    """Lister les cartes favorites d'un utilisateur (nécessite authentification)"""
+    # Vérifier que l'utilisateur ne peut voir que ses propres favoris (sauf admin)
+    if current_user.user_id != user_id and current_user.user_type != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Vous ne pouvez voir que vos propres favoris"
+        )
+    logging.info(f"Récupération des favoris pour user_id={user_id} par {current_user.email}")
     favorites = favorite_service.list_favorites(user_id)
     if not favorites:
         return {"message": "No cards in favorites"}
