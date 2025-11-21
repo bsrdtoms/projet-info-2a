@@ -261,19 +261,22 @@ class CardService:
 
         return card_found
 
+
     @log
     def semantic_search(
         self, 
         text: str, 
         top_k: int = 5, 
-        distance: str = "L2"
+        distance: str = "L2",
+        user_id: int = None
     ) -> list[tuple[Card, float]]:
         """
         Optimized semantic search using pgvector
-
+        AVEC ENREGISTREMENT AUTOMATIQUE DE L'HISTORIQUE
+    
         BEFORE: Retrieved all cards, calculated in Python (slow)
         AFTER: All computation done in SQL (fast)
-
+    
         Parameters
         ----------
         text : str
@@ -282,7 +285,9 @@ class CardService:
             Number of results to return (default: 5)
         distance : str, optional
             Distance metric: "L2" or "cosine" (default: "L2")
-
+        user_id : int, optional
+            ID of the user (if provided, search is logged to history)
+    
         Returns
         -------
         list[tuple[Card, float]]
@@ -297,17 +302,32 @@ class CardService:
             # Generate embedding for search text
             embedding_response = get_embedding(text)
             query_embedding = embedding_response["embeddings"][0]
-
+    
             # Direct SQL search via pgvector (FAST!)
             # No Python loop or pandas needed!
             results = self.dao.semantic_search(query_embedding, top_k, distance)
-
+    
+            # NOUVEAU: Enregistrer dans l'historique si user_id fourni
+            if user_id is not None:
+                try:
+                    from service.historical_service import HistoricalSearchService
+                    history_service = HistoricalSearchService()
+                    history_service.add_search(
+                        user_id=user_id,
+                        query_text=text,
+                        result_count=len(results),
+                        save_embedding=False  # On ne le regenère pas, on utilise celui qu'on vient de créer
+                    )
+                except Exception as e:
+                    print(f"⚠️  Warning: Could not save to history: {e}")
+                    # Ne pas lever l'erreur, continuer quand même
+    
             return results
-
+    
         except Exception as e:
             print(f"❌ Error during semantic search: {e}")
             raise
-
+            
     @log
     def random(self) -> Card:
         """
