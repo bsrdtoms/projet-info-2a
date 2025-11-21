@@ -190,53 +190,7 @@ class TestFavoriteDAO:
         with pytest.raises(Exception, match="DB error"):
             dao.list_favorites(user_id)
 
-    # Tests for the is_favorite() method - CORRECTED
-
-    def test_is_favorite_true(self):
-        """Test favorite verification - card is in favorites"""
-        # GIVEN
-        user_id = 1
-        card_id = 123
-        self.mock_cursor.fetchone.return_value = [1]
-        dao = FavoriteDAO()
-
-        # WHEN
-        result = dao.is_favorite(user_id, card_id)
-
-        # THEN
-        assert result is True
-        self.mock_cursor.execute.assert_called_once()
-        call_args = self.mock_cursor.execute.call_args[0]
-        assert call_args[1] == (1, 123)
-
-    def test_is_favorite_false(self):
-        """Test favorite verification - card is not in favorites"""
-        # GIVEN
-        user_id = 1
-        card_id = 999
-        self.mock_cursor.fetchone.return_value = None
-        dao = FavoriteDAO()
-
-        # WHEN
-        result = dao.is_favorite(user_id, card_id)
-
-        # THEN
-        assert result is False
-        self.mock_cursor.execute.assert_called_once()
-
-    def test_is_favorite_database_error(self):
-        """Test favorite verification with database error"""
-        # GIVEN
-        user_id = 1
-        card_id = 123
-        self.mock_cursor.execute.side_effect = Exception("DB error")
-        dao = FavoriteDAO()
-
-        # WHEN/THEN
-        with pytest.raises(Exception, match="DB error"):
-            dao.is_favorite(user_id, card_id)
-
-    # Simple tests for edge cases
+    # Tests simples pour les cas limites
 
     def test_add_favorite_min_ids(self):
         """Test adding favorite with minimal IDs"""

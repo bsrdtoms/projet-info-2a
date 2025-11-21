@@ -1401,3 +1401,143 @@ NameError: name 'HistoricalSearchDAO' is not defined. Did you mean: 'HistoricalS
 20/11/2025 23:03:28 - INFO     -            └─> Sortie : [] ... (0 elements)
 20/11/2025 23:03:28 - INFO     -     HistoricalSearchService.get_history(1, 20) - FIN
 20/11/2025 23:03:28 - INFO     -        └─> Sortie : [] ... (0 elements)
+21/11/2025 09:31:18 - INFO     - --------------------------------------------------
+21/11/2025 09:31:18 - INFO     - Lancement MagicSearch API                           
+21/11/2025 09:31:18 - INFO     - --------------------------------------------------
+21/11/2025 09:36:24 - INFO     - Tentative de connexion pour : 123@gmail.com
+21/11/2025 09:36:24 - INFO     -     UserService.login('123@gmail.com', '*****') - DEBUT
+21/11/2025 09:36:24 - INFO     -         UserDao.find_by_email('123@gmail.com',) - DEBUT
+21/11/2025 09:36:24 - INFO     -         UserDao.find_by_email('123@gmail.com',) - FIN
+21/11/2025 09:36:24 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:36:24 - INFO     -         UserService.verify_password('*****', '$2b$12$WBJXxnW5ngvN3xkgV.JSquMH34ds6N8/AODGMEjvvq.6lNO1KVFlC') - DEBUT
+21/11/2025 09:36:25 - INFO     -         UserService.verify_password('*****', '$2b$12$WBJXxnW5ngvN3xkgV.JSquMH34ds6N8/AODGMEjvvq.6lNO1KVFlC') - FIN
+21/11/2025 09:36:25 - INFO     -            └─> Sortie : True
+21/11/2025 09:36:25 - INFO     -         SessionDao.create('Session 625fedd7... (user_id=2)',) - DEBUT
+21/11/2025 09:36:25 - INFO     -         SessionDao.create('Session 625fedd7... (user_id=2)',) - FIN
+21/11/2025 09:36:25 - INFO     -            └─> Sortie : True
+21/11/2025 09:36:25 - INFO     -     UserService.login('123@gmail.com', '*****') - FIN
+21/11/2025 09:36:25 - INFO     -        └─> Sortie : (True, 'Bienvenue 123@gmail.com!', Session(id='625fedd7...', user_id=2, active=True))
+21/11/2025 09:36:25 - INFO     -     UserService.find_by_email('123@gmail.com',) - DEBUT
+21/11/2025 09:36:25 - INFO     -         UserDao.find_by_email('123@gmail.com',) - DEBUT
+21/11/2025 09:36:25 - INFO     -         UserDao.find_by_email('123@gmail.com',) - FIN
+21/11/2025 09:36:25 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:36:25 - INFO     -     UserService.find_by_email('123@gmail.com',) - FIN
+21/11/2025 09:36:25 - INFO     -        └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:37:16 - INFO     - Récupération du profil pour 123@gmail.com
+21/11/2025 09:37:16 - INFO     -     UserService.find_by_id(2,) - DEBUT
+21/11/2025 09:37:16 - INFO     -         UserDao.find_by_id(2,) - DEBUT
+21/11/2025 09:37:16 - INFO     -         UserDao.find_by_id(2,) - FIN
+21/11/2025 09:37:16 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:37:16 - INFO     -     UserService.find_by_id(2,) - FIN
+21/11/2025 09:37:16 - INFO     -        └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:37:32 - INFO     - Recherche d'une carte aléatoire
+21/11/2025 09:37:32 - INFO     -     CardService.random() - DEBUT
+21/11/2025 09:37:32 - INFO     -         CardDao.get_all_ids() - DEBUT
+21/11/2025 09:37:32 - INFO     -         CardDao.get_all_ids() - FIN
+21/11/2025 09:37:32 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32548 elements)
+21/11/2025 09:37:32 - INFO     -         CardDao.find_by_id(2923,) - DEBUT
+21/11/2025 09:37:32 - INFO     -         CardDao.find_by_id(2923,) - FIN
+21/11/2025 09:37:32 - INFO     -            └─> Sortie : Card 2923
+Name: Blinding Fog
+Text: Prevent all damage that would be dealt to creatures this turn. Creatures you control gain hexproof u...
+21/11/2025 09:37:32 - INFO     -     CardService.random() - FIN
+21/11/2025 09:37:32 - INFO     -        └─> Sortie : Card 2923
+Name: Blinding Fog
+Text: Prevent all damage that would be dealt to creatures this turn. Creatures you control gain hexproof u...
+21/11/2025 09:39:02 - INFO     - Ajout d'un favori : user_id=2, card_id=2923 par 123@gmail.com
+21/11/2025 09:39:02 - INFO     -     FavoriteService.add_favorite(2, 2923) - DEBUT
+21/11/2025 09:39:02 - INFO     -         FavoriteDAO.add_favorite(2, 2923) - DEBUT
+21/11/2025 09:39:02 - INFO     -         FavoriteDAO.add_favorite(2, 2923) - FIN
+21/11/2025 09:39:02 - INFO     -            └─> Sortie : True
+21/11/2025 09:39:02 - INFO     -     FavoriteService.add_favorite(2, 2923) - FIN
+21/11/2025 09:39:02 - INFO     -        └─> Sortie : (True, 'Carte ajoutée aux favoris')
+21/11/2025 09:39:24 - INFO     - Récupération des favoris pour user_id=2 par 123@gmail.com
+21/11/2025 09:39:24 - INFO     -     FavoriteService.list_favorites(2,) - DEBUT
+21/11/2025 09:39:24 - INFO     -         FavoriteDAO.list_favorites(2,) - DEBUT
+21/11/2025 09:39:24 - INFO     -         FavoriteDAO.list_favorites(2,) - FIN
+21/11/2025 09:39:24 - INFO     -            └─> Sortie : ['Card 2923\nName: Blinding Fog\nText: Prevent all damage that would be dealt to creatures this turn. Creatures you control gain hexproof u...'] ... (1 elements)
+21/11/2025 09:39:24 - INFO     -     FavoriteService.list_favorites(2,) - FIN
+21/11/2025 09:39:24 - INFO     -        └─> Sortie : ['Card 2923\nName: Blinding Fog\nText: Prevent all damage that would be dealt to creatures this turn. Creatures you control gain hexproof u...'] ... (1 elements)
+21/11/2025 09:42:17 - INFO     - Tentative de déconnexion
+21/11/2025 09:42:17 - INFO     -     UserService.logout() - DEBUT
+21/11/2025 09:42:17 - INFO     -         SessionDao.deactivate('625fedd7-a339-475b-8937-edbc67cc5932',) - DEBUT
+21/11/2025 09:42:17 - INFO     -         SessionDao.deactivate('625fedd7-a339-475b-8937-edbc67cc5932',) - FIN
+21/11/2025 09:42:17 - INFO     -            └─> Sortie : True
+21/11/2025 09:42:17 - INFO     -     UserService.logout() - FIN
+21/11/2025 09:42:17 - INFO     -        └─> Sortie : (True, 'Déconnexion réussie')
+21/11/2025 09:42:31 - INFO     - Récupération du profil pour 123@gmail.com
+21/11/2025 09:42:31 - INFO     -     UserService.find_by_id(2,) - DEBUT
+21/11/2025 09:42:31 - INFO     -         UserDao.find_by_id(2,) - DEBUT
+21/11/2025 09:42:31 - INFO     -         UserDao.find_by_id(2,) - FIN
+21/11/2025 09:42:31 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:42:31 - INFO     -     UserService.find_by_id(2,) - FIN
+21/11/2025 09:42:31 - INFO     -        └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:42:36 - INFO     - Récupération du profil pour 123@gmail.com
+21/11/2025 09:42:36 - INFO     -     UserService.find_by_id(2,) - DEBUT
+21/11/2025 09:42:36 - INFO     -         UserDao.find_by_id(2,) - DEBUT
+21/11/2025 09:42:36 - INFO     -         UserDao.find_by_id(2,) - FIN
+21/11/2025 09:42:36 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:42:36 - INFO     -     UserService.find_by_id(2,) - FIN
+21/11/2025 09:42:36 - INFO     -        └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:44:56 - INFO     - Arrêt de MagicSearch API
+21/11/2025 09:45:05 - INFO     - --------------------------------------------------
+21/11/2025 09:45:05 - INFO     - Lancement MagicSearch Application                           
+21/11/2025 09:45:05 - INFO     - --------------------------------------------------
+21/11/2025 09:45:12 - INFO     - Vue créée : SearchView
+21/11/2025 09:45:32 - INFO     -     UserService.login('123@gmail.com', '*****') - DEBUT
+21/11/2025 09:45:32 - INFO     -         UserDao.find_by_email('123@gmail.com',) - DEBUT
+21/11/2025 09:45:32 - INFO     -         UserDao.find_by_email('123@gmail.com',) - FIN
+21/11/2025 09:45:32 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:45:32 - INFO     -         UserService.verify_password('*****', '$2b$12$WBJXxnW5ngvN3xkgV.JSquMH34ds6N8/AODGMEjvvq.6lNO1KVFlC') - DEBUT
+21/11/2025 09:45:32 - INFO     -         UserService.verify_password('*****', '$2b$12$WBJXxnW5ngvN3xkgV.JSquMH34ds6N8/AODGMEjvvq.6lNO1KVFlC') - FIN
+21/11/2025 09:45:32 - INFO     -            └─> Sortie : True
+21/11/2025 09:45:32 - INFO     -         SessionDao.create('Session 3f6438c7... (user_id=2)',) - DEBUT
+21/11/2025 09:45:32 - INFO     -         SessionDao.create('Session 3f6438c7... (user_id=2)',) - FIN
+21/11/2025 09:45:32 - INFO     -            └─> Sortie : True
+21/11/2025 09:45:32 - INFO     -     UserService.login('123@gmail.com', '*****') - FIN
+21/11/2025 09:45:32 - INFO     -        └─> Sortie : (True, 'Bienvenue 123@gmail.com!', Session(id='3f6438c7...', user_id=2, active=True))
+21/11/2025 09:45:34 - INFO     -     UserService.get_current_user() - DEBUT
+21/11/2025 09:45:34 - INFO     -         UserDao.find_by_id(2,) - DEBUT
+21/11/2025 09:45:34 - INFO     -         UserDao.find_by_id(2,) - FIN
+21/11/2025 09:45:34 - INFO     -            └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:45:34 - INFO     -     UserService.get_current_user() - FIN
+21/11/2025 09:45:34 - INFO     -        └─> Sortie : Client - 123@gmail.com (123@gmail.com)
+21/11/2025 09:45:55 - INFO     - Vue créée : SearchView
+21/11/2025 09:45:57 - INFO     -     CardService.random() - DEBUT
+21/11/2025 09:45:57 - INFO     -         CardDao.get_all_ids() - DEBUT
+21/11/2025 09:45:57 - INFO     -         CardDao.get_all_ids() - FIN
+21/11/2025 09:45:57 - INFO     -            └─> Sortie : ['1', '2', '3'] ... (32548 elements)
+21/11/2025 09:45:57 - INFO     -         CardDao.find_by_id(16905,) - DEBUT
+21/11/2025 09:45:57 - INFO     -         CardDao.find_by_id(16905,) - FIN
+21/11/2025 09:45:57 - INFO     -            └─> Sortie : Card 16905
+Name: Margle, Cousin of Yargle
+Text: Other creatures you control lose all abilities, can't gain abilities, and get +2/+2.
+21/11/2025 09:45:57 - INFO     -     CardService.random() - FIN
+21/11/2025 09:45:57 - INFO     -        └─> Sortie : Card 16905
+Name: Margle, Cousin of Yargle
+Text: Other creatures you control lose all abilities, can't gain abilities, and get +2/+2.
+21/11/2025 09:46:12 - INFO     -     CardService.search_by_name('Laurine',) - DEBUT
+21/11/2025 09:46:12 - INFO     -         CardDao.search_by_name('Laurine',) - DEBUT
+21/11/2025 09:46:12 - INFO     -         CardDao.search_by_name('Laurine',) - FIN
+21/11/2025 09:46:12 - INFO     -            └─> Sortie : ['Card 15641\nName: Laurine, the Diversion\nText: Partner with Kamber, the Plunderer (When this creature enters, target player may put Kamber into the...'] ... (1 elements)
+21/11/2025 09:46:12 - INFO     -     CardService.search_by_name('Laurine',) - FIN
+21/11/2025 09:46:12 - INFO     -        └─> Sortie : ['Card 15641\nName: Laurine, the Diversion\nText: Partner with Kamber, the Plunderer (When this creature enters, target player may put Kamber into the...'] ... (1 elements)
+21/11/2025 09:46:27 - INFO     -     HistoricalSearchService.get_history(2, 100) - DEBUT
+21/11/2025 09:46:27 - INFO     -         HistoricalSearchDAO.read_history(2, 100) - DEBUT
+21/11/2025 09:46:27 - INFO     -         HistoricalSearchDAO.read_history(2, 100) - FIN
+21/11/2025 09:46:27 - INFO     -            └─> Sortie : [] ... (0 elements)
+21/11/2025 09:46:27 - INFO     -     HistoricalSearchService.get_history(2, 100) - FIN
+21/11/2025 09:46:27 - INFO     -        └─> Sortie : [] ... (0 elements)
+21/11/2025 09:46:50 - INFO     -     HistoricalSearchService.get_stats(2,) - DEBUT
+21/11/2025 09:46:50 - INFO     -         HistoricalSearchDAO.get_user_search_stats(2,) - DEBUT
+21/11/2025 09:46:50 - INFO     -         HistoricalSearchDAO.get_user_search_stats(2,) - FIN
+21/11/2025 09:46:50 - INFO     -            └─> Sortie : [('total_searches', '0'), ('avg_results', '0'), ('most_recent', 'None'), ' ', '.', '.', '.', ' ', '(', '5', ' ', 'e', 'l', 'e', 'm', 'e', 'n', 't', 's', ')']
+21/11/2025 09:46:50 - INFO     -     HistoricalSearchService.get_stats(2,) - FIN
+21/11/2025 09:46:50 - INFO     -        └─> Sortie : [('total_searches', '0'), ('avg_results', '0'), ('most_recent', 'None'), ' ', '.', '.', '.', ' ', '(', '5', ' ', 'e', 'l', 'e', 'm', 'e', 'n', 't', 's', ')']
+21/11/2025 09:47:03 - INFO     -     HistoricalSearchService.get_history(2, 20) - DEBUT
+21/11/2025 09:47:03 - INFO     -         HistoricalSearchDAO.read_history(2, 20) - DEBUT
+21/11/2025 09:47:03 - INFO     -         HistoricalSearchDAO.read_history(2, 20) - FIN
+21/11/2025 09:47:03 - INFO     -            └─> Sortie : [] ... (0 elements)
+21/11/2025 09:47:03 - INFO     -     HistoricalSearchService.get_history(2, 20) - FIN
+21/11/2025 09:47:03 - INFO     -        └─> Sortie : [] ... (0 elements)
+21/11/2025 09:47:24 - INFO     - Fin de l'application
