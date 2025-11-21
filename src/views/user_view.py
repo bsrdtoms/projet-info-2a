@@ -40,7 +40,7 @@ class UserView(AbstractView):
             elif choice == "2":
                 pass
             elif choice == "3":
-                SearchView().menu_choice()
+                SearchView(user=self.user).menu_choice()
             elif choice == "4":
                 self.show_message("You have been logged out.")
                 break
