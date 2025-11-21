@@ -23,13 +23,12 @@ class UserView(AbstractView):
         print("1. Access favorites")
         print("2. Access history")
         print("3. Search a card")
-        print("4. Manage your account")
-        print("5. Logout")
+        print("4. Logout")
 
         if self.role == "admin":
-            print("6. Account management")
+            print("5. Account management")
         elif self.role == "gamedesigner":
-            print("6. Card management")
+            print("5. Card management")
 
     def menu_choice(self):
         while True:
@@ -43,11 +42,9 @@ class UserView(AbstractView):
             elif choice == "3":
                 SearchView().menu_choice()
             elif choice == "4":
-                pass
-            elif choice == "5":
                 self.show_message("You have been logged out.")
                 break
-            elif choice == "6" and self.role in ["admin", "gamedesigner"]:
+            elif choice == "5" and self.role in ["admin", "gamedesigner"]:
                 if self.role == "admin":
                     self.admin_menu_choice()
                 if self.role == "gamedesigner":

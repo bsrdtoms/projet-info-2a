@@ -396,7 +396,7 @@ async def remove_favorite(card_id: int, user_id: int, current_user: TokenData = 
 
 
 @app.get("/favorites/{user_id}", tags=["Favorites"])
-async def list_favorites(user_id: int, current_user: TokenData = Depends(require_authenticated)):
+async def list_favorites(user_id: int, response_model=list[CardModel], current_user: TokenData = Depends(require_authenticated)):
     """Lister les cartes favorites d'un utilisateur (nécessite authentification)"""
     # Vérifier que l'utilisateur ne peut voir que ses propres favoris (sauf admin)
     if current_user.user_id != user_id and current_user.user_type != "admin":
