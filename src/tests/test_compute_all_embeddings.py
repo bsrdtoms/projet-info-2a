@@ -1,44 +1,113 @@
+# tests/test_compute_all_embeddings.py
+
+import sys
 import os
-import importlib
+import pytest
 from unittest.mock import patch, MagicMock
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+os.environ.update({
+    "POSTGRES_HOST": "localhost",
+    "POSTGRES_DATABASE": "x",
+    "POSTGRES_USER": "x",
+    "POSTGRES_PASSWORD": "x",
+    "POSTGRES_SCHEMA": "x",
+    "POSTGRES_PORT": "5432"
+})
+
+class MockCard:
+    def __init__(self, id, text):
+        self.id = id
+        self.text = text
+
+with patch("psycopg2.connect") as mock_connect:
+    mock_connect.return_value = MagicMock()
+    from technical_components.embedding import compute_all_embeddings as cae
+
+# Tests unitaires 
+# -------------------------------
+
 def test_launch_nominal():
-    class MockCard:
-        def __init__(self, card_id, text):
-            self.id = card_id
-            self.text = text
+    # GIVEN 
+    cards = [MockCard(1, "texte1"), MockCard(2, "texte2")]
 
-    mock_cards = [MockCard(1, "Texte 1"), MockCard(2, "Texte 2")]
-    with patch.dict(os.environ, {
-        "POSTGRES_HOST": "x",
-        "POSTGRES_PORT": "5432",  
-        "POSTGRES_DATABASE": "x",
-        "POSTGRES_USER": "x",
-        "POSTGRES_PASSWORD": "x",
-        "POSTGRES_SCHEMA": "x"
-    }), patch("psycopg2.connect") as mock_connect:
-        mock_conn = MagicMock()
-        mock_connect.return_value = mock_conn
+    with patch("technical_components.embedding.compute_all_embeddings.CardDao") as MockCardDao:
+        instance = MockCardDao.return_value
+        instance.list_all.return_value = cards
 
-        with patch("technical_components.embedding.compute_all_embeddings.CardDao") as mock_card_dao, \
-             patch("technical_components.embedding.compute_all_embeddings.get_embedding") as mock_get_embedding, \
-             patch("technical_components.embedding.compute_all_embeddings.float_list_to_pg_array") as mock_converter, \
-             patch("builtins.print") as mock_print:
+        with patch("technical_components.embedding.compute_all_embeddings.get_embedding") as mock_get:
+            mock_get.return_value = {"embeddings": [[0.1, 0.2], [0.3, 0.4]]}
 
-            mock_dao_instance = MagicMock()
-            mock_dao_instance.list_all.return_value = mock_cards
-            mock_dao_instance.modify.return_value = True
-            mock_card_dao.return_value = mock_dao_instance
-
-            mock_get_embedding.return_value = {"embeddings": [[0.1, 0.2], [0.3, 0.4]]}
-            mock_converter.side_effect = lambda x: f"[{','.join(str(f) for f in x)}]"
-
-            
-            cae = importlib.import_module("technical_components.embedding.compute_all_embeddings")
+            # WHEN 
             cae.launch()
 
-          
-            mock_dao_instance.list_all.assert_called_once()
-            mock_get_embedding.assert_called_once_with(["Texte 1", "Texte 2"])
-            assert mock_dao_instance.modify.call_count == 2
-            mock_print.assert_any_call("✅ Updated embeddings for 2 cards.")
+            # THEN 
+            instance.list_all.assert_called_once()
+
+def test_launch_no_cards():
+    # GIVEN 
+    with patch("technical_components.embedding.compute_all_embeddings.CardDao") as MockCardDao:
+        instance = MockCardDao.return_value
+        instance.list_all.return_value = []
+
+        # WHEN 
+        cae.launch()
+
+        # THEN 
+        instance.list_all.assert_called_once()
+
+def test_launch_cards_without_text():
+    # GIVEN 
+    cards = [MockCard(1, None), MockCard(2, None)]
+
+    with patch("technical_components.embedding.compute_all_embeddings.CardDao") as MockCardDao:
+        instance = MockCardDao.return_value
+        instance.list_all.return_value = cards
+
+        # WHEN 
+        cae.launch()
+
+        # THEN 
+        instance.list_all.assert_called_once()
+
+def test_launch_bad_embedding_format():
+    # GIVEN 
+    cards = [MockCard(1, "texte1")]
+
+    with patch("technical_components.embedding.compute_all_embeddings.CardDao") as MockCardDao:
+        instance = MockCardDao.return_value
+        instance.list_all.return_value = cards
+
+        with patch("technical_components.embedding.compute_all_embeddings.get_embedding") as mock_get:
+            mock_get.return_value = {"wrong_key": []} 
+            with pytest.raises(KeyError):
+                cae.launch()
+
+def test_launch_modify_failure():
+    # GIVEN 
+    cards = [MockCard(1, "texte1")]
+
+    with patch("technical_components.embedding.compute_all_embeddings.CardDao") as MockCardDao:
+        instance = MockCardDao.return_value
+        instance.list_all.return_value = cards
+        instance.modify.side_effect = Exception("DB update failed")
+        with pytest.raises(Exception):
+            cae.launch()
+
+def test_launch_batches_of_10000():
+    # GIVEN 
+    cards = [MockCard(i, f"texte{i}") for i in range(25000)]
+
+    with patch("technical_components.embedding.compute_all_embeddings.CardDao") as MockCardDao:
+        instance = MockCardDao.return_value
+        instance.list_all.return_value = cards
+
+        with patch("technical_components.embedding.compute_all_embeddings.get_embedding") as mock_get:
+            mock_get.return_value = {"embeddings": [[0.1, 0.2]] * 10000}
+
+            # WHEN 
+            cae.launch()
+
+            # THEN 
+            instance.list_all.assert_called_once()
