@@ -151,7 +151,7 @@ class ResetDatabase(metaclass=Singleton):
         )
         return sql
 
-    def launch(self, use_embeddings: bool = True):
+    def launch(self, use_embeddings: bool = True, add_all_cards: bool = True):
         """
         Reset database and import cards
 
@@ -170,51 +170,52 @@ class ResetDatabase(metaclass=Singleton):
         self.run_sql_string_sql(init_db_as_string)
         print("✅ Database initialized")
 
-        # 2. Download cards from appropriate URL
-        if use_embeddings:
-            # Mode 1: Download WITH embeddings
-            url = (
-                "https://minio.lab.sspcloud.fr/thomasfr/AtomicCardsWithEmbeddings.json"
+        if add_all_cards:
+            # 2. Download cards from appropriate URL
+            if use_embeddings:
+                # Mode 1: Download WITH embeddings
+                url = (
+                    "https://minio.lab.sspcloud.fr/thomasfr/AtomicCardsWithEmbeddings.json"
+                )
+                print(f"📦 Downloading cards from {url} (WITH embeddings ✨)")
+                with_embeddings = True
+            else:
+                # Mode 2: Download WITHOUT embeddings
+                url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
+                print(f"📦 Downloading cards from {url} (WITHOUT embeddings)")
+                with_embeddings = False
+    
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
+                data = response.json()
+            except Exception as e:
+                print(f"❌ Error downloading from {url}: {e}")
+                return False
+    
+            print(f"📊 Found {len(data['data'].keys())} unique card names")
+    
+            # 3. Build one big INSERT for all cards (first version of each card)
+            all_cards = [versions[0] for _, versions in data["data"].items()]
+    
+            print(f"💾 Preparing to insert {len(all_cards)} cards...")
+            sql_string = self.generate_insert_sql_many(
+                all_cards, with_embeddings=with_embeddings
             )
-            print(f"📦 Downloading cards from {url} (WITH embeddings ✨)")
-            with_embeddings = True
-        else:
-            # Mode 2: Download WITHOUT embeddings
-            url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
-            print(f"📦 Downloading cards from {url} (WITHOUT embeddings)")
-            with_embeddings = False
-
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-        except Exception as e:
-            print(f"❌ Error downloading from {url}: {e}")
-            return False
-
-        print(f"📊 Found {len(data['data'].keys())} unique card names")
-
-        # 3. Build one big INSERT for all cards (first version of each card)
-        all_cards = [versions[0] for _, versions in data["data"].items()]
-
-        print(f"💾 Preparing to insert {len(all_cards)} cards...")
-        sql_string = self.generate_insert_sql_many(
-            all_cards, with_embeddings=with_embeddings
-        )
-
-        try:
-            self.run_sql_string_sql(sql_string)
-            embeddings_status = (
-                "WITH embeddings ✨" if with_embeddings else "WITHOUT embeddings"
-            )
-            print(f"✅ All {len(all_cards)} cards inserted {embeddings_status}")
-            return True
-        except Exception as e:
-            print(f"❌ Could not insert all cards: {e}")
-            return False
+    
+            try:
+                self.run_sql_string_sql(sql_string)
+                embeddings_status = (
+                    "WITH embeddings ✨" if with_embeddings else "WITHOUT embeddings"
+                )
+                print(f"✅ All {len(all_cards)} cards inserted {embeddings_status}")
+                return True
+            except Exception as e:
+                print(f"❌ Could not insert all cards: {e}")
+                return False
 
 
-def main():
+def main(add_all_cards: bool = True):
     """Main function with argument parsing"""
     parser = argparse.ArgumentParser(
         description="Reset database and import Magic cards from URL",
@@ -246,7 +247,7 @@ URLs used:
     pgvector_setup = PgVectorSetup()
     pgvector_setup.setup()
 
-    ResetDatabase().launch(use_embeddings=use_embeddings)
+    ResetDatabase().launch(use_embeddings=use_embeddings, add_all_cards)
     # Now we automatically call init_user_tables.py
     utils.init_users_tables.main()
 
