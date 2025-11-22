@@ -7,8 +7,6 @@ from service.user_service import UserService
 import logging
 
 from service.card_service import CardService
-from business_object.card import Card
-# Note: the API must communicate with the service only
 
 
 class UserView(AbstractView):
@@ -113,9 +111,8 @@ class UserView(AbstractView):
                 text = self.get_input()
 
                 logging.info("Creating a card")
-                card_object = Card(None, name, text)
 
-                success = card_service.add_card(card_object)
+                success = card_service.add_card(name, text)
                 if not success:
                     print("Error creating the card")
 

@@ -44,7 +44,7 @@ class Card:
         text_content = self.text or ""  # Use empty string if text is None
         self.is_truncated = len(text_content) >= 100
         text_preview = (
-            text_content if len(text_content) < 100 else text_content[:100] + "..."
+            text_content if not self.is_truncated else text_content[:100] + "..."
         )
         
         id_display = self.id if self.id is not None else "(not saved)"
