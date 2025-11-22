@@ -423,7 +423,7 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
     }
 
 
-@app.get("/user/", tags=["Users"])
+@app.get("/user/", tags=["Admin"])
 async def list_all_users(current_user: TokenData = Depends(require_admin)):
     """List all users (requires admin role)"""
     logging.info(f"Fetching user list by {current_user.email}")
