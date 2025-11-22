@@ -423,7 +423,7 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
     }
 
 
-@app.get("/user/", tags=["Users"])
+@app.get("/user/", tags=["Admin"])
 async def list_all_users(current_user: TokenData = Depends(require_admin)):
     """List all users (requires admin role)"""
     logging.info(f"Fetching user list by {current_user.email}")
@@ -1041,12 +1041,15 @@ if __name__ == "__main__":
     # Check required environment variables
     required_vars = [
         'API_TOKEN',
-        'POSTGRES_HOST',
-        'POSTGRES_PORT',
-        'POSTGRES_DATABASE',
-        'POSTGRES_USER',
-        'POSTGRES_PASSWORD',
-        'POSTGRES_SCHEMA'
+        'PGHOST',
+        'PGPORT',
+        'PGDATABASE',
+        'PGUSER',
+        'PGPASSWORD',
+        'PGSCHEMA',
+        'SECRET_KEY',
+        'ALGORITHM',
+        'ACCESS_TOKEN_EXPIRE_MINUTES'
     ]
     missing = [var for var in required_vars if not os.getenv(var)]
     if missing:
