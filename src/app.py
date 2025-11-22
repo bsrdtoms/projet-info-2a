@@ -1041,12 +1041,15 @@ if __name__ == "__main__":
     # Check required environment variables
     required_vars = [
         'API_TOKEN',
-        'POSTGRES_HOST',
-        'POSTGRES_PORT',
-        'POSTGRES_DATABASE',
-        'POSTGRES_USER',
-        'POSTGRES_PASSWORD',
-        'POSTGRES_SCHEMA'
+        'PGHOST',
+        'PGPORT',
+        'PGDATABASE',
+        'PGUSER',
+        'PGPASSWORD',
+        'PGSCHEMA',
+        'SECRET_KEY',
+        'ALGORITHM',
+        'ACCESS_TOKEN_EXPIRE_MINUTES'
     ]
     missing = [var for var in required_vars if not os.getenv(var)]
     if missing:
