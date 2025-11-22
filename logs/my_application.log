@@ -2079,3 +2079,31 @@ AttributeError: 'HistoricalService' object has no attribute 'get_stats'
 21/11/2025 19:21:50 - INFO     -            └─> Output: ["(Card(id=23838, name='Sculptor of Winter', text='{T}: Untap target snow land.'), 0.09728311434313786)", "(Card(id=22535, name='Rime Tender', text='{T}: Untap another target snow permanent.'), 0.07505539982678566)", "(Card(id=13417, name='Iceberg', text='This enchantment enters with X ice counters on it.\n{3}: Put an ice counter on this enchantment.\nRemo...'), 0.06028881167554556)"] ... (3 elements)
 21/11/2025 19:21:50 - INFO     -     CardService.semantic_search('ice', 3, 1) - END
 21/11/2025 19:21:50 - INFO     -        └─> Output: ["(Card(id=23838, name='Sculptor of Winter', text='{T}: Untap target snow land.'), 0.09728311434313786)", "(Card(id=22535, name='Rime Tender', text='{T}: Untap another target snow permanent.'), 0.07505539982678566)", "(Card(id=13417, name='Iceberg', text='This enchantment enters with X ice counters on it.\n{3}: Put an ice counter on this enchantment.\nRemo...'), 0.06028881167554556)"] ... (3 elements)
+22/11/2025 11:45:55 - INFO     - --------------------------------------------------
+22/11/2025 11:45:55 - INFO     - Starting MagicSearch Application                           
+22/11/2025 11:45:55 - INFO     - --------------------------------------------------
+22/11/2025 11:46:13 - INFO     -     UserService.login('123@gmail.com', '*****') - START
+22/11/2025 11:46:13 - INFO     -         UserDao.find_by_email('123@gmail.com',) - START
+22/11/2025 11:46:13 - INFO     -         UserDao.find_by_email('123@gmail.com',) - END
+22/11/2025 11:46:13 - INFO     -            └─> Output: Client - 123@gmail.com (123@gmail.com)
+22/11/2025 11:46:13 - INFO     -         UserService.verify_password('*****', '$2b$12$WBJXxnW5ngvN3xkgV.JSquMH34ds6N8/AODGMEjvvq.6lNO1KVFlC') - START
+22/11/2025 11:46:14 - INFO     -         UserService.verify_password('*****', '$2b$12$WBJXxnW5ngvN3xkgV.JSquMH34ds6N8/AODGMEjvvq.6lNO1KVFlC') - END
+22/11/2025 11:46:14 - INFO     -            └─> Output: True
+22/11/2025 11:46:14 - INFO     -         SessionDao.create('Session 1c8d6c28... (user_id=2)',) - START
+22/11/2025 11:46:14 - INFO     -         SessionDao.create('Session 1c8d6c28... (user_id=2)',) - END
+22/11/2025 11:46:14 - INFO     -            └─> Output: True
+22/11/2025 11:46:14 - INFO     -     UserService.login('123@gmail.com', '*****') - END
+22/11/2025 11:46:14 - INFO     -        └─> Output: (True, 'Welcome 123@gmail.com!', Session(id='1c8d6c28...', user_id=2, active=True))
+22/11/2025 11:46:16 - INFO     -     UserService.get_current_user() - START
+22/11/2025 11:46:16 - INFO     -         UserDao.find_by_id(2,) - START
+22/11/2025 11:46:16 - INFO     -         UserDao.find_by_id(2,) - END
+22/11/2025 11:46:16 - INFO     -            └─> Output: Client - 123@gmail.com (123@gmail.com)
+22/11/2025 11:46:16 - INFO     -     UserService.get_current_user() - END
+22/11/2025 11:46:16 - INFO     -        └─> Output: Client - 123@gmail.com (123@gmail.com)
+22/11/2025 11:46:18 - INFO     -     UserService.logout() - START
+22/11/2025 11:46:18 - INFO     -         SessionDao.deactivate('1c8d6c28-462c-4410-8a5d-9c87dbf63c85',) - START
+22/11/2025 11:46:18 - INFO     -         SessionDao.deactivate('1c8d6c28-462c-4410-8a5d-9c87dbf63c85',) - END
+22/11/2025 11:46:18 - INFO     -            └─> Output: True
+22/11/2025 11:46:18 - INFO     -     UserService.logout() - END
+22/11/2025 11:46:18 - INFO     -        └─> Output: (True, 'Successfully logged out')
+22/11/2025 11:46:25 - INFO     - End of application

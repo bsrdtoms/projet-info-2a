@@ -43,8 +43,10 @@ class UserView(AbstractView):
             elif choice == "3":
                 SearchView(user=self.user).menu_choice()
             elif choice == "4":
-                self.show_message("You have been logged out.")
-                break
+                success, message = self.user_service.logout()
+                self.show_message(message)
+                if success:
+                    break
             elif choice == "5" and self.role in ["admin", "gamedesigner"]:
                 if self.role == "admin":
                     self.admin_menu_choice()
