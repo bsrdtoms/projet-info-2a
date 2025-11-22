@@ -1041,12 +1041,12 @@ if __name__ == "__main__":
     # Check required environment variables
     required_vars = [
         'API_TOKEN',
-        'PGHOST',
-        'PGPORT',
-        'PGDATABASE',
-        'PGUSER',
-        'PGPASSWORD',
-        'PGSCHEMA',
+        'POSTGRES_HOST',
+        'POSTGRES_DATABASE',
+        'POSTGRES_USER',
+        'POSTGRES_PASSWORD',
+        'POSTGRES_PORT',
+        'POSTGRES_SCHEMA',
         'SECRET_KEY',
         'ALGORITHM',
         'ACCESS_TOKEN_EXPIRE_MINUTES'
