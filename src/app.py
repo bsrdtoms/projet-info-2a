@@ -511,8 +511,140 @@ async def list_favorites(current_user: TokenData = Depends(require_authenticated
 
     return favorites
 
-
 # ==================== HISTORY ROUTES ====================
+
+# Function helper for optional authentification
+async def get_optional_user(authorization: Optional[str] = None) -> Optional[TokenData]:
+    """
+    Dependance for optional authentification
+    Returns TokenData if authentified, None otherwise
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        return None
+    
+    try:
+        token = authorization.split(" ")[1]
+        from utils.auth import decode_token
+        return decode_token(token)
+    except Exception:
+        return None
+
+
+@app.post("/card/semantic_search_with_L2_distance/", tags=["Cards"])
+async def semantic_search_l2(
+    query: str, 
+    limit: int = 3,
+    authorization: Optional[str] = None
+):
+    """
+    Semantic search for cards with L2 distance
+    
+    **Authentication**: Optional
+    - If authenticated (Bearer token in Authorization header), search is saved to history
+    - If not authenticated, search works normally but is not saved
+    
+    **Parameters**:
+    - query: Text description of the card you're looking for
+    - limit: Number of results to return (default: 3)
+    
+    **Returns**: List of cards with similarity scores
+    """
+    # Get user if authenticated (optional)
+    current_user = await get_optional_user(authorization)
+    user_id = current_user.user_id if current_user else None
+    
+    logging.info(f"L2 semantic search: '{query}' (limit={limit}, user_id={user_id})")
+    
+    try:
+        # Perform search with optional user_id for history
+        result = card_service.semantic_search(query, limit, "L2", user_id=user_id)
+        
+        if not result:
+            raise HTTPException(
+                status_code=404,
+                detail="No matching card found"
+            )
+        
+        return {
+            "query": query,
+            "distance_metric": "L2",
+            "results_count": len(result),
+            "saved_to_history": user_id is not None,
+            "results": [
+                {
+                    "id": card.id,
+                    "name": card.name,
+                    "text": card.text,
+                    "similarity": similarity,
+                }
+                for card, similarity in result
+            ]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error in semantic search: {e}")
+        raise HTTPException(status_code=500, detail=f"Search error: {str(e)}")
+
+
+@app.post("/card/semantic_search_with_cosine_distance/", tags=["Cards"])
+async def semantic_search_cosine(
+    query: str, 
+    limit: int = 3,
+    authorization: Optional[str] = None
+):
+    """
+    Semantic search for cards with cosine distance
+    
+    **Authentication**: Optional
+    - If authenticated (Bearer token in Authorization header), search is saved to history
+    - If not authenticated, search works normally but is not saved
+    
+    **Parameters**:
+    - query: Text description of the card you're looking for
+    - limit: Number of results to return (default: 3)
+    
+    **Returns**: List of cards with similarity scores
+    """
+    # Get user if authenticated (optional)
+    current_user = await get_optional_user(authorization)
+    user_id = current_user.user_id if current_user else None
+    
+    logging.info(f"Cosine semantic search: '{query}' (limit={limit}, user_id={user_id})")
+    
+    try:
+        # Perform search with optional user_id for history
+        result = card_service.semantic_search(query, limit, "cosine", user_id=user_id)
+        
+        if not result:
+            raise HTTPException(
+                status_code=404,
+                detail="No matching card found"
+            )
+        
+        return {
+            "query": query,
+            "distance_metric": "cosine",
+            "results_count": len(result),
+            "saved_to_history": user_id is not None,
+            "results": [
+                {
+                    "id": card.id,
+                    "name": card.name,
+                    "text": card.text,
+                    "similarity": similarity,
+                }
+                for card, similarity in result
+            ]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error in semantic search: {e}")
+        raise HTTPException(status_code=500, detail=f"Search error: {str(e)}")
+
+
+# ==================== HISTORY ENDPOINTS ====================
 
 @app.get("/history", tags=["History"])
 async def get_search_history(
@@ -520,47 +652,387 @@ async def get_search_history(
     per_page: int = 20,
     current_user: TokenData = Depends(require_authenticated)
 ):
-    """Get your search history with pagination (requires authentication)"""
-    # Use the user_id from the JWT token
+    """
+    Get your search history with pagination
+    
+    **Authentication**: Required
+    
+    **Parameters**:
+    - page: Page number (starts at 1)
+    - per_page: Number of results per page (max 100)
+    
+    **Returns**: Paginated list of searches with metadata
+    """
+    # Validate pagination parameters
+    if page < 1:
+        raise HTTPException(status_code=400, detail="Page must be >= 1")
+    
+    if per_page < 1 or per_page > 100:
+        raise HTTPException(status_code=400, detail="Per_page must be between 1 and 100")
+    
     user_id = current_user.user_id
-    logging.info(f"Fetching search history for user_id={user_id} by {current_user.email}")
+    logging.info(f"Fetching search history for user_id={user_id} (page={page}, per_page={per_page})")
 
-    history_data = historical_service.get_paginated_history(user_id, page, per_page)
+    try:
+        history_data = historical_service.get_paginated_history(user_id, page, per_page)
 
-    return {
-        "searches": history_data["searches"],
-        "total": history_data["total"],
-        "page": history_data["page"],
-        "per_page": history_data["per_page"],
-        "total_pages": history_data["total_pages"]
-    }
+        # Format the searches for better readability
+        formatted_searches = []
+        for search in history_data["searches"]:
+            formatted_searches.append({
+                "id": search.id,
+                "query": search.query_text,
+                "results_found": search.result_count,
+                "date": search.created_at.isoformat(),
+                "has_embedding": search.query_embedding is not None
+            })
+
+        return {
+            "user_id": user_id,
+            "searches": formatted_searches,
+            "pagination": {
+                "total_searches": history_data["total"],
+                "current_page": history_data["page"],
+                "per_page": history_data["per_page"],
+                "total_pages": history_data["total_pages"],
+                "has_next": history_data["page"] < history_data["total_pages"],
+                "has_previous": history_data["page"] > 1
+            }
+        }
+    except Exception as e:
+        logging.error(f"Error fetching history: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching history: {str(e)}")
+
+
+@app.get("/history/stats", tags=["History"])
+async def get_search_statistics(current_user: TokenData = Depends(require_authenticated)):
+    """
+    Get statistics about your search history
+    
+    **Authentication**: Required
+    
+    **Returns**: Statistics including total searches, average results, etc.
+    """
+    user_id = current_user.user_id
+    logging.info(f"Fetching search statistics for user_id={user_id}")
+
+    try:
+        stats = historical_service.get_stats(user_id)
+
+        if not stats or stats.get('total_searches', 0) == 0:
+            return {
+                "user_id": user_id,
+                "message": "No search history yet",
+                "stats": {
+                    "total_searches": 0,
+                    "total_results": 0,
+                    "average_results_per_search": 0,
+                    "most_recent_search": None,
+                    "oldest_search": None
+                }
+            }
+
+        return {
+            "user_id": user_id,
+            "stats": {
+                "total_searches": stats['total_searches'],
+                "total_results": stats['total_results'],
+                "average_results_per_search": round(stats['avg_results'], 2),
+                "most_recent_search": stats['most_recent'].isoformat(),
+                "oldest_search": stats['oldest'].isoformat()
+            }
+        }
+    except Exception as e:
+        logging.error(f"Error fetching statistics: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching statistics: {str(e)}")
 
 
 @app.get("/history/count", tags=["History"])
 async def get_search_count(current_user: TokenData = Depends(require_authenticated)):
-    """Get the total number of searches in your history (requires authentication)"""
-    # Use the user_id from the JWT token
+    """
+    Get the total number of searches in your history
+    
+    **Authentication**: Required
+    
+    **Returns**: Total count of searches
+    """
     user_id = current_user.user_id
-    logging.info(f"Counting search history for user_id={user_id} by {current_user.email}")
+    logging.info(f"Counting search history for user_id={user_id}")
 
-    count = historical_service.get_history_count(user_id)
+    try:
+        count = historical_service.get_history_count(user_id)
+        return {
+            "user_id": user_id, 
+            "total_searches": count
+        }
+    except Exception as e:
+        logging.error(f"Error counting history: {e}")
+        raise HTTPException(status_code=500, detail=f"Error counting history: {str(e)}")
 
-    return {"user_id": user_id, "total_searches": count}
+
+@app.get("/history/{search_id}", tags=["History"])
+async def get_search_by_id(
+    search_id: int,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """
+    Get details of a specific search from your history
+    
+    **Authentication**: Required
+    
+    **Parameters**:
+    - search_id: ID of the search to retrieve
+    
+    **Returns**: Detailed information about the search
+    """
+    user_id = current_user.user_id
+    logging.info(f"Fetching search {search_id} for user_id={user_id}")
+
+    try:
+        # Get user's history to verify ownership
+        history = historical_service.get_user_history(user_id, limit=1000)
+        
+        # Find the specific search
+        search = None
+        for s in history:
+            if s.id == search_id:
+                search = s
+                break
+        
+        if not search:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Search {search_id} not found in your history"
+            )
+        
+        return {
+            "id": search.id,
+            "user_id": search.user_id,
+            "query": search.query_text,
+            "results_found": search.result_count,
+            "date": search.created_at.isoformat(),
+            "has_embedding": search.query_embedding is not None,
+            "embedding_dimensions": len(search.query_embedding) if search.query_embedding else None
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error fetching search: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching search: {str(e)}")
+
+
+@app.post("/history/{search_id}/repeat", tags=["History"])
+async def repeat_search(
+    search_id: int,
+    limit: int = 5,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """
+    Repeat a past search from your history
+    
+    **Authentication**: Required
+    
+    **Parameters**:
+    - search_id: ID of the search to repeat
+    - limit: Number of results to return (default: 5)
+    
+    **Returns**: New search results (this creates a new history entry)
+    """
+    user_id = current_user.user_id
+    logging.info(f"Repeating search {search_id} for user_id={user_id}")
+
+    try:
+        # Get user's history to verify ownership
+        history = historical_service.get_user_history(user_id, limit=1000)
+        
+        # Find the specific search
+        search_to_repeat = None
+        for s in history:
+            if s.id == search_id:
+                search_to_repeat = s
+                break
+        
+        if not search_to_repeat:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Search {search_id} not found in your history"
+            )
+        
+        # Perform the search again (will create a new history entry)
+        result = card_service.semantic_search(
+            search_to_repeat.query_text,
+            top_k=limit,
+            user_id=user_id
+        )
+        
+        return {
+            "original_search_id": search_id,
+            "query": search_to_repeat.query_text,
+            "new_results_count": len(result),
+            "message": "Search repeated and saved as new history entry",
+            "results": [
+                {
+                    "id": card.id,
+                    "name": card.name,
+                    "text": card.text,
+                    "similarity": similarity,
+                }
+                for card, similarity in result
+            ]
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error repeating search: {e}")
+        raise HTTPException(status_code=500, detail=f"Error repeating search: {str(e)}")
+
+
+@app.delete("/history/{search_id}", tags=["History"])
+async def delete_search(
+    search_id: int,
+    current_user: TokenData = Depends(require_authenticated)
+):
+    """
+    Delete a specific search from your history
+    
+    **Authentication**: Required
+    
+    **Parameters**:
+    - search_id: ID of the search to delete
+    
+    **Returns**: Confirmation message
+    """
+    user_id = current_user.user_id
+    logging.info(f"Deleting search {search_id} for user_id={user_id}")
+
+    try:
+        # Get user's history to verify ownership
+        history = historical_service.get_user_history(user_id, limit=1000)
+        
+        # Verify the search belongs to this user
+        found = any(s.id == search_id for s in history)
+        if not found:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Search {search_id} not found in your history"
+            )
+        
+        # Delete the search
+        success = historical_service.delete_search(search_id)
+        
+        if not success:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to delete search"
+            )
+        
+        return {
+            "message": f"Search {search_id} deleted successfully",
+            "deleted_search_id": search_id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting search: {e}")
+        raise HTTPException(status_code=500, detail=f"Error deleting search: {str(e)}")
 
 
 @app.delete("/history", tags=["History"])
 async def clear_search_history(current_user: TokenData = Depends(require_authenticated)):
-    """Clear all your search history (requires authentication)"""
-    # Use the user_id from the JWT token
+    """
+    Clear ALL your search history
+    
+    **Authentication**: Required
+    
+    **Warning**: This action cannot be undone!
+    
+    **Returns**: Confirmation message with count of deleted searches
+    """
     user_id = current_user.user_id
-    logging.info(f"Clearing search history for user_id={user_id} by {current_user.email}")
+    logging.info(f"Clearing ALL search history for user_id={user_id}")
 
-    success = historical_service.clear_user_history(user_id)
+    try:
+        # Get count before deletion
+        count_before = historical_service.get_history_count(user_id)
+        
+        # Clear history
+        success = historical_service.clear_user_history(user_id)
+        
+        if not success:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to clear history"
+            )
+        
+        return {
+            "message": "Search history cleared successfully",
+            "deleted_searches": count_before,
+            "user_id": user_id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error clearing history: {e}")
+        raise HTTPException(status_code=500, detail=f"Error clearing history: {str(e)}")
 
-    if not success:
-        raise HTTPException(status_code=500, detail="Failed to clear history")
 
-    return {"message": "Search history cleared successfully"}
+# ==================== ADMIN ENDPOINTS FOR HISTORY ====================
+
+@app.get("/admin/history/{user_id}", tags=["Admin"])
+async def get_user_history_as_admin(
+    user_id: int,
+    page: int = 1,
+    per_page: int = 20,
+    current_user: TokenData = Depends(require_admin)
+):
+    """
+    Get any user's search history (admin only)
+    
+    **Authentication**: Admin required
+    
+    **Parameters**:
+    - user_id: ID of the user whose history to retrieve
+    - page: Page number (starts at 1)
+    - per_page: Number of results per page
+    
+    **Returns**: Paginated list of user's searches
+    """
+    logging.info(f"Admin {current_user.email} fetching history for user ID {user_id}")
+
+    try:
+        # Verify user exists
+        user = user_service.find_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        history_data = historical_service.get_paginated_history(user_id, page, per_page)
+
+        # Format the searches
+        formatted_searches = []
+        for search in history_data["searches"]:
+            formatted_searches.append({
+                "id": search.id,
+                "query": search.query_text,
+                "results_found": search.result_count,
+                "date": search.created_at.isoformat()
+            })
+
+        return {
+            "user_id": user_id,
+            "user_email": user.email,
+            "searches": formatted_searches,
+            "pagination": {
+                "total_searches": history_data["total"],
+                "current_page": history_data["page"],
+                "per_page": history_data["per_page"],
+                "total_pages": history_data["total_pages"]
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error fetching user history: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching user history: {str(e)}")
 
 
 # ==================== APPLICATION STARTUP ====================
