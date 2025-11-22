@@ -4,6 +4,7 @@ sequenceDiagram
     participant U as User
     participant V as SearchView
     participant CS as CardService
+    participant EA as EmbeddingAPI
     participant CD as CardDao
     participant DB as Database
 
@@ -11,10 +12,10 @@ sequenceDiagram
     U->>V: Enters semantic query (“flying dragon card”)
     V->>CS: semantic_search(query, limit, user_id=user_id)
 
-    %% Étape 2: Génération de l'embedd
+    %% Étape 2: Génération de l'embedding
     rect rgba(200,200,255,0.1)
-        CS->>CS: get_embedding(text)<br/>(appel interne via requests)
-        CS-->>CS: embedding_requete
+        CS->>EA: POST /embed (text)
+        EA-->>CS: embedding_response
     end
 
     %% Étape 3: Recherche par similarité en SQL
