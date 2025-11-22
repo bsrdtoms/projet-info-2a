@@ -314,13 +314,13 @@ class CardService:
             # NOUVEAU: Enregistrer dans l'historique si user_id fourni
             if user_id is not None:
                 try:
-                    from service.historical_service import HistoricalSearchService
-                    history_service = HistoricalSearchService()
+                    from service.historical_service import HistoricalService
+                    history_service = HistoricalService()
                     history_service.add_search(
                         user_id=user_id,
                         query_text=text,
                         result_count=len(results),
-                        save_embedding=False  # On ne le regenère pas, on utilise celui qu'on vient de créer
+                        query_embedding=None  # On ne sauvegarde pas l'embedding pour économiser de l'espace
                     )
                 except Exception as e:
                     print(f"⚠️  Warning: Could not save to history: {e}")

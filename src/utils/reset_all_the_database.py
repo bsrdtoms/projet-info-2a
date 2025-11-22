@@ -247,7 +247,7 @@ URLs used:
     pgvector_setup = PgVectorSetup()
     pgvector_setup.setup()
 
-    ResetDatabase().launch(use_embeddings=use_embeddings, add_all_cards)
+    ResetDatabase().launch(use_embeddings=use_embeddings, add_all_cards=add_all_cards)
     # Now we automatically call init_user_tables.py
     utils.init_users_tables.main()
 
