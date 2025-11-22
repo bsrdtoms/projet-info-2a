@@ -21,8 +21,12 @@ pip install -r requirements.txt
 # 3. Initialize database
 python src/utils/reset_all_the_database.py
 
-# 4. Start API
+# 4. Start CLI
+python src/main.py
+
+# 4. Or start API
 python src/app.py
+
 ```
 
 API available at: **http://localhost:9876/docs**
@@ -36,13 +40,22 @@ API available at: **http://localhost:9876/docs**
 In the [SSPCloud catalog](https://datalab.sspcloud.fr):
 
 1. Select **PostgreSQL** service
-2. Choose image: `pgvector/pgvector:pg16` or `ankane/pgvector:latest`
+2. Choose image: `inseefrlab/onyxia-postgresql-pgvector` reather than the default `bitnamilegacy/postgresql`
 3. Launch service
 4. Note connection details from service info panel
 
-### 2. Configure Environment Variables
+### 2. Launch VSCode Service
+1. Open the port 9876 so that the API has a port to run on.
+2. run on a termial :
+```bash
+git clone <YOUR_REPO_URL> projet-info-2a
+cd projet-info-2a
+export PYTHONPATH=/home/onyxia/work/projet-info-2a/src
+pip install -r ~/work/projet-info-2a/requirements.txt
+```
+3. Configure Environment Variables
 
-Create a `.env` file at project root:
+Create a `.env` file at project root (in the folder projet-info-2a):
 ```env
 # PostgreSQL (from Onyxia service info)
 POSTGRES_HOST=postgresql-397117.user-yourname
@@ -61,25 +74,15 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 API_TOKEN=your_sspcloud_api_token
 ```
 
-**Get your API_TOKEN:**
-```bash
-# In Onyxia terminal:
-echo $MLFLOW_TRACKING_TOKEN
-```
-
-**Generate SECRET_KEY:**
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-```
 
 ### 3. Initialize Database
 ```bash
-# With pre-computed embeddings (2-3 minutes, recommended)
+# With pre-computed embeddings (1 minute, recommended)
 python src/utils/reset_all_the_database.py
 
 # Without embeddings (if you want to compute them yourself)
 python src/utils/reset_all_the_database.py --no-embeddings
-python src/technical_components/embedding/compute_all_embeddings.py  # 2-4 hours
+python src/technical_components/embedding/compute_all_embeddings.py  # 1/2 hours
 ```
 
 **What gets created:**
@@ -97,41 +100,6 @@ python src/technical_components/embedding/compute_all_embeddings.py  # 2-4 hours
 ```
 Email: admin@magicsearch.com
 Password: our very secure password
-```
-
-### API Examples
-
-**1. Register:**
-```bash
-curl -X POST "http://localhost:9876/user/register" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"pass123"}'
-```
-
-**2. Login (get JWT token):**
-```bash
-curl -X POST "http://localhost:9876/user/login?email=user@example.com&password=pass123"
-```
-
-**3. Semantic search:**
-```bash
-# Public (no auth)
-curl -X POST "http://localhost:9876/card/semantic_search_with_L2_distance/?query=flying%20dragon&limit=5"
-
-# Authenticated (saves to history)
-curl -X POST "http://localhost:9876/card/semantic_search_with_L2_distance/?query=destroy%20creature&limit=5" \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
-
-**4. Manage favorites:**
-```bash
-# Add to favorites
-curl -X POST "http://localhost:9876/favorites/12345" \
-  -H "Authorization: Bearer YOUR_TOKEN"
-
-# List favorites
-curl -X GET "http://localhost:9876/favorites/" \
-  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ### CLI Interface
@@ -217,50 +185,8 @@ src/
 # Run all tests
 pytest src/tests/
 
-# With coverage
-pytest src/tests/ --cov=src --cov-report=html
-
 # Test authentication system
 python src/tests/test_authentication.py
-```
-
----
-
-## 🔧 Troubleshooting
-
-### Connection refused to PostgreSQL
-```bash
-# Check service is running in Onyxia "My Services"
-# Test connection
-psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DATABASE -c "SELECT 1"
-```
-
-### pgvector extension not found
-```bash
-# Ensure you used pgvector/pgvector:pg16 image
-# Manually enable if needed:
-psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DATABASE -c "CREATE EXTENSION IF NOT EXISTS vector;"
-```
-
-### Invalid API_TOKEN
-```bash
-# Test token manually
-curl -X POST "https://llm.lab.sspcloud.fr/ollama/api/embed" \
-  -H "Authorization: Bearer $API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"bge-m3:latest","input":"test"}'
-```
-
-### Port already in use
-```bash
-# Find process
-lsof -i :9876
-
-# Kill it
-kill -9 <PID>
-
-# Or use different port
-uvicorn src.app:app --host 0.0.0.0 --port 8000
 ```
 
 ---
@@ -272,30 +198,4 @@ After initialization:
 - **Cards with embeddings:** ~32,000 (cards without text are skipped)
 - **Embedding dimension:** 1024 (bge-m3 model)
 - **Database size:** ~500 MB with embeddings
-
-Check your database:
-```bash
-psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DATABASE
-
--- Count cards
-SELECT COUNT(*) FROM public.cards;
-
--- Count embeddings
-SELECT COUNT(*) FROM public.cards WHERE embedding_of_text IS NOT NULL;
-
--- Sample semantic search
-SELECT name, text 
-FROM public.cards 
-WHERE embedding_of_text IS NOT NULL 
-ORDER BY embedding_of_text <-> '[0.1, 0.2, ...]'::vector 
-LIMIT 5;
-```
-
----
-
-## 📖 Resources
-
-- **Onyxia Documentation:** https://datalab.sspcloud.fr/
-- **PostgreSQL pgvector:** https://github.com/pgvector/pgvector
-- **FastAPI Documentation:** https://fastapi.tiangolo.com/
 
