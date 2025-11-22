@@ -24,27 +24,29 @@ class WelcomeView(AbstractView):
         self.show_title("Create an account")
 
         email = self.get_input("Email: ")
-        password = getpass("Password (min 6 characters): ") # Thanks to getpass() the password is not displayed when the user types it
+        password = getpass(
+            "Password (min 6 characters): "
+        )  # Thanks to getpass() the password is not displayed when the user types it
         password_confirm = getpass("Confirm password: ")
-        
+
         if password != password_confirm:
             self.show_message("❌ Passwords do not match")
             input("\nPress Enter to continue...")
             return
-        
+
         first_name = self.get_input("First name (optional): ")
         last_name = self.get_input("Last name (optional): ")
-        
+
         success, message, user = self.user_service.create_account(
             email=email,
             password=password,
             first_name=first_name if first_name else None,
-            last_name=last_name if last_name else None
+            last_name=last_name if last_name else None,
         )
-        
+
         self.show_message(message)
         input("\nPress Enter to continue...")
-        
+
         if success:
             self.show_message("You can now log in with your credentials")
 
@@ -62,7 +64,9 @@ class WelcomeView(AbstractView):
             input("\nPress Enter to continue...")
             # Redirect to user interface
             user = self.user_service.get_current_user()
-            UserView(user=user, user_service=self.user_service, role=user.user_type).menu_choice()
+            UserView(
+                user=user, user_service=self.user_service, role=user.user_type
+            ).menu_choice()
         else:
             input("\nPress Enter to continue...")
 

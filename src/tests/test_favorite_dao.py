@@ -7,22 +7,24 @@ from business_object.card import Card
 
 class TestFavoriteDAO:
     """Unit tests for the FavoriteDAO class"""
+
     @pytest.fixture(autouse=True)
     def setup_mocks(self):
         """Setup mocks to isolate tests from the database"""
-        with patch('dao.favorite_dao.DBConnection') as mock_db_connection:
+        with patch("dao.favorite_dao.DBConnection") as mock_db_connection:
             self.mock_connection = MagicMock()
             self.mock_cursor = MagicMock()
 
             # Configure the connection mock
             self.mock_connection.__enter__ = Mock(return_value=self.mock_connection)
             self.mock_connection.__exit__ = Mock(return_value=None)
-            self.mock_connection.cursor.return_value.__enter__ = Mock(return_value=self.mock_cursor)
+            self.mock_connection.cursor.return_value.__enter__ = Mock(
+                return_value=self.mock_cursor
+            )
             self.mock_connection.cursor.return_value.__exit__ = Mock(return_value=None)
 
             mock_db_connection.return_value.connection = self.mock_connection
             yield
-
 
     def test_add_favorite_success(self):
         """Test successful favorite addition (new entry)"""
@@ -73,7 +75,6 @@ class TestFavoriteDAO:
         # THEN
         assert result is False
         self.mock_connection.commit.assert_not_called()
-
 
     def test_remove_favorite_success(self):
         """Test successful favorite removal"""
@@ -137,15 +138,15 @@ class TestFavoriteDAO:
                 "id": 123,
                 "name": "Test Card 1",
                 "text": "Card 1 text",
-                "embedding_of_text": [0.1, 0.2, 0.3]
+                "embedding_of_text": [0.1, 0.2, 0.3],
             },
             {
                 "card_id": 124,
                 "id": 124,
                 "name": "Test Card 2",
                 "text": "Card 2 text",
-                "embedding_of_text": [0.4, 0.5, 0.6]
-            }
+                "embedding_of_text": [0.4, 0.5, 0.6],
+            },
         ]
         self.mock_cursor.fetchall.return_value = mock_rows
         dao = FavoriteDAO()

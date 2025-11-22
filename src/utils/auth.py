@@ -1,6 +1,7 @@
 """
 JWT Authentication and Authorization utilities for the Magic Cards API
 """
+
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -24,6 +25,7 @@ security = HTTPBearer()
 
 class TokenData(BaseModel):
     """Token payload data"""
+
     user_id: int
     email: str
     user_type: str
@@ -32,6 +34,7 @@ class TokenData(BaseModel):
 
 class Token(BaseModel):
     """Token response model"""
+
     access_token: str
     token_type: str = "bearer"
     user_id: int
@@ -39,8 +42,9 @@ class Token(BaseModel):
     user_type: str
 
 
-def create_access_token(user_id: int, email: str, user_type: str,
-                       expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(
+    user_id: int, email: str, user_type: str, expires_delta: Optional[timedelta] = None
+) -> str:
     """
     Create a JWT access token
 
@@ -62,7 +66,7 @@ def create_access_token(user_id: int, email: str, user_type: str,
         "user_id": user_id,
         "email": email,
         "user_type": user_type,
-        "exp": expire
+        "exp": expire,
     }
 
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -103,7 +107,9 @@ def decode_token(token: str) -> TokenData:
         raise credentials_exception
 
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> TokenData:
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> TokenData:
     """
     Dependency to get the current authenticated user from the JWT token
 
@@ -120,7 +126,9 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return decode_token(token)
 
 
-async def require_admin(current_user: TokenData = Depends(get_current_user)) -> TokenData:
+async def require_admin(
+    current_user: TokenData = Depends(get_current_user),
+) -> TokenData:
     """
     Dependency to require admin role
 
@@ -135,13 +143,14 @@ async def require_admin(current_user: TokenData = Depends(get_current_user)) -> 
     """
     if current_user.user_type != "admin":
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin privileges required"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required"
         )
     return current_user
 
 
-async def require_game_designer(current_user: TokenData = Depends(get_current_user)) -> TokenData:
+async def require_game_designer(
+    current_user: TokenData = Depends(get_current_user),
+) -> TokenData:
     """
     Dependency to require game_designer role (or admin)
 
@@ -157,12 +166,14 @@ async def require_game_designer(current_user: TokenData = Depends(get_current_us
     if current_user.user_type not in ["game_designer", "admin"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Game Designer privileges required"
+            detail="Game Designer privileges required",
         )
     return current_user
 
 
-async def require_authenticated(current_user: TokenData = Depends(get_current_user)) -> TokenData:
+async def require_authenticated(
+    current_user: TokenData = Depends(get_current_user),
+) -> TokenData:
     """
     Dependency to require any authenticated user
 

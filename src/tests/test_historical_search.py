@@ -2,9 +2,11 @@
 import pytest
 from datetime import datetime
 import sys, os
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from business_object.historical_search import HistoricalSearch
+
 
 class TestHistoricalSearch:
 
@@ -20,7 +22,7 @@ class TestHistoricalSearch:
             user_id=user_id,
             query_text=query_text,
             query_embedding=[0.1, 0.2, 0.3],
-            result_count=result_count
+            result_count=result_count,
         )
 
         # THEN
@@ -61,7 +63,9 @@ class TestHistoricalSearch:
         created = datetime(2022, 1, 1, 12, 0)
 
         # WHEN
-        search = HistoricalSearch(user_id=user_id, query_text=query_text, created_at=created)
+        search = HistoricalSearch(
+            user_id=user_id, query_text=query_text, created_at=created
+        )
 
         # THEN
         assert search.created_at == created

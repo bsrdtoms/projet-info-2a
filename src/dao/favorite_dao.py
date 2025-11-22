@@ -21,7 +21,7 @@ class FavoriteDAO:
                     return cursor.rowcount > 0  # True if added, False if already exists
         except Exception as e:
             print(f"❌ Error adding card to favorites: {e}")
-            return False    
+            return False
 
     @log
     def remove_favorite(self, user_id: int, card_id: int) -> bool:
@@ -49,7 +49,7 @@ class FavoriteDAO:
         """
         cards = []
 
-        try :
+        try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(query, (user_id,))
@@ -66,7 +66,6 @@ class FavoriteDAO:
                             embedding_of_text=row["embedding_of_text"],
                         )
                         cards.append(card)
-                    
 
         except Exception as e:
             print(f"❌ Database error: {e}")

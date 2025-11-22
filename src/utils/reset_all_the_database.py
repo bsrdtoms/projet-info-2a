@@ -8,6 +8,7 @@ Usage:
     python reset_all_the_database.py                    # Default: with embeddings from URL
     python reset_all_the_database.py --no-embeddings    # From URL without embeddings
 """
+
 import requests
 import argparse
 from utils.singleton import Singleton
@@ -174,9 +175,7 @@ class ResetDatabase(metaclass=Singleton):
             # 2. Download cards from appropriate URL
             if use_embeddings:
                 # Mode 1: Download WITH embeddings
-                url = (
-                    "https://minio.lab.sspcloud.fr/thomasfr/AtomicCardsWithEmbeddings.json"
-                )
+                url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCardsWithEmbeddings.json"
                 print(f"📦 Downloading cards from {url} (WITH embeddings ✨)")
                 with_embeddings = True
             else:
@@ -184,7 +183,7 @@ class ResetDatabase(metaclass=Singleton):
                 url = "https://minio.lab.sspcloud.fr/thomasfr/AtomicCards.json"
                 print(f"📦 Downloading cards from {url} (WITHOUT embeddings)")
                 with_embeddings = False
-    
+
             try:
                 response = requests.get(url)
                 response.raise_for_status()
@@ -192,17 +191,17 @@ class ResetDatabase(metaclass=Singleton):
             except Exception as e:
                 print(f"❌ Error downloading from {url}: {e}")
                 return False
-    
+
             print(f"📊 Found {len(data['data'].keys())} unique card names")
-    
+
             # 3. Build one big INSERT for all cards (first version of each card)
             all_cards = [versions[0] for _, versions in data["data"].items()]
-    
+
             print(f"💾 Preparing to insert {len(all_cards)} cards...")
             sql_string = self.generate_insert_sql_many(
                 all_cards, with_embeddings=with_embeddings
             )
-    
+
             try:
                 self.run_sql_string_sql(sql_string)
                 embeddings_status = (

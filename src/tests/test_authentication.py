@@ -1,11 +1,13 @@
 """
 Test script for the JWT authentication system
 """
+
 import requests
 import json
 from typing import Optional
 
 BASE_URL = "http://localhost:9876"
+
 
 class TestAuthenticationSystem:
     def __init__(self):
@@ -29,8 +31,8 @@ class TestAuthenticationSystem:
             f"{self.base_url}/user/login",
             params={
                 "email": "admin@magicsearch.com",
-                "password": "our very secure password"
-            }
+                "password": "our very secure password",
+            },
         )
 
         print(f"Status: {response.status_code}")
@@ -65,8 +67,8 @@ class TestAuthenticationSystem:
                 "password": "designer123",
                 "first_name": "Test",
                 "last_name": "Designer",
-                "user_type": "game_designer"
-            }
+                "user_type": "game_designer",
+            },
         )
 
         print(f"Status: {response.status_code}")
@@ -79,10 +81,7 @@ class TestAuthenticationSystem:
             # Login with the account
             response = requests.post(
                 f"{self.base_url}/user/login",
-                params={
-                    "email": self.test_designer_email,
-                    "password": "designer123"
-                }
+                params={"email": self.test_designer_email, "password": "designer123"},
             )
 
             if response.status_code == 200:
@@ -93,8 +92,10 @@ class TestAuthenticationSystem:
                 print(f"  Role: {data['user_type']}")
 
                 # Verify the role is correct
-                if data['user_type'] != 'game_designer':
-                    print(f"✗ ERROR: Expected role 'game_designer', got '{data['user_type']}'")
+                if data["user_type"] != "game_designer":
+                    print(
+                        f"✗ ERROR: Expected role 'game_designer', got '{data['user_type']}'"
+                    )
                     return False
 
                 return True
@@ -113,8 +114,8 @@ class TestAuthenticationSystem:
                 "email": self.test_client_email,
                 "password": "client123",
                 "first_name": "Test",
-                "last_name": "Client"
-            }
+                "last_name": "Client",
+            },
         )
 
         print(f"Status: {response.status_code}")
@@ -127,10 +128,7 @@ class TestAuthenticationSystem:
             # Login with the account
             response = requests.post(
                 f"{self.base_url}/user/login",
-                params={
-                    "email": self.test_client_email,
-                    "password": "client123"
-                }
+                params={"email": self.test_client_email, "password": "client123"},
             )
 
             if response.status_code == 200:
@@ -141,7 +139,7 @@ class TestAuthenticationSystem:
                 print(f"  Role: {data['user_type']}")
 
                 # Verify the role is client
-                if data['user_type'] != 'client':
+                if data["user_type"] != "client":
                     print(f"✗ ERROR: Expected role 'client', got '{data['user_type']}'")
                     return False
 
@@ -171,8 +169,7 @@ class TestAuthenticationSystem:
         headers = {"Authorization": f"Bearer {self.designer_token}"}
 
         response = requests.post(
-            f"{self.base_url}/card/Test Card/This is a test card",
-            headers=headers
+            f"{self.base_url}/card/Test Card/This is a test card", headers=headers
         )
 
         print(f"Status: {response.status_code}")
@@ -191,8 +188,7 @@ class TestAuthenticationSystem:
         headers = {"Authorization": f"Bearer {self.client_token}"}
 
         response = requests.post(
-            f"{self.base_url}/card/Unauthorized Card/This should fail",
-            headers=headers
+            f"{self.base_url}/card/Unauthorized Card/This should fail", headers=headers
         )
 
         print(f"Status: {response.status_code}")
@@ -226,10 +222,7 @@ class TestAuthenticationSystem:
 
         headers = {"Authorization": f"Bearer {self.admin_token}"}
 
-        response = requests.get(
-            f"{self.base_url}/user/",
-            headers=headers
-        )
+        response = requests.get(f"{self.base_url}/user/", headers=headers)
 
         print(f"Status: {response.status_code}")
         if response.status_code == 200:
@@ -247,10 +240,7 @@ class TestAuthenticationSystem:
 
         headers = {"Authorization": f"Bearer {self.designer_token}"}
 
-        response = requests.get(
-            f"{self.base_url}/user/",
-            headers=headers
-        )
+        response = requests.get(f"{self.base_url}/user/", headers=headers)
 
         print(f"Status: {response.status_code}")
         if response.status_code == 403:
@@ -268,8 +258,7 @@ class TestAuthenticationSystem:
         headers = {"Authorization": "Bearer invalid_token_123"}
 
         response = requests.post(
-            f"{self.base_url}/card/Invalid/Should fail",
-            headers=headers
+            f"{self.base_url}/card/Invalid/Should fail", headers=headers
         )
 
         print(f"Status: {response.status_code}")
@@ -293,8 +282,8 @@ class TestAuthenticationSystem:
                 "password": "password123",
                 "first_name": "Sneaky",
                 "last_name": "User",
-                "user_type": "game_designer"  # Attempt to get a privileged role
-            }
+                "user_type": "game_designer",  # Attempt to get a privileged role
+            },
         )
 
         print(f"Status: {response.status_code}")
@@ -302,15 +291,12 @@ class TestAuthenticationSystem:
             # Login to verify the actual role
             login_response = requests.post(
                 f"{self.base_url}/user/login",
-                params={
-                    "email": "sneaky_user@example.com",
-                    "password": "password123"
-                }
+                params={"email": "sneaky_user@example.com", "password": "password123"},
             )
 
             if login_response.status_code == 200:
                 user_data = login_response.json()
-                if user_data['user_type'] == 'client':
+                if user_data["user_type"] == "client":
                     print(f"✓ Role correctly forced to 'client' (security OK)")
                     print(f"  User type: {user_data['user_type']}")
 
@@ -318,12 +304,14 @@ class TestAuthenticationSystem:
                     if self.admin_token:
                         requests.delete(
                             f"{self.base_url}/user/{user_data['user_id']}",
-                            headers={"Authorization": f"Bearer {self.admin_token}"}
+                            headers={"Authorization": f"Bearer {self.admin_token}"},
                         )
 
                     return True
                 else:
-                    print(f"✗ SECURITY: Role not forced! User type: {user_data['user_type']}")
+                    print(
+                        f"✗ SECURITY: Role not forced! User type: {user_data['user_type']}"
+                    )
                     return False
 
         print(f"✗ Test failed")
@@ -347,8 +335,8 @@ class TestAuthenticationSystem:
                 "password": "password123",
                 "first_name": "Unauthorized",
                 "last_name": "Designer",
-                "user_type": "game_designer"
-            }
+                "user_type": "game_designer",
+            },
         )
 
         print(f"Status: {response.status_code}")
@@ -362,9 +350,9 @@ class TestAuthenticationSystem:
 
     def run_all_tests(self):
         """Execute all tests"""
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("  JWT AUTHENTICATION SYSTEM TEST")
-        print("="*60)
+        print("=" * 60)
         print(f"\nBase URL: {self.base_url}")
         print(f"Make sure the API is running before executing the tests!")
 
@@ -374,17 +362,35 @@ class TestAuthenticationSystem:
 
         # Tests
         results.append(("Login Admin", self.test_login_admin()))
-        results.append(("Create Game Designer (admin)", self.test_create_game_designer()))
+        results.append(
+            ("Create Game Designer (admin)", self.test_create_game_designer())
+        )
         results.append(("Create Client (public)", self.test_create_client()))
         results.append(("Public Endpoint", self.test_public_endpoint()))
         results.append(("Create card (Designer)", self.test_create_card_as_designer()))
-        results.append(("Create card (Client - denied)", self.test_create_card_as_client()))
-        results.append(("Create card (No token - denied)", self.test_create_card_without_token()))
+        results.append(
+            ("Create card (Client - denied)", self.test_create_card_as_client())
+        )
+        results.append(
+            ("Create card (No token - denied)", self.test_create_card_without_token())
+        )
         results.append(("List users (Admin)", self.test_list_users_as_admin()))
-        results.append(("List users (Designer - denied)", self.test_list_users_as_designer()))
+        results.append(
+            ("List users (Designer - denied)", self.test_list_users_as_designer())
+        )
         results.append(("Invalid token (denied)", self.test_invalid_token()))
-        results.append(("Register forces client role", self.test_public_register_forces_client_role()))
-        results.append(("Non-admin creates account - denied", self.test_non_admin_cannot_create_privileged_accounts()))
+        results.append(
+            (
+                "Register forces client role",
+                self.test_public_register_forces_client_role(),
+            )
+        )
+        results.append(
+            (
+                "Non-admin creates account - denied",
+                self.test_non_admin_cannot_create_privileged_accounts(),
+            )
+        )
 
         # Summary
         self.print_section("TEST SUMMARY")
@@ -420,4 +426,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nERROR: {e}")
         import traceback
+
         traceback.print_exc()

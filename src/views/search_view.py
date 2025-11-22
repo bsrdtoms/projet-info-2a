@@ -51,21 +51,21 @@ class SearchView(AbstractView):
 
             elif choice == "3":
                 query = self.get_input("Describe the card you're looking for: ")
-                limit_input = self.get_input("How many results do you want? (default = 3): ")
+                limit_input = self.get_input(
+                    "How many results do you want? (default = 3): "
+                )
                 # If user just presses Enter, set to 3
                 try:
                     limit = int(limit_input) if limit_input.strip() else 3
                 except ValueError:
                     limit = 3  # in case of invalid value
-                
+
                 # NEW: Pass user_id for history recording
                 user_id = self.user.id if self.user else None
                 result = card_service.semantic_search(
-                    query, 
-                    limit,
-                    user_id=user_id  # 👈 IMPORTANT: pass user_id here
+                    query, limit, user_id=user_id  # 👈 IMPORTANT: pass user_id here
                 )
-                
+
                 for card, similarity in result:
                     self.show_message(card)
                     print(f"Similarity: {similarity:.4f}\n")

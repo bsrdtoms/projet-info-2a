@@ -1,34 +1,49 @@
 import pytest
 from unittest.mock import MagicMock
 
-# MOCKS pour éviter les dépendances externes 
+
+# MOCKS pour éviter les dépendances externes
 class Card:
     def __init__(self, id, name, text):
         self.id = id
         self.name = name
         self.text = text
 
+
 class CardService:
     def __init__(self):
         self.dao = MagicMock()
-        
+
+
 @pytest.fixture
 def card_service():
     service = CardService()
 
     # Mocker toutes les méthodes DAO pour ne jamais toucher à la DB
     for method in [
-        "create", "modify_card", "delete",
-        "get_card_details", "search_by_name",
-        "find_by_id", "semantic_search", "get_all_ids"
+        "create",
+        "modify_card",
+        "delete",
+        "get_card_details",
+        "search_by_name",
+        "find_by_id",
+        "semantic_search",
+        "get_all_ids",
     ]:
         setattr(service.dao, method, MagicMock())
 
     # Valeurs de retour mockées
-    service.dao.search_by_name.return_value = [Card(id=1, name="Lightning Bolt", text="Deals 3 damage")]
-    service.dao.get_card_details.return_value = {"id": 1, "name": "Lightning Bolt", "text": "Deals 3 damage"}
+    service.dao.search_by_name.return_value = [
+        Card(id=1, name="Lightning Bolt", text="Deals 3 damage")
+    ]
+    service.dao.get_card_details.return_value = {
+        "id": 1,
+        "name": "Lightning Bolt",
+        "text": "Deals 3 damage",
+    }
 
     return service
+
 
 def test_add_card(card_service):
     # GIVEN

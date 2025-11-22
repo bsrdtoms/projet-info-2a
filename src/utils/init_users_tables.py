@@ -12,7 +12,7 @@ import os
 def run_sql_file(filepath: str) -> bool:
     """Execute an SQL file"""
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             sql = f.read()
 
         with DBConnection().connection as connection:

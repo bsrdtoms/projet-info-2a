@@ -140,7 +140,7 @@ class CardDao:
         Returns
         -------
         dict or None
-            Dictionary with card details (name, type, mana_cost, text, colors, 
+            Dictionary with card details (name, type, mana_cost, text, colors,
             power, toughness, etc.) or None if card not found
         """
         sql_query = """
@@ -163,18 +163,18 @@ class CardDao:
                         return None
 
                     return {
-                        'id': row['id'],
-                        'name': row['name'],
-                        'type': row['type'],
-                        'mana_cost': row['mana_cost'],
-                        'text': row['text'],
-                        'colors': row['colors'],
-                        'power': row['power'],
-                        'toughness': row['toughness'],
-                        'loyalty': row['loyalty'],
-                        'types': row['types'],
-                        'subtypes': row['subtypes'],
-                        'supertypes': row['supertypes']
+                        "id": row["id"],
+                        "name": row["name"],
+                        "type": row["type"],
+                        "mana_cost": row["mana_cost"],
+                        "text": row["text"],
+                        "colors": row["colors"],
+                        "power": row["power"],
+                        "toughness": row["toughness"],
+                        "loyalty": row["loyalty"],
+                        "types": row["types"],
+                        "subtypes": row["subtypes"],
+                        "supertypes": row["supertypes"],
                     }
 
         except Exception as e:
@@ -195,7 +195,7 @@ class CardDao:
         -------
         Card
             Card object corresponding to the ID
-        
+
         Raises
         ------
         Exception
@@ -206,7 +206,7 @@ class CardDao:
             FROM project.cards
             WHERE id = %s
         """
-     
+
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -243,7 +243,7 @@ class CardDao:
         -------
         list[Card]
             List of Card objects matching the search criteria
-        
+
         Raises
         ------
         Exception
@@ -279,10 +279,7 @@ class CardDao:
 
     @log
     def semantic_search(
-        self, 
-        query_embedding: list[float], 
-        top_k: int = 5, 
-        distance: str = "L2"
+        self, query_embedding: list[float], top_k: int = 5, distance: str = "L2"
     ) -> list[tuple[Card, float]]:
         """
         Semantic search using pgvector (optimized)
@@ -300,7 +297,7 @@ class CardDao:
         -------
         list[tuple[Card, float]]
             List of tuples (Card, similarity_score)
-        
+
         Raises
         ------
         Exception
@@ -347,7 +344,9 @@ class CardDao:
                             (embedding_str, embedding_str, top_k),
                         )
                     else:
-                        raise ValueError(f"Invalid distance metric: {distance}. Use 'L2' or 'cosine'")
+                        raise ValueError(
+                            f"Invalid distance metric: {distance}. Use 'L2' or 'cosine'"
+                        )
 
                     rows = cursor.fetchall()
 
@@ -358,7 +357,7 @@ class CardDao:
                                 name=row["name"],
                                 text=row["text"],
                             ),
-                            float(row["similarity"])
+                            float(row["similarity"]),
                         )
                         for row in rows
                     ]
@@ -376,7 +375,7 @@ class CardDao:
         -------
         list[Card]
             List of Card objects containing all cards from the database
-        
+
         Raises
         ------
         Exception
@@ -415,7 +414,7 @@ class CardDao:
         -------
         list[int]
             List of integers containing the IDs of all cards in the database
-        
+
         Raises
         ------
         Exception

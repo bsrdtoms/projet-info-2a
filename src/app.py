@@ -19,7 +19,7 @@ from utils.auth import (
     TokenData,
     require_admin,
     require_game_designer,
-    require_authenticated
+    require_authenticated,
 )
 
 
@@ -37,19 +37,24 @@ historical_service = HistoricalService()
 # ==================== PYDANTIC MODELS ====================
 class CardModel(BaseModel):
     """Pydantic model for Magic cards"""
+
     id: Optional[int] = None
     name: str
     text: Optional[str] = None
 
+
 class UserModel(BaseModel):
     """Pydantic model for users"""
+
     email: EmailStr
     password: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
 
+
 class CompleteUserModel(BaseModel):
     """Pydantic model for users"""
+
     email: EmailStr
     password: str
     first_name: Optional[str] = None
@@ -60,6 +65,7 @@ class CompleteUserModel(BaseModel):
 
 # ==================== REDIRECTION ====================
 
+
 @app.get("/", include_in_schema=False)
 async def redirect_to_docs():
     """Redirect to the API documentation"""
@@ -67,6 +73,7 @@ async def redirect_to_docs():
 
 
 # ==================== CARD ROUTES ====================
+
 
 @app.get("/card/random", response_model=CardModel, tags=["Cards"])
 async def random_card():
@@ -84,10 +91,7 @@ async def search_by_name(name: str):
     logging.info(f"Searching for cards by name: {name}")
     result = card_service.search_by_name(name)
     if not result:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No card found for name: {name}"
-        )
+        raise HTTPException(status_code=404, detail=f"No card found for name: {name}")
     return result
 
 
@@ -97,10 +101,7 @@ async def describe_by_id(id: int):
     logging.info(f"Searching for card by ID: {id}")
     result = card_service.describe_card(id)
     if not result:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No card found for ID: {id}"
-        )
+        raise HTTPException(status_code=404, detail=f"No card found for ID: {id}")
     return {"id": id, "description": result}
 
 
@@ -110,10 +111,7 @@ async def semantic_search_l2(query: str, limit: int = 3):
     logging.info(f"L2 semantic search with: {query} (limit={limit})")
     result = card_service.semantic_search(query, limit)
     if not result:
-        raise HTTPException(
-            status_code=404,
-            detail="No matching card found"
-        )
+        raise HTTPException(status_code=404, detail="No matching card found")
     return [
         {
             "id": card.id,
@@ -131,10 +129,7 @@ async def semantic_search_cosine(query: str, limit: int = 3):
     logging.info(f"Cosine semantic search with: {query} (limit={limit})")
     result = card_service.semantic_search(query, limit, "cosine")
     if not result:
-        raise HTTPException(
-            status_code=404,
-            detail="No matching card found"
-        )
+        raise HTTPException(status_code=404, detail="No matching card found")
     return [
         {
             "id": card.id,
@@ -147,61 +142,55 @@ async def semantic_search_cosine(query: str, limit: int = 3):
 
 
 @app.post("/card/{name}/{text}", tags=["game_designer"])
-async def create_card(name: str, text: str, current_user: TokenData = Depends(require_game_designer)):
+async def create_card(
+    name: str, text: str, current_user: TokenData = Depends(require_game_designer)
+):
     """Create a new card (requires game_designer role)"""
     logging.info(f"Creating card: {name} by {current_user.email}")
     success = card_service.add_card(name, text)
     if not success:
-        raise HTTPException(
-            status_code=500,
-            detail="Error creating card"
-        )
+        raise HTTPException(status_code=500, detail="Error creating card")
     return {"message": f"Card '{name}' created successfully"}
 
 
 @app.put("/card/{card_id}", tags=["game_designer"])
-async def update_card(card_id: int, updates: dict, current_user: TokenData = Depends(require_game_designer)):
+async def update_card(
+    card_id: int,
+    updates: dict,
+    current_user: TokenData = Depends(require_game_designer),
+):
     """Update one or more fields of a card (requires game_designer role)"""
     logging.info(f"Updating card ID {card_id} by {current_user.email}")
     card_object = card_service.find_by_id(card_id)
     if not card_object:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Card with ID {card_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Card with ID {card_id} not found")
     success = card_service.modify_card(card_object, updates)
     if not success:
-        raise HTTPException(
-            status_code=400,
-            detail="One or more updates failed"
-        )
+        raise HTTPException(status_code=400, detail="One or more updates failed")
     return {
         "message": f"Card '{card_object.name}' (ID={card_id}) updated",
-        "updates": updates
+        "updates": updates,
     }
 
 
 @app.delete("/card/{card_id}", tags=["game_designer"])
-async def delete_card(card_id: int, current_user: TokenData = Depends(require_game_designer)):
+async def delete_card(
+    card_id: int, current_user: TokenData = Depends(require_game_designer)
+):
     """Delete a card (requires game_designer role)"""
     logging.info(f"Deleting card ID {card_id} by {current_user.email}")
     card_object = card_service.find_by_id(card_id)
     if not card_object:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Card with ID {card_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Card with ID {card_id} not found")
     name = card_object.name
     success = card_service.delete_card(card_object)
     if not success:
-        raise HTTPException(
-            status_code=500,
-            detail="Error during deletion"
-        )
+        raise HTTPException(status_code=500, detail="Error during deletion")
     return {"message": f"Card '{name}' (ID={card_id}) deleted successfully"}
 
 
 # ==================== USER ROUTES ====================
+
 
 @app.post("/user/register", tags=["Users"])
 async def register_client(user: UserModel):
@@ -214,17 +203,15 @@ async def register_client(user: UserModel):
         password=user.password,
         first_name=user.first_name,
         last_name=user.last_name,
-        user_type="client"  # Always client for public registration
+        user_type="client",  # Always client for public registration
     )
     if not success:
         raise HTTPException(status_code=400, detail=message)
     return {
         "message": message,
-        "user": {
-            "email": created_user.email,
-            "user_type": created_user.user_type
-        }
+        "user": {"email": created_user.email, "user_type": created_user.user_type},
     }
+
 
 @app.post("/user/login", tags=["Users"], response_model=Token)
 async def login(email: str, password: str):
@@ -241,9 +228,7 @@ async def login(email: str, password: str):
 
     # Create JWT token
     access_token = create_access_token(
-        user_id=user.id,
-        email=user.email,
-        user_type=user.user_type
+        user_id=user.id, email=user.email, user_type=user.user_type
     )
 
     return Token(
@@ -251,7 +236,7 @@ async def login(email: str, password: str):
         token_type="bearer",
         user_id=user.id,
         email=user.email,
-        user_type=user.user_type
+        user_type=user.user_type,
     )
 
 
@@ -270,15 +255,17 @@ async def get_my_profile(current_user: TokenData = Depends(require_authenticated
         "first_name": user.first_name,
         "last_name": user.last_name,
         "user_type": user.user_type,
-        "is_active": user.is_active
+        "is_active": user.is_active,
     }
-
 
 
 # ==================== ADMIN ROUTES ====================
 
+
 @app.post("/admin/user/", tags=["Admin"])
-async def create_user_as_admin(user: CompleteUserModel, current_user: TokenData = Depends(require_admin)):
+async def create_user_as_admin(
+    user: CompleteUserModel, current_user: TokenData = Depends(require_admin)
+):
     """Create a user account with any role (admin only)"""
     logging.info(f"Creating {user.user_type} account by admin: {current_user.email}")
 
@@ -287,7 +274,7 @@ async def create_user_as_admin(user: CompleteUserModel, current_user: TokenData 
     if user.user_type not in valid_types:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid user type. Must be one of: {', '.join(valid_types)}"
+            detail=f"Invalid user type. Must be one of: {', '.join(valid_types)}",
         )
 
     success, message, created_user = user_service.create_account(
@@ -295,7 +282,7 @@ async def create_user_as_admin(user: CompleteUserModel, current_user: TokenData 
         password=user.password,
         first_name=user.first_name,
         last_name=user.last_name,
-        user_type=user.user_type
+        user_type=user.user_type,
     )
     if not success:
         raise HTTPException(status_code=400, detail=message)
@@ -304,8 +291,8 @@ async def create_user_as_admin(user: CompleteUserModel, current_user: TokenData 
         "user": {
             "email": created_user.email,
             "user_type": created_user.user_type,
-            "id": created_user.id
-        }
+            "id": created_user.id,
+        },
     }
 
 
@@ -316,7 +303,7 @@ async def update_user_as_admin(
     is_active: Optional[bool] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
-    current_user: TokenData = Depends(require_admin)
+    current_user: TokenData = Depends(require_admin),
 ):
     """Update a user's information (admin only)"""
     logging.info(f"Updating user ID {user_id} by admin: {current_user.email}")
@@ -327,7 +314,7 @@ async def update_user_as_admin(
         user_type=user_type,
         is_active=is_active,
         first_name=first_name,
-        last_name=last_name
+        last_name=last_name,
     )
 
     if not success:
@@ -338,15 +325,13 @@ async def update_user_as_admin(
         else:
             raise HTTPException(status_code=500, detail=message)
 
-    return {
-        "message": message,
-        "user_id": user_id,
-        "updates": updates
-    }
+    return {"message": message, "user_id": user_id, "updates": updates}
 
 
 @app.get("/admin/favorites/{user_id}", tags=["Admin"])
-async def get_user_favorites_as_admin(user_id: int, current_user: TokenData = Depends(require_admin)):
+async def get_user_favorites_as_admin(
+    user_id: int, current_user: TokenData = Depends(require_admin)
+):
     """Get any user's favorites (admin only)"""
     logging.info(f"Admin {current_user.email} fetching favorites for user ID {user_id}")
 
@@ -358,7 +343,7 @@ async def get_user_favorites_as_admin(user_id: int, current_user: TokenData = De
     return {
         "user_id": user_id,
         "user_email": user.email,
-        "favorites": favorites if favorites else []
+        "favorites": favorites if favorites else [],
     }
 
 
@@ -367,7 +352,7 @@ async def get_user_history_as_admin(
     user_id: int,
     page: int = 1,
     per_page: int = 20,
-    current_user: TokenData = Depends(require_admin)
+    current_user: TokenData = Depends(require_admin),
 ):
     """Get any user's search history (admin only)"""
     logging.info(f"Admin {current_user.email} fetching history for user ID {user_id}")
@@ -385,7 +370,7 @@ async def get_user_history_as_admin(
         "total": history_data["total"],
         "page": history_data["page"],
         "per_page": history_data["per_page"],
-        "total_pages": history_data["total_pages"]
+        "total_pages": history_data["total_pages"],
     }
 
 
@@ -401,9 +386,9 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
     user_counts = {"client": 0, "game_designer": 0, "admin": 0}
     active_users = 0
     for user in all_users:
-        if hasattr(user, 'user_type'):
+        if hasattr(user, "user_type"):
             user_counts[user.user_type] = user_counts.get(user.user_type, 0) + 1
-        if hasattr(user, 'is_active') and user.is_active:
+        if hasattr(user, "is_active") and user.is_active:
             active_users += 1
 
     # Get total searches across all users
@@ -415,11 +400,9 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
         "users": {
             "total": len(all_users),
             "active": active_users,
-            "by_type": user_counts
+            "by_type": user_counts,
         },
-        "searches": {
-            "total": total_searches
-        }
+        "searches": {"total": total_searches},
     }
 
 
@@ -431,30 +414,28 @@ async def list_all_users(current_user: TokenData = Depends(require_admin)):
 
 
 @app.get("/user/{user_id}", tags=["Users"])
-async def find_user(user_id: int, current_user: TokenData = Depends(require_authenticated)):
+async def find_user(
+    user_id: int, current_user: TokenData = Depends(require_authenticated)
+):
     """Get a user by ID (requires authentication)"""
     logging.info(f"Searching for user ID {user_id} by {current_user.email}")
 
     # Verify that user is requesting their own profile (except admin)
     if current_user.user_id != user_id and current_user.user_type != "admin":
         raise HTTPException(
-            status_code=403,
-            detail="You can only view your own profile"
+            status_code=403, detail="You can only view your own profile"
         )
 
     user = user_service.find_by_id(user_id)
     if not user:
-        raise HTTPException(
-            status_code=404,
-            detail=f"User with ID {user_id} not found"
-        )
+        raise HTTPException(status_code=404, detail=f"User with ID {user_id} not found")
     return {
         "id": user.id,
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
         "user_type": user.user_type,
-        "is_active": user.is_active
+        "is_active": user.is_active,
     }
 
 
@@ -470,12 +451,17 @@ async def delete_user(user_id: int, current_user: TokenData = Depends(require_ad
 
 # ==================== FAVORITE ROUTES ====================
 
+
 @app.post("/favorites/{card_id}", tags=["Favorites"])
-async def add_favorite(card_id: int, current_user: TokenData = Depends(require_authenticated)):
+async def add_favorite(
+    card_id: int, current_user: TokenData = Depends(require_authenticated)
+):
     """Add a card to your favorites (requires authentication)"""
     # Use the user_id from the JWT token
     user_id = current_user.user_id
-    logging.info(f"Adding favorite: user_id={user_id}, card_id={card_id} by {current_user.email}")
+    logging.info(
+        f"Adding favorite: user_id={user_id}, card_id={card_id} by {current_user.email}"
+    )
     success, message = favorite_service.add_favorite(user_id, card_id)
     if not success and "Internal error" in message:
         raise HTTPException(status_code=500, detail=message)
@@ -485,11 +471,15 @@ async def add_favorite(card_id: int, current_user: TokenData = Depends(require_a
 
 
 @app.delete("/favorites/{card_id}", tags=["Favorites"])
-async def remove_favorite(card_id: int, current_user: TokenData = Depends(require_authenticated)):
+async def remove_favorite(
+    card_id: int, current_user: TokenData = Depends(require_authenticated)
+):
     """Remove a card from your favorites (requires authentication)"""
     # Use the user_id from the JWT token
     user_id = current_user.user_id
-    logging.info(f"Removing favorite: user_id={user_id}, card_id={card_id} by {current_user.email}")
+    logging.info(
+        f"Removing favorite: user_id={user_id}, card_id={card_id} by {current_user.email}"
+    )
     success, message = favorite_service.remove_favorite(user_id, card_id)
     if not success and "Internal error" in message:
         raise HTTPException(status_code=500, detail=message)
@@ -511,7 +501,9 @@ async def list_favorites(current_user: TokenData = Depends(require_authenticated
 
     return favorites
 
+
 # ==================== OTHER CARD ROUTES ====================
+
 
 # Function helper for optional authentification
 async def get_optional_user(authorization: Optional[str] = None) -> Optional[TokenData]:
@@ -521,10 +513,11 @@ async def get_optional_user(authorization: Optional[str] = None) -> Optional[Tok
     """
     if not authorization or not authorization.startswith("Bearer "):
         return None
-    
+
     try:
         token = authorization.split(" ")[1]
         from utils.auth import decode_token
+
         return decode_token(token)
     except Exception:
         return None
@@ -532,39 +525,34 @@ async def get_optional_user(authorization: Optional[str] = None) -> Optional[Tok
 
 @app.post("/card/semantic_search_with_L2_distance/", tags=["Cards"])
 async def semantic_search_l2(
-    query: str, 
-    limit: int = 3,
-    authorization: Optional[str] = None
+    query: str, limit: int = 3, authorization: Optional[str] = None
 ):
     """
     Semantic search for cards with L2 distance
-    
+
     **Authentication**: Optional
     - If authenticated (Bearer token in Authorization header), search is saved to history
     - If not authenticated, search works normally but is not saved
-    
+
     **Parameters**:
     - query: Text description of the card you're looking for
     - limit: Number of results to return (default: 3)
-    
+
     **Returns**: List of cards with similarity scores
     """
     # Get user if authenticated (optional)
     current_user = await get_optional_user(authorization)
     user_id = current_user.user_id if current_user else None
-    
+
     logging.info(f"L2 semantic search: '{query}' (limit={limit}, user_id={user_id})")
-    
+
     try:
         # Perform search with optional user_id for history
         result = card_service.semantic_search(query, limit, "L2", user_id=user_id)
-        
+
         if not result:
-            raise HTTPException(
-                status_code=404,
-                detail="No matching card found"
-            )
-        
+            raise HTTPException(status_code=404, detail="No matching card found")
+
         return {
             "query": query,
             "distance_metric": "L2",
@@ -578,7 +566,7 @@ async def semantic_search_l2(
                     "similarity": similarity,
                 }
                 for card, similarity in result
-            ]
+            ],
         }
     except HTTPException:
         raise
@@ -589,39 +577,36 @@ async def semantic_search_l2(
 
 @app.post("/card/semantic_search_with_cosine_distance/", tags=["Cards"])
 async def semantic_search_cosine(
-    query: str, 
-    limit: int = 3,
-    authorization: Optional[str] = None
+    query: str, limit: int = 3, authorization: Optional[str] = None
 ):
     """
     Semantic search for cards with cosine distance
-    
+
     **Authentication**: Optional
     - If authenticated (Bearer token in Authorization header), search is saved to history
     - If not authenticated, search works normally but is not saved
-    
+
     **Parameters**:
     - query: Text description of the card you're looking for
     - limit: Number of results to return (default: 3)
-    
+
     **Returns**: List of cards with similarity scores
     """
     # Get user if authenticated (optional)
     current_user = await get_optional_user(authorization)
     user_id = current_user.user_id if current_user else None
-    
-    logging.info(f"Cosine semantic search: '{query}' (limit={limit}, user_id={user_id})")
-    
+
+    logging.info(
+        f"Cosine semantic search: '{query}' (limit={limit}, user_id={user_id})"
+    )
+
     try:
         # Perform search with optional user_id for history
         result = card_service.semantic_search(query, limit, "cosine", user_id=user_id)
-        
+
         if not result:
-            raise HTTPException(
-                status_code=404,
-                detail="No matching card found"
-            )
-        
+            raise HTTPException(status_code=404, detail="No matching card found")
+
         return {
             "query": query,
             "distance_metric": "cosine",
@@ -635,7 +620,7 @@ async def semantic_search_cosine(
                     "similarity": similarity,
                 }
                 for card, similarity in result
-            ]
+            ],
         }
     except HTTPException:
         raise
@@ -646,32 +631,37 @@ async def semantic_search_cosine(
 
 # ==================== HISTORY ROUTES ====================
 
+
 @app.get("/history", tags=["History"])
 async def get_search_history(
     page: int = 1,
     per_page: int = 20,
-    current_user: TokenData = Depends(require_authenticated)
+    current_user: TokenData = Depends(require_authenticated),
 ):
     """
     Get your search history with pagination
-    
+
     **Authentication**: Required
-    
+
     **Parameters**:
     - page: Page number (starts at 1)
     - per_page: Number of results per page (max 100)
-    
+
     **Returns**: Paginated list of searches with metadata
     """
     # Validate pagination parameters
     if page < 1:
         raise HTTPException(status_code=400, detail="Page must be >= 1")
-    
+
     if per_page < 1 or per_page > 100:
-        raise HTTPException(status_code=400, detail="Per_page must be between 1 and 100")
-    
+        raise HTTPException(
+            status_code=400, detail="Per_page must be between 1 and 100"
+        )
+
     user_id = current_user.user_id
-    logging.info(f"Fetching search history for user_id={user_id} (page={page}, per_page={per_page})")
+    logging.info(
+        f"Fetching search history for user_id={user_id} (page={page}, per_page={per_page})"
+    )
 
     try:
         history_data = historical_service.get_paginated_history(user_id, page, per_page)
@@ -679,13 +669,15 @@ async def get_search_history(
         # Format the searches for better readability
         formatted_searches = []
         for search in history_data["searches"]:
-            formatted_searches.append({
-                "id": search.id,
-                "query": search.query_text,
-                "results_found": search.result_count,
-                "date": search.created_at.isoformat(),
-                "has_embedding": search.query_embedding is not None
-            })
+            formatted_searches.append(
+                {
+                    "id": search.id,
+                    "query": search.query_text,
+                    "results_found": search.result_count,
+                    "date": search.created_at.isoformat(),
+                    "has_embedding": search.query_embedding is not None,
+                }
+            )
 
         return {
             "user_id": user_id,
@@ -696,8 +688,8 @@ async def get_search_history(
                 "per_page": history_data["per_page"],
                 "total_pages": history_data["total_pages"],
                 "has_next": history_data["page"] < history_data["total_pages"],
-                "has_previous": history_data["page"] > 1
-            }
+                "has_previous": history_data["page"] > 1,
+            },
         }
     except Exception as e:
         logging.error(f"Error fetching history: {e}")
@@ -705,12 +697,14 @@ async def get_search_history(
 
 
 @app.get("/history/stats", tags=["History"])
-async def get_search_statistics(current_user: TokenData = Depends(require_authenticated)):
+async def get_search_statistics(
+    current_user: TokenData = Depends(require_authenticated),
+):
     """
     Get statistics about your search history
-    
+
     **Authentication**: Required
-    
+
     **Returns**: Statistics including total searches, average results, etc.
     """
     user_id = current_user.user_id
@@ -719,7 +713,7 @@ async def get_search_statistics(current_user: TokenData = Depends(require_authen
     try:
         stats = historical_service.get_stats(user_id)
 
-        if not stats or stats.get('total_searches', 0) == 0:
+        if not stats or stats.get("total_searches", 0) == 0:
             return {
                 "user_id": user_id,
                 "message": "No search history yet",
@@ -728,32 +722,34 @@ async def get_search_statistics(current_user: TokenData = Depends(require_authen
                     "total_results": 0,
                     "average_results_per_search": 0,
                     "most_recent_search": None,
-                    "oldest_search": None
-                }
+                    "oldest_search": None,
+                },
             }
 
         return {
             "user_id": user_id,
             "stats": {
-                "total_searches": stats['total_searches'],
-                "total_results": stats['total_results'],
-                "average_results_per_search": round(stats['avg_results'], 2),
-                "most_recent_search": stats['most_recent'].isoformat(),
-                "oldest_search": stats['oldest'].isoformat()
-            }
+                "total_searches": stats["total_searches"],
+                "total_results": stats["total_results"],
+                "average_results_per_search": round(stats["avg_results"], 2),
+                "most_recent_search": stats["most_recent"].isoformat(),
+                "oldest_search": stats["oldest"].isoformat(),
+            },
         }
     except Exception as e:
         logging.error(f"Error fetching statistics: {e}")
-        raise HTTPException(status_code=500, detail=f"Error fetching statistics: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching statistics: {str(e)}"
+        )
 
 
 @app.get("/history/count", tags=["History"])
 async def get_search_count(current_user: TokenData = Depends(require_authenticated)):
     """
     Get the total number of searches in your history
-    
+
     **Authentication**: Required
-    
+
     **Returns**: Total count of searches
     """
     user_id = current_user.user_id
@@ -761,10 +757,7 @@ async def get_search_count(current_user: TokenData = Depends(require_authenticat
 
     try:
         count = historical_service.get_history_count(user_id)
-        return {
-            "user_id": user_id, 
-            "total_searches": count
-        }
+        return {"user_id": user_id, "total_searches": count}
     except Exception as e:
         logging.error(f"Error counting history: {e}")
         raise HTTPException(status_code=500, detail=f"Error counting history: {str(e)}")
@@ -772,17 +765,16 @@ async def get_search_count(current_user: TokenData = Depends(require_authenticat
 
 @app.get("/history/{search_id}", tags=["History"])
 async def get_search_by_id(
-    search_id: int,
-    current_user: TokenData = Depends(require_authenticated)
+    search_id: int, current_user: TokenData = Depends(require_authenticated)
 ):
     """
     Get details of a specific search from your history
-    
+
     **Authentication**: Required
-    
+
     **Parameters**:
     - search_id: ID of the search to retrieve
-    
+
     **Returns**: Detailed information about the search
     """
     user_id = current_user.user_id
@@ -791,20 +783,19 @@ async def get_search_by_id(
     try:
         # Get user's history to verify ownership
         history = historical_service.get_user_history(user_id, limit=1000)
-        
+
         # Find the specific search
         search = None
         for s in history:
             if s.id == search_id:
                 search = s
                 break
-        
+
         if not search:
             raise HTTPException(
-                status_code=404,
-                detail=f"Search {search_id} not found in your history"
+                status_code=404, detail=f"Search {search_id} not found in your history"
             )
-        
+
         return {
             "id": search.id,
             "user_id": search.user_id,
@@ -812,7 +803,9 @@ async def get_search_by_id(
             "results_found": search.result_count,
             "date": search.created_at.isoformat(),
             "has_embedding": search.query_embedding is not None,
-            "embedding_dimensions": len(search.query_embedding) if search.query_embedding else None
+            "embedding_dimensions": (
+                len(search.query_embedding) if search.query_embedding else None
+            ),
         }
     except HTTPException:
         raise
@@ -825,17 +818,17 @@ async def get_search_by_id(
 async def repeat_search(
     search_id: int,
     limit: int = 5,
-    current_user: TokenData = Depends(require_authenticated)
+    current_user: TokenData = Depends(require_authenticated),
 ):
     """
     Repeat a past search from your history
-    
+
     **Authentication**: Required
-    
+
     **Parameters**:
     - search_id: ID of the search to repeat
     - limit: Number of results to return (default: 5)
-    
+
     **Returns**: New search results (this creates a new history entry)
     """
     user_id = current_user.user_id
@@ -844,27 +837,24 @@ async def repeat_search(
     try:
         # Get user's history to verify ownership
         history = historical_service.get_user_history(user_id, limit=1000)
-        
+
         # Find the specific search
         search_to_repeat = None
         for s in history:
             if s.id == search_id:
                 search_to_repeat = s
                 break
-        
+
         if not search_to_repeat:
             raise HTTPException(
-                status_code=404,
-                detail=f"Search {search_id} not found in your history"
+                status_code=404, detail=f"Search {search_id} not found in your history"
             )
-        
+
         # Perform the search again (will create a new history entry)
         result = card_service.semantic_search(
-            search_to_repeat.query_text,
-            top_k=limit,
-            user_id=user_id
+            search_to_repeat.query_text, top_k=limit, user_id=user_id
         )
-        
+
         return {
             "original_search_id": search_id,
             "query": search_to_repeat.query_text,
@@ -878,7 +868,7 @@ async def repeat_search(
                     "similarity": similarity,
                 }
                 for card, similarity in result
-            ]
+            ],
         }
     except HTTPException:
         raise
@@ -889,17 +879,16 @@ async def repeat_search(
 
 @app.delete("/history/{search_id}", tags=["History"])
 async def delete_search(
-    search_id: int,
-    current_user: TokenData = Depends(require_authenticated)
+    search_id: int, current_user: TokenData = Depends(require_authenticated)
 ):
     """
     Delete a specific search from your history
-    
+
     **Authentication**: Required
-    
+
     **Parameters**:
     - search_id: ID of the search to delete
-    
+
     **Returns**: Confirmation message
     """
     user_id = current_user.user_id
@@ -908,27 +897,23 @@ async def delete_search(
     try:
         # Get user's history to verify ownership
         history = historical_service.get_user_history(user_id, limit=1000)
-        
+
         # Verify the search belongs to this user
         found = any(s.id == search_id for s in history)
         if not found:
             raise HTTPException(
-                status_code=404,
-                detail=f"Search {search_id} not found in your history"
+                status_code=404, detail=f"Search {search_id} not found in your history"
             )
-        
+
         # Delete the search
         success = historical_service.delete_search(search_id)
-        
+
         if not success:
-            raise HTTPException(
-                status_code=500,
-                detail="Failed to delete search"
-            )
-        
+            raise HTTPException(status_code=500, detail="Failed to delete search")
+
         return {
             "message": f"Search {search_id} deleted successfully",
-            "deleted_search_id": search_id
+            "deleted_search_id": search_id,
         }
     except HTTPException:
         raise
@@ -938,14 +923,16 @@ async def delete_search(
 
 
 @app.delete("/history", tags=["History"])
-async def clear_search_history(current_user: TokenData = Depends(require_authenticated)):
+async def clear_search_history(
+    current_user: TokenData = Depends(require_authenticated),
+):
     """
     Clear ALL your search history
-    
+
     **Authentication**: Required
-    
+
     **Warning**: This action cannot be undone!
-    
+
     **Returns**: Confirmation message with count of deleted searches
     """
     user_id = current_user.user_id
@@ -954,20 +941,17 @@ async def clear_search_history(current_user: TokenData = Depends(require_authent
     try:
         # Get count before deletion
         count_before = historical_service.get_history_count(user_id)
-        
+
         # Clear history
         success = historical_service.clear_user_history(user_id)
-        
+
         if not success:
-            raise HTTPException(
-                status_code=500,
-                detail="Failed to clear history"
-            )
-        
+            raise HTTPException(status_code=500, detail="Failed to clear history")
+
         return {
             "message": "Search history cleared successfully",
             "deleted_searches": count_before,
-            "user_id": user_id
+            "user_id": user_id,
         }
     except HTTPException:
         raise
@@ -978,23 +962,24 @@ async def clear_search_history(current_user: TokenData = Depends(require_authent
 
 # ==================== ADMIN ENDPOINTS FOR HISTORY ====================
 
+
 @app.get("/admin/history/{user_id}", tags=["Admin"])
 async def get_user_history_as_admin(
     user_id: int,
     page: int = 1,
     per_page: int = 20,
-    current_user: TokenData = Depends(require_admin)
+    current_user: TokenData = Depends(require_admin),
 ):
     """
     Get any user's search history (admin only)
-    
+
     **Authentication**: Admin required
-    
+
     **Parameters**:
     - user_id: ID of the user whose history to retrieve
     - page: Page number (starts at 1)
     - per_page: Number of results per page
-    
+
     **Returns**: Paginated list of user's searches
     """
     logging.info(f"Admin {current_user.email} fetching history for user ID {user_id}")
@@ -1010,12 +995,14 @@ async def get_user_history_as_admin(
         # Format the searches
         formatted_searches = []
         for search in history_data["searches"]:
-            formatted_searches.append({
-                "id": search.id,
-                "query": search.query_text,
-                "results_found": search.result_count,
-                "date": search.created_at.isoformat()
-            })
+            formatted_searches.append(
+                {
+                    "id": search.id,
+                    "query": search.query_text,
+                    "results_found": search.result_count,
+                    "date": search.created_at.isoformat(),
+                }
+            )
 
         return {
             "user_id": user_id,
@@ -1025,14 +1012,16 @@ async def get_user_history_as_admin(
                 "total_searches": history_data["total"],
                 "current_page": history_data["page"],
                 "per_page": history_data["per_page"],
-                "total_pages": history_data["total_pages"]
-            }
+                "total_pages": history_data["total_pages"],
+            },
         }
     except HTTPException:
         raise
     except Exception as e:
         logging.error(f"Error fetching user history: {e}")
-        raise HTTPException(status_code=500, detail=f"Error fetching user history: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching user history: {str(e)}"
+        )
 
 
 # ==================== APPLICATION STARTUP ====================
@@ -1040,16 +1029,16 @@ async def get_user_history_as_admin(
 if __name__ == "__main__":
     # Check required environment variables
     required_vars = [
-        'API_TOKEN',
-        'POSTGRES_HOST',
-        'POSTGRES_DATABASE',
-        'POSTGRES_USER',
-        'POSTGRES_PASSWORD',
-        'POSTGRES_PORT',
-        'POSTGRES_SCHEMA',
-        'SECRET_KEY',
-        'ALGORITHM',
-        'ACCESS_TOKEN_EXPIRE_MINUTES'
+        "API_TOKEN",
+        "POSTGRES_HOST",
+        "POSTGRES_DATABASE",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_PORT",
+        "POSTGRES_SCHEMA",
+        "SECRET_KEY",
+        "ALGORITHM",
+        "ACCESS_TOKEN_EXPIRE_MINUTES",
     ]
     missing = [var for var in required_vars if not os.getenv(var)]
     if missing:

@@ -2,9 +2,17 @@
 import pytest
 from datetime import datetime
 import sys, os
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from business_object.user import User, Client, GameDesigner, Admin, create_user_from_type
+from business_object.user import (
+    User,
+    Client,
+    GameDesigner,
+    Admin,
+    create_user_from_type,
+)
+
 
 class TestUser:
     def test_user_init_basic(self):
@@ -20,7 +28,7 @@ class TestUser:
             first_name=first_name,
             last_name=last_name,
             user_type="client",
-            is_active=True
+            is_active=True,
         )
 
         assert user.id == 1
@@ -65,6 +73,12 @@ class TestUser:
         assert isinstance(user_default, Client)
 
     def test_repr_str_methods(self):
-        user = User(id=10, email="repr@example.com", password_hash="hash", first_name="R", last_name="E")
+        user = User(
+            id=10,
+            email="repr@example.com",
+            password_hash="hash",
+            first_name="R",
+            last_name="E",
+        )
         assert repr(user) == "User(id=10, email='repr@example.com', type='client')"
         assert "R E" in str(user)

@@ -12,7 +12,7 @@ class HistoricalSearch:
         query_text: str,
         query_embedding: Optional[list] = None,
         result_count: Optional[int] = None,
-        created_at: Optional[datetime] = None
+        created_at: Optional[datetime] = None,
     ):
         self.id = id
         self.user_id = user_id

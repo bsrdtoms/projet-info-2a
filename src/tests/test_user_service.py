@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, patch
 
+
 # ----- MOCKS -----
 class User:
     def __init__(self, id, email, password_hash, is_active=True, full_name="Test User"):
@@ -10,34 +11,47 @@ class User:
         self.is_active = is_active
         self.full_name = full_name
 
+
 class Session:
     def __init__(self, user_id, session_id=1, is_active=True):
         self.user_id = user_id
         self.session_id = session_id
         self.is_active = is_active
 
-def create_user_from_type(user_type, id, email, password_hash, first_name=None, last_name=None):
+
+def create_user_from_type(
+    user_type, id, email, password_hash, first_name=None, last_name=None
+):
     return User(id, email, password_hash)
+
 
 class UserDao:
     def find_by_email(self, email):
         return None
+
     def create(self, user):
         return True
+
     def find_by_id(self, user_id):
         return User(user_id, "a@b.com", "hash")
+
     def delete(self, user):
         return True
+
     def list_all(self):
         return []
+
 
 class SessionDao:
     def create(self, session):
         return True
+
     def deactivate(self, session_id):
         return True
+
     def deactivate_all_user_sessions(self, user_id):
         return True
+
 
 class UserService:
     def __init__(self):
@@ -51,11 +65,15 @@ class UserService:
     def verify_password(self, password, password_hash):
         return password_hash == "hashed_" + password
 
-    def create_account(self, email, password, first_name=None, last_name=None, user_type="client"):
+    def create_account(
+        self, email, password, first_name=None, last_name=None, user_type="client"
+    ):
         existing_user = self.user_dao.find_by_email(email)
         if existing_user:
             return False, "Cet email est déjà utilisé", None
-        user = create_user_from_type(user_type, None, email, self.hash_password(password))
+        user = create_user_from_type(
+            user_type, None, email, self.hash_password(password)
+        )
         if self.user_dao.create(user):
             return True, f"Compte créé avec succès pour {email}", user
         else:
@@ -63,7 +81,11 @@ class UserService:
 
     def login(self, email, password):
         user = self.user_dao.find_by_email(email)
-        if not user or not self.verify_password(password, user.password_hash) or not user.is_active:
+        if (
+            not user
+            or not self.verify_password(password, user.password_hash)
+            or not user.is_active
+        ):
             return False, "Email ou mot de passe incorrect", None
         session = Session(user_id=user.id)
         if self.session_dao.create(session):
@@ -79,6 +101,7 @@ class UserService:
             self.current_session = None
             return True, "Déconnexion réussie"
         return False, "Erreur lors de la déconnexion"
+
 
 # ----- FIXTURE -----
 @pytest.fixture
@@ -97,6 +120,7 @@ def user_service():
 
     return service
 
+
 # ----- TESTS UNITAIRES -----
 def test_create_account_success(user_service):
     # GIVEN
@@ -111,6 +135,7 @@ def test_create_account_success(user_service):
     assert success is True
     assert user.email == email
 
+
 def test_create_account_email_exists(user_service):
     # GIVEN
     email = "exists@example.com"
@@ -123,6 +148,7 @@ def test_create_account_email_exists(user_service):
     # THEN
     assert success is False
     assert user is None
+
 
 def test_login_success(user_service):
     # GIVEN
@@ -138,6 +164,7 @@ def test_login_success(user_service):
     assert success is True
     assert session.user_id == 1
 
+
 def test_login_wrong_password(user_service):
     # GIVEN
     user_service.user_dao.find_by_email.return_value = User(1, "a@b.com", "wrong_hash")
@@ -148,6 +175,7 @@ def test_login_wrong_password(user_service):
     # THEN
     assert success is False
     assert session is None
+
 
 def test_logout_success(user_service):
     # GIVEN
@@ -160,6 +188,7 @@ def test_logout_success(user_service):
     user_service.session_dao.deactivate.assert_called_once()
     assert success is True
     assert user_service.current_session is None
+
 
 def test_logout_no_session(user_service):
     # GIVEN

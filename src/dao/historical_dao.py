@@ -12,7 +12,9 @@ class HistoricalDao:
             embedding_str = None
             if historical_search.query_embedding:
                 embedding_str = (
-                    "[" + ",".join(str(f) for f in historical_search.query_embedding) + "]"
+                    "["
+                    + ",".join(str(f) for f in historical_search.query_embedding)
+                    + "]"
                 )
 
             with DBConnection().connection as connection:
@@ -39,7 +41,9 @@ class HistoricalDao:
             print(f"❌ Error adding to history: {e}")
             return False
 
-    def find_by_user_id(self, user_id: int, limit: int = 50, offset: int = 0) -> List[HistoricalSearch]:
+    def find_by_user_id(
+        self, user_id: int, limit: int = 50, offset: int = 0
+    ) -> List[HistoricalSearch]:
         """Retrieves the history of a user"""
         searches = []
         try:

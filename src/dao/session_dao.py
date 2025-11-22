@@ -37,8 +37,8 @@ class SessionDao:
                             session.user_id,
                             session.created_at,
                             session.last_activity,
-                            session.is_active
-                        )
+                            session.is_active,
+                        ),
                     )
                 connection.commit()
             return True
@@ -70,16 +70,16 @@ class SessionDao:
                         FROM project.sessions
                         WHERE session_id = %s
                         """,
-                        (session_id,)
+                        (session_id,),
                     )
                     row = cursor.fetchone()
                     if row:
                         return Session(
-                            session_id=row['session_id'],
-                            user_id=row['user_id'],
-                            created_at=row['created_at'],
-                            last_activity=row['last_activity'],
-                            is_active=row['is_active']
+                            session_id=row["session_id"],
+                            user_id=row["user_id"],
+                            created_at=row["created_at"],
+                            last_activity=row["last_activity"],
+                            is_active=row["is_active"],
                         )
             return None
         except Exception as e:
@@ -112,16 +112,16 @@ class SessionDao:
                         ORDER BY last_activity DESC
                         LIMIT 1
                         """,
-                        (user_id,)
+                        (user_id,),
                     )
                     row = cursor.fetchone()
                     if row:
                         return Session(
-                            session_id=row['session_id'],
-                            user_id=row['user_id'],
-                            created_at=row['created_at'],
-                            last_activity=row['last_activity'],
-                            is_active=row['is_active']
+                            session_id=row["session_id"],
+                            user_id=row["user_id"],
+                            created_at=row["created_at"],
+                            last_activity=row["last_activity"],
+                            is_active=row["is_active"],
                         )
             return None
         except Exception as e:
@@ -152,7 +152,7 @@ class SessionDao:
                         SET last_activity = %s
                         WHERE session_id = %s
                         """,
-                        (datetime.now(), session_id)
+                        (datetime.now(), session_id),
                     )
                 connection.commit()
             return True
@@ -184,7 +184,7 @@ class SessionDao:
                         SET is_active = FALSE
                         WHERE session_id = %s
                         """,
-                        (session_id,)
+                        (session_id,),
                     )
                 connection.commit()
             return True
@@ -216,7 +216,7 @@ class SessionDao:
                         SET is_active = FALSE
                         WHERE user_id = %s
                         """,
-                        (user_id,)
+                        (user_id,),
                     )
                 connection.commit()
             return True

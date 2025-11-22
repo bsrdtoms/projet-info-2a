@@ -11,7 +11,7 @@ class Card:
         id: int | None,
         name: str,
         text: str | None,
-        embedding_of_text: list[float] | None = None
+        embedding_of_text: list[float] | None = None,
     ):
         """
         Initialize a Magic card
@@ -46,14 +46,10 @@ class Card:
         text_preview = (
             text_content if not self.is_truncated else text_content[:100] + "..."
         )
-        
+
         id_display = self.id if self.id is not None else "(not saved)"
-        
-        return (
-            f"Card {id_display}\n"
-            f"Name: {self.name}\n"
-            f"Text: {text_preview}"
-        )
+
+        return f"Card {id_display}\n" f"Name: {self.name}\n" f"Text: {text_preview}"
 
     def __repr__(self) -> str:
         """
@@ -68,5 +64,5 @@ class Card:
         text_preview = (
             text_content if len(text_content) < 100 else text_content[:100] + "..."
         )
-        
+
         return f"Card(id={self.id}, name='{self.name}', text='{text_preview}')"

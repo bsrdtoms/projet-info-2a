@@ -1,6 +1,7 @@
 from dao.favorite_dao import FavoriteDAO
 from utils.log_decorator import log
 
+
 class FavoriteService:
     def __init__(self):
         self.dao = FavoriteDAO()
@@ -16,9 +17,9 @@ class FavoriteService:
     @log
     def remove_favorite(self, user_id: int, card_id: int):
         removed = self.dao.remove_favorite(user_id, card_id)
-        if removed :
+        if removed:
             return True, "Card removed from favorites"
-        else :
+        else:
             return False, "Card not found"
 
     @log

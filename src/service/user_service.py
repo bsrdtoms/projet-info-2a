@@ -31,7 +31,7 @@ class UserService:
             Password hash
         """
         salt = bcrypt.gensalt()
-        return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
     @log
     def verify_password(self, password: str, password_hash: str) -> bool:
@@ -50,7 +50,7 @@ class UserService:
         bool
             True if the password is correct
         """
-        return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
+        return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
 
     @log
     def create_account(
@@ -59,7 +59,8 @@ class UserService:
         password: str,
         first_name: Optional[str] = None,
         last_name: Optional[str] = None,
-        user_type: str = "client") -> Tuple[bool, str, Optional[User]]:
+        user_type: str = "client",
+    ) -> Tuple[bool, str, Optional[User]]:
         """
         Creates a new user account
 
@@ -82,7 +83,7 @@ class UserService:
             (success, message, created user)
         """
         # Email validation
-        if not email or '@' not in email:
+        if not email or "@" not in email:
             return False, "Invalid email", None
 
         # Password validation
@@ -102,7 +103,7 @@ class UserService:
             email=email,
             password_hash=password_hash,
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
         )
 
         if self.user_dao.create(user):
@@ -208,39 +209,44 @@ class UserService:
             return True, f"Account {user.email} deleted"
         else:
             return False, "Error during deletion"
+
     # Add to src/service/user_service.py
     @log
-    def update_user(self, user_id: int, user_type: Optional[str] = None,
-                    is_active: Optional[bool] = None, 
-                    first_name: Optional[str] = None,
-                    last_name: Optional[str] = None) -> Tuple[bool, str, dict]:
+    def update_user(
+        self,
+        user_id: int,
+        user_type: Optional[str] = None,
+        is_active: Optional[bool] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+    ) -> Tuple[bool, str, dict]:
         """Update a user (admin only)"""
         user = self.user_dao.find_by_id(user_id)
         if not user:
             return False, "User not found", {}
-        
+
         updates = {}
         if user_type is not None:
-            if user_type not in ['client', 'game_designer', 'admin']:
+            if user_type not in ["client", "game_designer", "admin"]:
                 return False, "Invalid user type", {}
             user.user_type = user_type
-            updates['user_type'] = user_type
-        
+            updates["user_type"] = user_type
+
         if is_active is not None:
             user.is_active = is_active
-            updates['is_active'] = is_active
-        
+            updates["is_active"] = is_active
+
         if first_name is not None:
             user.first_name = first_name
-            updates['first_name'] = first_name
-        
+            updates["first_name"] = first_name
+
         if last_name is not None:
             user.last_name = last_name
-            updates['last_name'] = last_name
-        
+            updates["last_name"] = last_name
+
         if not updates:
             return False, "No updates provided", {}
-        
+
         if self.user_dao.update(user):
             return True, f"User {user.email} updated", updates
         return False, "Error updating user", {}

@@ -33,13 +33,17 @@ class FavoriteView(AbstractView):
 
             elif choice == "2":
                 card_id = self.get_input("Enter the card ID to add: ")
-                success, message = self.favorite_service.add_favorite(self.user.id, int(card_id))
+                success, message = self.favorite_service.add_favorite(
+                    self.user.id, int(card_id)
+                )
                 self.show_message(message)
                 input("\nPress Enter to continue...")
 
             elif choice == "3":
                 card_id = self.get_input("Enter the card ID to remove: ")
-                success, message = self.favorite_service.remove_favorite(self.user.id, int(card_id))
+                success, message = self.favorite_service.remove_favorite(
+                    self.user.id, int(card_id)
+                )
                 self.show_message(message)
                 input("\nPress Enter to continue...")
 

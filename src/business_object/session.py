@@ -12,7 +12,7 @@ class Session:
         user_id: Optional[int] = None,
         created_at: Optional[datetime] = None,
         last_activity: Optional[datetime] = None,
-        is_active: bool = True
+        is_active: bool = True,
     ):
         """
         Initialize a session

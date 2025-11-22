@@ -2,9 +2,13 @@
 import pytest
 from datetime import datetime
 import sys, os
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from business_object.session import Session  # Assure-toi que session.py est bien dans business_object
+from business_object.session import (
+    Session,
+)  # Assure-toi que session.py est bien dans business_object
+
 
 class TestSession:
     def test_session_init_basic(self):
@@ -42,7 +46,9 @@ class TestSession:
         s = str(session)
         assert r.startswith("Session(")
         assert f"{session.user_id}" in s
-        assert f"{session.session_id}" in s or "Session " in s  # s'adapte au __str__ réel
+        assert (
+            f"{session.session_id}" in s or "Session " in s
+        )  # s'adapte au __str__ réel
 
     def test_custom_created_timestamp(self):
         # GIVEN

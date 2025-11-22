@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, patch
 
+
 # ----- MOCKS -----
 class HistoricalSearch:
     def __init__(self, user_id, query_text, query_embedding, result_count):
@@ -9,25 +10,33 @@ class HistoricalSearch:
         self.query_embedding = query_embedding
         self.result_count = result_count
 
+
 class HistoricalSearchDAO:
     def add(self, search):
         return True
+
     def read_history(self, user_id, limit):
         return [HistoricalSearch(user_id, "query1", None, 5)]
+
     def delete_search(self, search_id):
         return True
+
     def clear_user_history(self, user_id):
         return True
+
     def get_user_search_stats(self, user_id):
         return {"total_searches": 3}
+
 
 class HistoricalSearchService:
     def __init__(self):
         self.dao = HistoricalSearchDAO()
-    
+
     def add_search(self, user_id, query_text, result_count, save_embedding=True):
         query_embedding = "mocked_embedding" if save_embedding and query_text else None
-        historical_search = HistoricalSearch(user_id, query_text, query_embedding, result_count)
+        historical_search = HistoricalSearch(
+            user_id, query_text, query_embedding, result_count
+        )
         return self.dao.add(historical_search)
 
     def get_history(self, user_id, limit=50):
@@ -41,6 +50,7 @@ class HistoricalSearchService:
 
     def get_stats(self, user_id):
         return self.dao.get_user_search_stats(user_id)
+
 
 # ----- FIXTURE -----
 @pytest.fixture
@@ -57,6 +67,7 @@ def historical_service():
 
     return service
 
+
 # ----- TESTS UNITAIRES -----
 def test_add_search(historical_service):
     # GIVEN
@@ -71,6 +82,7 @@ def test_add_search(historical_service):
     historical_service.dao.add.assert_called_once()
     assert result is True
 
+
 def test_get_history(historical_service):
     # GIVEN
     user_id = 1
@@ -83,6 +95,7 @@ def test_get_history(historical_service):
     assert len(history) == 1
     assert history[0].query_text == "query1"
 
+
 def test_delete_search(historical_service):
     # GIVEN
     search_id = 10
@@ -94,6 +107,7 @@ def test_delete_search(historical_service):
     historical_service.dao.delete_search.assert_called_once_with(search_id)
     assert result is True
 
+
 def test_clear_history(historical_service):
     # GIVEN
     user_id = 1
@@ -104,6 +118,7 @@ def test_clear_history(historical_service):
     # THEN
     historical_service.dao.clear_user_history.assert_called_once_with(user_id)
     assert result is True
+
 
 def test_get_stats(historical_service):
     # GIVEN

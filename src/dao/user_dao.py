@@ -38,10 +38,10 @@ class UserDao:
                             user.first_name,
                             user.last_name,
                             user.user_type,
-                            user.is_active
-                        )
+                            user.is_active,
+                        ),
                     )
-                    user.id = cursor.fetchone()['id']
+                    user.id = cursor.fetchone()["id"]
                 connection.commit()
             return True
         except Exception as e:
@@ -73,20 +73,20 @@ class UserDao:
                         FROM project.users
                         WHERE id = %s
                         """,
-                        (user_id,)
+                        (user_id,),
                     )
                     row = cursor.fetchone()
                     if row:
                         return create_user_from_type(
-                            user_type=row['user_type'],
-                            id=row['id'],
-                            email=row['email'],
-                            password_hash=row['password_hash'],
-                            first_name=row['first_name'],
-                            last_name=row['last_name'],
-                            is_active=row['is_active'],
-                            created_at=row['created_at'],
-                            updated_at=row['updated_at']
+                            user_type=row["user_type"],
+                            id=row["id"],
+                            email=row["email"],
+                            password_hash=row["password_hash"],
+                            first_name=row["first_name"],
+                            last_name=row["last_name"],
+                            is_active=row["is_active"],
+                            created_at=row["created_at"],
+                            updated_at=row["updated_at"],
                         )
             return None
         except Exception as e:
@@ -118,20 +118,20 @@ class UserDao:
                         FROM project.users
                         WHERE email = %s
                         """,
-                        (email,)
+                        (email,),
                     )
                     row = cursor.fetchone()
                     if row:
                         return create_user_from_type(
-                            user_type=row['user_type'],
-                            id=row['id'],
-                            email=row['email'],
-                            password_hash=row['password_hash'],
-                            first_name=row['first_name'],
-                            last_name=row['last_name'],
-                            is_active=row['is_active'],
-                            created_at=row['created_at'],
-                            updated_at=row['updated_at']
+                            user_type=row["user_type"],
+                            id=row["id"],
+                            email=row["email"],
+                            password_hash=row["password_hash"],
+                            first_name=row["first_name"],
+                            last_name=row["last_name"],
+                            is_active=row["is_active"],
+                            created_at=row["created_at"],
+                            updated_at=row["updated_at"],
                         )
             return None
         except Exception as e:
@@ -162,15 +162,15 @@ class UserDao:
                     )
                     for row in cursor.fetchall():
                         user = create_user_from_type(
-                            user_type=row['user_type'],
-                            id=row['id'],
-                            email=row['email'],
-                            password_hash=row['password_hash'],
-                            first_name=row['first_name'],
-                            last_name=row['last_name'],
-                            is_active=row['is_active'],
-                            created_at=row['created_at'],
-                            updated_at=row['updated_at']
+                            user_type=row["user_type"],
+                            id=row["id"],
+                            email=row["email"],
+                            password_hash=row["password_hash"],
+                            first_name=row["first_name"],
+                            last_name=row["last_name"],
+                            is_active=row["is_active"],
+                            created_at=row["created_at"],
+                            updated_at=row["updated_at"],
                         )
                         users.append(user)
         except Exception as e:
@@ -196,8 +196,7 @@ class UserDao:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM project.users WHERE id = %s",
-                        (user.id,)
+                        "DELETE FROM project.users WHERE id = %s", (user.id,)
                     )
                     deleted = cursor.rowcount > 0
                 connection.commit()
@@ -231,7 +230,7 @@ class UserDao:
                             is_active = %s
                         WHERE id = %s
                         """,
-                        (user.first_name, user.last_name, user.is_active, user.id)
+                        (user.first_name, user.last_name, user.is_active, user.id),
                     )
                 connection.commit()
             return True

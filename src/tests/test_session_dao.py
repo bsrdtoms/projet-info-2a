@@ -10,15 +10,17 @@ class TestSessionDao:
 
     @pytest.fixture(autouse=True)
     def setup_mocks(self):
-        with patch('dao.session_dao.DBConnection') as mock_db_connection:
+        with patch("dao.session_dao.DBConnection") as mock_db_connection:
             self.mock_connection = MagicMock()
             self.mock_cursor = MagicMock()
-            
+
             self.mock_connection.__enter__ = Mock(return_value=self.mock_connection)
             self.mock_connection.__exit__ = Mock(return_value=None)
-            self.mock_connection.cursor.return_value.__enter__ = Mock(return_value=self.mock_cursor)
+            self.mock_connection.cursor.return_value.__enter__ = Mock(
+                return_value=self.mock_cursor
+            )
             self.mock_connection.cursor.return_value.__exit__ = Mock(return_value=None)
-            
+
             mock_db_connection.return_value.connection = self.mock_connection
             yield
 
@@ -29,7 +31,7 @@ class TestSessionDao:
             user_id=1,
             created_at=datetime(2024, 1, 1, 10, 0, 0),
             last_activity=datetime(2024, 1, 1, 10, 0, 0),
-            is_active=True
+            is_active=True,
         )
         dao = SessionDao()
 
@@ -48,7 +50,7 @@ class TestSessionDao:
             user_id=1,
             created_at=datetime(2024, 1, 1, 10, 0, 0),
             last_activity=datetime(2024, 1, 1, 10, 0, 0),
-            is_active=True
+            is_active=True,
         )
         self.mock_cursor.execute.side_effect = Exception("DB error")
         dao = SessionDao()
@@ -64,11 +66,11 @@ class TestSessionDao:
         # GIVEN
         session_id = "test-session-123"
         expected_session_data = {
-            'session_id': 'test-session-123',
-            'user_id': 1,
-            'created_at': datetime(2024, 1, 1, 10, 0, 0),
-            'last_activity': datetime(2024, 1, 1, 10, 30, 0),
-            'is_active': True
+            "session_id": "test-session-123",
+            "user_id": 1,
+            "created_at": datetime(2024, 1, 1, 10, 0, 0),
+            "last_activity": datetime(2024, 1, 1, 10, 30, 0),
+            "is_active": True,
         }
         self.mock_cursor.fetchone.return_value = expected_session_data
         dao = SessionDao()
@@ -111,11 +113,11 @@ class TestSessionDao:
         # GIVEN
         user_id = 1
         expected_session_data = {
-            'session_id': 'active-session-123',
-            'user_id': 1,
-            'created_at': datetime(2024, 1, 1, 10, 0, 0),
-            'last_activity': datetime(2024, 1, 1, 11, 0, 0),
-            'is_active': True
+            "session_id": "active-session-123",
+            "user_id": 1,
+            "created_at": datetime(2024, 1, 1, 10, 0, 0),
+            "last_activity": datetime(2024, 1, 1, 11, 0, 0),
+            "is_active": True,
         }
         self.mock_cursor.fetchone.return_value = expected_session_data
         dao = SessionDao()
@@ -158,7 +160,7 @@ class TestSessionDao:
         session_id = "test-session-123"
         dao = SessionDao()
 
-        with patch('dao.session_dao.datetime') as mock_datetime:
+        with patch("dao.session_dao.datetime") as mock_datetime:
             mock_now = datetime(2024, 1, 1, 12, 0, 0)
             mock_datetime.now.return_value = mock_now
 

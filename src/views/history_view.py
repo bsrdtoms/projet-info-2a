@@ -50,18 +50,13 @@ class HistoryView(AbstractView):
         for search in history:
             # Formater la date de manière lisible
             date_str = search.created_at.strftime("%d/%m/%Y %H:%M:%S")
-            
+
             # Tronquer le texte de la requête s'il est trop long
             query = search.query_text[:40]
             if len(search.query_text) > 40:
                 query += "..."
 
-            table_data.append([
-                search.id,
-                query,
-                search.result_count,
-                date_str
-            ])
+            table_data.append([search.id, query, search.result_count, date_str])
 
         headers = ["ID", "Query", "Results", "Date"]
         print("\n" + tabulate(table_data, headers=headers, tablefmt="grid"))
@@ -116,7 +111,7 @@ class HistoryView(AbstractView):
         try:
             stats = self.history_service.get_stats(self.user.id)
 
-            if not stats or stats.get('total_searches', 0) == 0:
+            if not stats or stats.get("total_searches", 0) == 0:
                 self.show_message("📊 No search statistics available yet")
                 input("\nPress Enter to continue...")
                 return
@@ -126,20 +121,25 @@ class HistoryView(AbstractView):
             print("=" * 70 + "\n")
 
             stats_table = [
-                ["Total Searches", stats['total_searches']],
-                ["Total Results Found", stats['total_results']],
+                ["Total Searches", stats["total_searches"]],
+                ["Total Results Found", stats["total_results"]],
                 ["Average Results per Search", f"{stats['avg_results']:.2f}"],
-                ["Most Recent Search", stats['most_recent'].strftime('%d/%m/%Y %H:%M:%S')],
-                ["Oldest Search", stats['oldest'].strftime('%d/%m/%Y %H:%M:%S')],
+                [
+                    "Most Recent Search",
+                    stats["most_recent"].strftime("%d/%m/%Y %H:%M:%S"),
+                ],
+                ["Oldest Search", stats["oldest"].strftime("%d/%m/%Y %H:%M:%S")],
             ]
 
             print(tabulate(stats_table, headers=["Metric", "Value"], tablefmt="grid"))
 
             print(f"\n📈 Analysis:")
-            if stats['total_searches'] > 0:
-                avg_results = stats['total_results'] / stats['total_searches']
+            if stats["total_searches"] > 0:
+                avg_results = stats["total_results"] / stats["total_searches"]
                 print(f"   • You average {avg_results:.1f} results per search")
-                print(f"   • Your most productive search found {int(max(10, stats['avg_results']))} results")
+                print(
+                    f"   • Your most productive search found {int(max(10, stats['avg_results']))} results"
+                )
 
         except Exception as e:
             self.show_message(f"❌ Error retrieving statistics: {e}")
@@ -163,7 +163,9 @@ class HistoryView(AbstractView):
             self.display_history_table(history)
 
             # Demander l'ID à supprimer
-            search_id_input = self.get_input("\nEnter the search ID to delete (or 0 to cancel): ")
+            search_id_input = self.get_input(
+                "\nEnter the search ID to delete (or 0 to cancel): "
+            )
 
             try:
                 search_id = int(search_id_input)
@@ -173,7 +175,9 @@ class HistoryView(AbstractView):
                 # Vérifier que la recherche appartient à l'utilisateur
                 found = any(s.id == search_id for s in history)
                 if not found:
-                    self.show_message(f"❌ Search ID {search_id} not found in your history")
+                    self.show_message(
+                        f"❌ Search ID {search_id} not found in your history"
+                    )
                     input("\nPress Enter to continue...")
                     return
 
@@ -231,7 +235,9 @@ class HistoryView(AbstractView):
             self.display_history_table(history)
 
             # Demander laquelle répéter
-            search_id_input = self.get_input("\nEnter the search ID to repeat (or 0 to cancel): ")
+            search_id_input = self.get_input(
+                "\nEnter the search ID to repeat (or 0 to cancel): "
+            )
 
             try:
                 search_id = int(search_id_input)
@@ -251,12 +257,12 @@ class HistoryView(AbstractView):
                     return
 
                 # Effectuer la recherche
-                self.show_message(f"🔍 Searching for: '{search_to_repeat.query_text}'...")
-                
+                self.show_message(
+                    f"🔍 Searching for: '{search_to_repeat.query_text}'..."
+                )
+
                 results = self.card_service.semantic_search(
-                    search_to_repeat.query_text,
-                    top_k=5,
-                    user_id=self.user.id
+                    search_to_repeat.query_text, top_k=5, user_id=self.user.id
                 )
 
                 # Afficher les résultats

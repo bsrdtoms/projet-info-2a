@@ -10,15 +10,17 @@ class TestUserDao:
 
     @pytest.fixture(autouse=True)
     def setup_mocks(self):
-        with patch('dao.user_dao.DBConnection') as mock_db_connection:
+        with patch("dao.user_dao.DBConnection") as mock_db_connection:
             self.mock_connection = MagicMock()
             self.mock_cursor = MagicMock()
-            
+
             self.mock_connection.__enter__ = Mock(return_value=self.mock_connection)
             self.mock_connection.__exit__ = Mock(return_value=None)
-            self.mock_connection.cursor.return_value.__enter__ = Mock(return_value=self.mock_cursor)
+            self.mock_connection.cursor.return_value.__enter__ = Mock(
+                return_value=self.mock_cursor
+            )
             self.mock_connection.cursor.return_value.__exit__ = Mock(return_value=None)
-            
+
             mock_db_connection.return_value.connection = self.mock_connection
             yield
 
@@ -31,9 +33,9 @@ class TestUserDao:
             first_name="John",
             last_name="Doe",
             user_type="student",
-            is_active=True
+            is_active=True,
         )
-        self.mock_cursor.fetchone.return_value = {'id': 1}
+        self.mock_cursor.fetchone.return_value = {"id": 1}
         dao = UserDao()
 
         # WHEN
@@ -54,7 +56,7 @@ class TestUserDao:
             first_name="John",
             last_name="Doe",
             user_type="student",
-            is_active=True
+            is_active=True,
         )
         self.mock_cursor.execute.side_effect = Exception("DB error")
         dao = UserDao()
@@ -70,27 +72,27 @@ class TestUserDao:
         # GIVEN
         user_id = 1
         expected_user_data = {
-            'id': 1,
-            'email': 'test@example.com',
-            'password_hash': 'hashed_password',
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'user_type': 'student',
-            'is_active': True,
-            'created_at': datetime(2024, 1, 1, 10, 0, 0),
-            'updated_at': datetime(2024, 1, 1, 10, 0, 0)
+            "id": 1,
+            "email": "test@example.com",
+            "password_hash": "hashed_password",
+            "first_name": "John",
+            "last_name": "Doe",
+            "user_type": "student",
+            "is_active": True,
+            "created_at": datetime(2024, 1, 1, 10, 0, 0),
+            "updated_at": datetime(2024, 1, 1, 10, 0, 0),
         }
         self.mock_cursor.fetchone.return_value = expected_user_data
-        
-        with patch('dao.user_dao.create_user_from_type') as mock_create_user:
+
+        with patch("dao.user_dao.create_user_from_type") as mock_create_user:
             mock_create_user.return_value = User(
                 id=1,
-                email='test@example.com',
-                password_hash='hashed_password',
-                first_name='John',
-                last_name='Doe',
-                user_type='student',
-                is_active=True
+                email="test@example.com",
+                password_hash="hashed_password",
+                first_name="John",
+                last_name="Doe",
+                user_type="student",
+                is_active=True,
             )
             dao = UserDao()
 
@@ -101,15 +103,15 @@ class TestUserDao:
             assert result is not None
             assert isinstance(result, User)
             mock_create_user.assert_called_once_with(
-                user_type='student',
+                user_type="student",
                 id=1,
-                email='test@example.com',
-                password_hash='hashed_password',
-                first_name='John',
-                last_name='Doe',
+                email="test@example.com",
+                password_hash="hashed_password",
+                first_name="John",
+                last_name="Doe",
                 is_active=True,
                 created_at=datetime(2024, 1, 1, 10, 0, 0),
-                updated_at=datetime(2024, 1, 1, 10, 0, 0)
+                updated_at=datetime(2024, 1, 1, 10, 0, 0),
             )
 
     def test_find_by_id_not_found(self):
@@ -140,27 +142,27 @@ class TestUserDao:
         # GIVEN
         email = "test@example.com"
         expected_user_data = {
-            'id': 1,
-            'email': 'test@example.com',
-            'password_hash': 'hashed_password',
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'user_type': 'student',
-            'is_active': True,
-            'created_at': datetime(2024, 1, 1, 10, 0, 0),
-            'updated_at': datetime(2024, 1, 1, 10, 0, 0)
+            "id": 1,
+            "email": "test@example.com",
+            "password_hash": "hashed_password",
+            "first_name": "John",
+            "last_name": "Doe",
+            "user_type": "student",
+            "is_active": True,
+            "created_at": datetime(2024, 1, 1, 10, 0, 0),
+            "updated_at": datetime(2024, 1, 1, 10, 0, 0),
         }
         self.mock_cursor.fetchone.return_value = expected_user_data
-        
-        with patch('dao.user_dao.create_user_from_type') as mock_create_user:
+
+        with patch("dao.user_dao.create_user_from_type") as mock_create_user:
             mock_create_user.return_value = User(
                 id=1,
-                email='test@example.com',
-                password_hash='hashed_password',
-                first_name='John',
-                last_name='Doe',
-                user_type='student',
-                is_active=True
+                email="test@example.com",
+                password_hash="hashed_password",
+                first_name="John",
+                last_name="Doe",
+                user_type="student",
+                is_active=True,
             )
             dao = UserDao()
 
@@ -171,15 +173,15 @@ class TestUserDao:
             assert result is not None
             assert isinstance(result, User)
             mock_create_user.assert_called_once_with(
-                user_type='student',
+                user_type="student",
                 id=1,
-                email='test@example.com',
-                password_hash='hashed_password',
-                first_name='John',
-                last_name='Doe',
+                email="test@example.com",
+                password_hash="hashed_password",
+                first_name="John",
+                last_name="Doe",
                 is_active=True,
                 created_at=datetime(2024, 1, 1, 10, 0, 0),
-                updated_at=datetime(2024, 1, 1, 10, 0, 0)
+                updated_at=datetime(2024, 1, 1, 10, 0, 0),
             )
 
     def test_find_by_email_not_found(self):
@@ -210,50 +212,50 @@ class TestUserDao:
         # GIVEN
         mock_rows = [
             {
-                'id': 1,
-                'email': 'user1@example.com',
-                'password_hash': 'hash1',
-                'first_name': 'John',
-                'last_name': 'Doe',
-                'user_type': 'student',
-                'is_active': True,
-                'created_at': datetime(2024, 1, 1, 10, 0, 0),
-                'updated_at': datetime(2024, 1, 1, 10, 0, 0)
+                "id": 1,
+                "email": "user1@example.com",
+                "password_hash": "hash1",
+                "first_name": "John",
+                "last_name": "Doe",
+                "user_type": "student",
+                "is_active": True,
+                "created_at": datetime(2024, 1, 1, 10, 0, 0),
+                "updated_at": datetime(2024, 1, 1, 10, 0, 0),
             },
             {
-                'id': 2,
-                'email': 'user2@example.com',
-                'password_hash': 'hash2',
-                'first_name': 'Jane',
-                'last_name': 'Smith',
-                'user_type': 'teacher',
-                'is_active': True,
-                'created_at': datetime(2024, 1, 1, 11, 0, 0),
-                'updated_at': datetime(2024, 1, 1, 11, 0, 0)
-            }
+                "id": 2,
+                "email": "user2@example.com",
+                "password_hash": "hash2",
+                "first_name": "Jane",
+                "last_name": "Smith",
+                "user_type": "teacher",
+                "is_active": True,
+                "created_at": datetime(2024, 1, 1, 11, 0, 0),
+                "updated_at": datetime(2024, 1, 1, 11, 0, 0),
+            },
         ]
         self.mock_cursor.fetchall.return_value = mock_rows
-        
-        with patch('dao.user_dao.create_user_from_type') as mock_create_user:
+
+        with patch("dao.user_dao.create_user_from_type") as mock_create_user:
             mock_create_user.side_effect = [
                 User(
-                    id=1, 
-                    email='user1@example.com', 
-                    password_hash='hash1',
-                    first_name='John', 
-                    last_name='Doe', 
-                    user_type='student',
-                    is_active=True
+                    id=1,
+                    email="user1@example.com",
+                    password_hash="hash1",
+                    first_name="John",
+                    last_name="Doe",
+                    user_type="student",
+                    is_active=True,
                 ),
                 User(
-                    id=2, 
-                    email='user2@example.com', 
-                    password_hash='hash2',
-                    first_name='Jane', 
-                    last_name='Smith', 
-                    user_type='teacher',
-                    is_active=True
-                )
+                    id=2,
+                    email="user2@example.com",
+                    password_hash="hash2",
+                    first_name="Jane",
+                    last_name="Smith",
+                    user_type="teacher",
+                    is_active=True,
+                ),
             ]
             dao = UserDao()
 
@@ -290,13 +292,13 @@ class TestUserDao:
     def test_delete_success(self):
         # GIVEN
         user = User(
-            id=1, 
+            id=1,
             email="test@example.com",
             password_hash="hashed_password",
             first_name="John",
             last_name="Doe",
             user_type="student",
-            is_active=True
+            is_active=True,
         )
         self.mock_cursor.rowcount = 1
         dao = UserDao()
@@ -312,13 +314,13 @@ class TestUserDao:
     def test_delete_not_found(self):
         # GIVEN
         user = User(
-            id=999, 
+            id=999,
             email="nonexistent@example.com",
             password_hash="hashed_password",
             first_name="John",
             last_name="Doe",
             user_type="student",
-            is_active=True
+            is_active=True,
         )
         self.mock_cursor.rowcount = 0
         dao = UserDao()
@@ -334,13 +336,13 @@ class TestUserDao:
     def test_delete_database_error(self):
         # GIVEN
         user = User(
-            id=1, 
+            id=1,
             email="test@example.com",
             password_hash="hashed_password",
             first_name="John",
             last_name="Doe",
             user_type="student",
-            is_active=True
+            is_active=True,
         )
         self.mock_cursor.execute.side_effect = Exception("DB error")
         dao = UserDao()
@@ -361,7 +363,7 @@ class TestUserDao:
             first_name="Updated",
             last_name="Name",
             user_type="student",
-            is_active=False
+            is_active=False,
         )
         dao = UserDao()
 
@@ -382,7 +384,7 @@ class TestUserDao:
             first_name="Updated",
             last_name="Name",
             user_type="student",
-            is_active=False
+            is_active=False,
         )
         self.mock_cursor.execute.side_effect = Exception("DB error")
         dao = UserDao()

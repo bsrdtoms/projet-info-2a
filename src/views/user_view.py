@@ -80,7 +80,9 @@ class UserView(AbstractView):
                 first_name = self.get_input()
                 print("Please write the last name of the user")
                 last_name = self.get_input()
-                UserService().create_account(email, password, first_name, last_name, role)
+                UserService().create_account(
+                    email, password, first_name, last_name, role
+                )
 
             elif choice == "2":
                 print("Please write the id of the user")

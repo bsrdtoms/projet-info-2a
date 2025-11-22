@@ -123,19 +123,26 @@ class CardService:
             description_parts = []
 
             # Card name and types
-            name = details['name']
-            card_type = details['type'] or "Card"
+            name = details["name"]
+            card_type = details["type"] or "Card"
 
             # Add color adjective before type if present
-            if details['colors'] and len(details['colors']) == 1:
-                color = details['colors'][0].lower()
+            if details["colors"] and len(details["colors"]) == 1:
+                color = details["colors"][0].lower()
                 # Insert color before the main type
                 # Example: "Creature" -> "blue Creature"
                 # But not for "Legendary Creature" -> keep "Legendary blue Creature"
                 type_parts = card_type.split()
-                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 
-                             'Artifact', 'Planeswalker', 'Land']
-                
+                main_types = [
+                    "Creature",
+                    "Instant",
+                    "Sorcery",
+                    "Enchantment",
+                    "Artifact",
+                    "Planeswalker",
+                    "Land",
+                ]
+
                 for i, part in enumerate(type_parts):
                     if any(mt in part for mt in main_types):
                         type_parts.insert(i, color)
@@ -143,55 +150,64 @@ class CardService:
                 else:
                     # If no main type found, add at the beginning
                     type_parts.insert(0, color)
-                card_type = ' '.join(type_parts)
-                
-            elif details['colors'] and len(details['colors']) > 1:
-                colors = ', '.join([c.lower() for c in details['colors']])
+                card_type = " ".join(type_parts)
+
+            elif details["colors"] and len(details["colors"]) > 1:
+                colors = ", ".join([c.lower() for c in details["colors"]])
                 type_parts = card_type.split()
-                main_types = ['Creature', 'Instant', 'Sorcery', 'Enchantment', 
-                             'Artifact', 'Planeswalker', 'Land']
-                
+                main_types = [
+                    "Creature",
+                    "Instant",
+                    "Sorcery",
+                    "Enchantment",
+                    "Artifact",
+                    "Planeswalker",
+                    "Land",
+                ]
+
                 for i, part in enumerate(type_parts):
                     if any(mt in part for mt in main_types):
                         type_parts.insert(i, f"multicolor ({colors})")
                         break
                 else:
                     type_parts.insert(0, f"multicolor ({colors})")
-                card_type = ' '.join(type_parts)
+                card_type = " ".join(type_parts)
 
             description_parts.append(f"{name} is a {card_type}")
 
             # Add mana cost if present
-            if details['mana_cost']:
+            if details["mana_cost"]:
                 description_parts.append(f"that costs {details['mana_cost']}")
 
             # Join first part
-            first_sentence = ' '.join(description_parts) + '.'
+            first_sentence = " ".join(description_parts) + "."
 
             # Add power/toughness for creatures
-            if details['power'] and details['toughness']:
-                first_sentence += f" It is a {details['power']}/{details['toughness']} creature."
+            if details["power"] and details["toughness"]:
+                first_sentence += (
+                    f" It is a {details['power']}/{details['toughness']} creature."
+                )
 
             # Add loyalty for planeswalkers
-            if details['loyalty']:
+            if details["loyalty"]:
                 first_sentence += f" It has {details['loyalty']} loyalty."
 
             # Add card text if present
             result = first_sentence
-            if details['text']:
-                text = details['text']
+            if details["text"]:
+                text = details["text"]
 
                 # Remove reminder text (in parentheses) for cleaner output
-                text_cleaned = re.sub(r'\([^)]*\)', '', text)
+                text_cleaned = re.sub(r"\([^)]*\)", "", text)
                 # Remove extra spaces
-                text_cleaned = ' '.join(text_cleaned.split())
+                text_cleaned = " ".join(text_cleaned.split())
 
                 # Truncate if too long (keep first sentence or 200 chars)
                 if len(text_cleaned) > 200:
                     # Try to cut at sentence end
-                    sentences = text_cleaned.split('. ')
+                    sentences = text_cleaned.split(". ")
                     if sentences[0] and len(sentences[0]) < 200:
-                        text_cleaned = sentences[0] + '.'
+                        text_cleaned = sentences[0] + "."
                     else:
                         text_cleaned = text_cleaned[:200] + "..."
 
@@ -217,7 +233,7 @@ class CardService:
         -------
         list[Card]
             List of Card objects matching the search criteria
-        
+
         Raises
         ------
         ValueError
@@ -248,7 +264,7 @@ class CardService:
         -------
         Card or None
             Card object corresponding to the search result, or None if not found
-        
+
         Raises
         ------
         ValueError
@@ -265,22 +281,17 @@ class CardService:
 
         return card_found
 
-
     @log
     def semantic_search(
-        self, 
-        text: str, 
-        top_k: int = 5, 
-        distance: str = "L2",
-        user_id: int = None
+        self, text: str, top_k: int = 5, distance: str = "L2", user_id: int = None
     ) -> list[tuple[Card, float]]:
         """
         Optimized semantic search using pgvector
         AVEC ENREGISTREMENT AUTOMATIQUE DE L'HISTORIQUE
-    
+
         BEFORE: Retrieved all cards, calculated in Python (slow)
         AFTER: All computation done in SQL (fast)
-    
+
         Parameters
         ----------
         text : str
@@ -291,12 +302,12 @@ class CardService:
             Distance metric: "L2" or "cosine" (default: "L2")
         user_id : int, optional
             ID of the user (if provided, search is logged to history)
-    
+
         Returns
         -------
         list[tuple[Card, float]]
             List of tuples (Card, similarity_score)
-        
+
         Raises
         ------
         Exception
@@ -306,32 +317,33 @@ class CardService:
             # Generate embedding for search text
             embedding_response = get_embedding(text)
             query_embedding = embedding_response["embeddings"][0]
-    
+
             # Direct SQL search via pgvector (FAST!)
             # No Python loop or pandas needed!
             results = self.dao.semantic_search(query_embedding, top_k, distance)
-    
+
             # NOUVEAU: Enregistrer dans l'historique si user_id fourni
             if user_id is not None:
                 try:
                     from service.historical_service import HistoricalService
+
                     history_service = HistoricalService()
                     history_service.add_search(
                         user_id=user_id,
                         query_text=text,
                         result_count=len(results),
-                        query_embedding=None  # On ne sauvegarde pas l'embedding pour économiser de l'espace
+                        query_embedding=None,  # On ne sauvegarde pas l'embedding pour économiser de l'espace
                     )
                 except Exception as e:
                     print(f"⚠️  Warning: Could not save to history: {e}")
                     # Ne pas lever l'erreur, continuer quand même
-    
+
             return results
-    
+
         except Exception as e:
             print(f"❌ Error during semantic search: {e}")
             raise
-            
+
     @log
     def random(self) -> Card:
         """
@@ -346,6 +358,6 @@ class CardService:
         if not ids:
             print("❌ No cards found in database")
             return None
-        
+
         random_id = random.choice(ids)
         return self.dao.find_by_id(random_id)

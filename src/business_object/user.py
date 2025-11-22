@@ -15,7 +15,7 @@ class User:
         user_type: str = "client",
         is_active: bool = True,
         created_at: Optional[datetime] = None,
-        updated_at: Optional[datetime] = None
+        updated_at: Optional[datetime] = None,
     ):
         """
         Initialise un utilisateur
@@ -69,7 +69,7 @@ class Client(User):
     """Utilisateur classique pouvant rechercher des cartes et gérer des favoris"""
 
     def __init__(self, **kwargs):
-        kwargs['user_type'] = 'client'
+        kwargs["user_type"] = "client"
         super().__init__(**kwargs)
 
 
@@ -77,7 +77,7 @@ class GameDesigner(User):
     """Utilisateur pouvant gérer les cartes (ajout, modification, suppression)"""
 
     def __init__(self, **kwargs):
-        kwargs['user_type'] = 'game_designer'
+        kwargs["user_type"] = "game_designer"
         super().__init__(**kwargs)
 
 
@@ -85,7 +85,7 @@ class Admin(User):
     """Administrateur pouvant gérer les utilisateurs"""
 
     def __init__(self, **kwargs):
-        kwargs['user_type'] = 'admin'
+        kwargs["user_type"] = "admin"
         super().__init__(**kwargs)
 
 
@@ -106,11 +106,7 @@ def create_user_from_type(user_type: str, **kwargs) -> User:
     User
         Instance de Client, GameDesigner ou Admin
     """
-    user_classes = {
-        'client': Client,
-        'game_designer': GameDesigner,
-        'admin': Admin
-    }
+    user_classes = {"client": Client, "game_designer": GameDesigner, "admin": Admin}
 
     user_class = user_classes.get(user_type, Client)
     return user_class(**kwargs)
