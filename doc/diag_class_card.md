@@ -63,7 +63,7 @@ classDiagram
 
     CardDao ..> Card : manipulate
 
-    CardService ..> Card : use
+    CardService ..> Card : manipulate
 
     
 
