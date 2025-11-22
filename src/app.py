@@ -511,7 +511,7 @@ async def list_favorites(current_user: TokenData = Depends(require_authenticated
 
     return favorites
 
-# ==================== HISTORY ROUTES ====================
+# ==================== OTHER CARD ROUTES ====================
 
 # Function helper for optional authentification
 async def get_optional_user(authorization: Optional[str] = None) -> Optional[TokenData]:
@@ -644,7 +644,7 @@ async def semantic_search_cosine(
         raise HTTPException(status_code=500, detail=f"Search error: {str(e)}")
 
 
-# ==================== HISTORY ENDPOINTS ====================
+# ==================== HISTORY ROUTES ====================
 
 @app.get("/history", tags=["History"])
 async def get_search_history(
