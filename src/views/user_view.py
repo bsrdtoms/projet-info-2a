@@ -85,7 +85,10 @@ class UserView(AbstractView):
                 UserService().create_account(email, password, first_name, last_name, role)
 
             elif choice == "2":
-                pass
+                print("Please write the id of the user")
+                user_id = self.get_input()
+                UserService().delete_account(user_id)
+
             else:
                 self.show_message("Invalid choice, please try again.")
 
