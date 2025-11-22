@@ -17,7 +17,6 @@ from utils.auth import (
     create_access_token,
     Token,
     TokenData,
-    get_current_user,
     require_admin,
     require_game_designer,
     require_authenticated
@@ -147,7 +146,7 @@ async def semantic_search_cosine(query: str, limit: int = 3):
     ]
 
 
-@app.post("/card/{name}/{text}", tags=["Cards"])
+@app.post("/card/{name}/{text}", tags=["game_designer"])
 async def create_card(name: str, text: str, current_user: TokenData = Depends(require_game_designer)):
     """Create a new card (requires game_designer role)"""
     logging.info(f"Creating card: {name} by {current_user.email}")
@@ -160,7 +159,7 @@ async def create_card(name: str, text: str, current_user: TokenData = Depends(re
     return {"message": f"Card '{name}' created successfully"}
 
 
-@app.put("/card/{card_id}", tags=["Cards"])
+@app.put("/card/{card_id}", tags=["game_designer"])
 async def update_card(card_id: int, updates: dict, current_user: TokenData = Depends(require_game_designer)):
     """Update one or more fields of a card (requires game_designer role)"""
     logging.info(f"Updating card ID {card_id} by {current_user.email}")
@@ -182,7 +181,7 @@ async def update_card(card_id: int, updates: dict, current_user: TokenData = Dep
     }
 
 
-@app.delete("/card/{card_id}", tags=["Cards"])
+@app.delete("/card/{card_id}", tags=["game_designer"])
 async def delete_card(card_id: int, current_user: TokenData = Depends(require_game_designer)):
     """Delete a card (requires game_designer role)"""
     logging.info(f"Deleting card ID {card_id} by {current_user.email}")
@@ -322,43 +321,25 @@ async def update_user_as_admin(
     """Update a user's information (admin only)"""
     logging.info(f"Updating user ID {user_id} by admin: {current_user.email}")
 
-    user = user_service.find_by_id(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Prepare updates dictionary
-    updates = {}
-    if user_type is not None:
-        valid_types = ["client", "game_designer", "admin"]
-        if user_type not in valid_types:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid user type. Must be one of: {', '.join(valid_types)}"
-            )
-        updates["user_type"] = user_type
-
-    if is_active is not None:
-        updates["is_active"] = is_active
-
-    if first_name is not None:
-        updates["first_name"] = first_name
-
-    if last_name is not None:
-        updates["last_name"] = last_name
-
-    if not updates:
-        raise HTTPException(status_code=400, detail="No updates provided")
-
-    # Update user via DAO
-    from dao.user_dao import UserDao
-    user_dao = UserDao()
-    success = user_dao.update(user, updates)
+    # Use service layer
+    success, message, updates = user_service.update_user(
+        user_id=user_id,
+        user_type=user_type,
+        is_active=is_active,
+        first_name=first_name,
+        last_name=last_name
+    )
 
     if not success:
-        raise HTTPException(status_code=500, detail="Failed to update user")
+        if "not found" in message.lower():
+            raise HTTPException(status_code=404, detail=message)
+        elif "invalid" in message.lower() or "no updates" in message.lower():
+            raise HTTPException(status_code=400, detail=message)
+        else:
+            raise HTTPException(status_code=500, detail=message)
 
     return {
-        "message": "User updated successfully",
+        "message": message,
         "user_id": user_id,
         "updates": updates
     }
@@ -425,11 +406,6 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
         if hasattr(user, 'is_active') and user.is_active:
             active_users += 1
 
-    # Get total cards (using DAO)
-    from dao.card_dao import CardDao
-    card_dao = CardDao()
-    total_cards = len(card_dao.get_all_ids())
-
     # Get total searches across all users
     total_searches = 0
     for user in all_users:
@@ -440,9 +416,6 @@ async def get_global_stats(current_user: TokenData = Depends(require_admin)):
             "total": len(all_users),
             "active": active_users,
             "by_type": user_counts
-        },
-        "cards": {
-            "total": total_cards
         },
         "searches": {
             "total": total_searches
@@ -485,7 +458,7 @@ async def find_user(user_id: int, current_user: TokenData = Depends(require_auth
     }
 
 
-@app.delete("/user/{user_id}", tags=["Users"])
+@app.delete("/admin/{user_id}", tags=["Users"])
 async def delete_user(user_id: int, current_user: TokenData = Depends(require_admin)):
     """Delete a user (requires admin role)"""
     logging.info(f"Deleting user ID {user_id} by {current_user.email}")
@@ -525,19 +498,17 @@ async def remove_favorite(card_id: int, current_user: TokenData = Depends(requir
     return {"message": message}
 
 
-@app.get("/favorites/{user_id}", response_model=list[CardModel], tags=["Favorites"])
-async def list_favorites(user_id: int, current_user: TokenData = Depends(require_authenticated)):
-    """Lister les cartes favorites d'un utilisateur (nécessite authentification)"""
-    # Vérifier que l'utilisateur ne peut voir que ses propres favoris (sauf admin)
-    if current_user.user_id != user_id and current_user.user_type != "admin":
-        raise HTTPException(
-            status_code=403,
-            detail="Vous ne pouvez voir que vos propres favoris"
-        )
-    logging.info(f"Récupération des favoris pour user_id={user_id} par {current_user.email}")
-    favorites = favorite_service.list_favorites(user_id)
+@app.get("/favorites/", response_model=list[CardModel], tags=["Favorites"])
+async def list_favorites(current_user: TokenData = Depends(require_authenticated)):
+    """List a user's favorite cards (requires authentication)"""
+
+    logging.info(f"Retrieving favorites for user_id={current_user.user_id}")
+
+    favorites = favorite_service.list_favorites(current_user.user_id)
+
     if not favorites:
         return {"message": "No cards in favorites"}
+
     return favorites
 
 
