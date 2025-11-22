@@ -11,7 +11,6 @@ from service.card_service import CardService
 from service.user_service import UserService
 from service.favorite_service import FavoriteService
 from service.historical_service import HistoricalService
-from business_object.card import Card
 from utils.log_init import initialize_logs
 from technical_components.embedding.ollama_embedding import get_embedding
 from utils.auth import (
@@ -152,14 +151,13 @@ async def semantic_search_cosine(query: str, limit: int = 3):
 async def create_card(name: str, text: str, current_user: TokenData = Depends(require_game_designer)):
     """Create a new card (requires game_designer role)"""
     logging.info(f"Creating card: {name} by {current_user.email}")
-    card_object = Card(None, name, text)
-    success = card_service.add_card(card_object)
+    success = card_service.add_card(name, text)
     if not success:
         raise HTTPException(
             status_code=500,
             detail="Error creating card"
         )
-    return {"message": f"Card '{card_object.name}' created successfully"}
+    return {"message": f"Card '{name}' created successfully"}
 
 
 @app.put("/card/{card_id}", tags=["Cards"])

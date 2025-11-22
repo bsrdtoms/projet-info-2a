@@ -17,20 +17,24 @@ class CardService:
         self.dao = CardDao()
 
     @log
-    def add_card(self, card: Card) -> bool:
+    def add_card(self, name: str, text: str | None) -> bool:
         """
         Add a card by generating its embedding before insertion
 
         Parameters
         ----------
-        card : Card
-            Card to add
+        name : str
+            The name of the card.
+        text : str
+            The textual content of the card from which the embedding will be generated.
+
 
         Returns
         -------
         bool
             True if successful, False otherwise
         """
+        card = Card(None, name, text)
         try:
             # Generate embedding if text exists
             if card.text:
